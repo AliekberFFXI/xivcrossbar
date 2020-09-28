@@ -28,6 +28,9 @@
 
 local defaults = {}
 
+defaults.buttonbackgroundalpha = 150
+defaults.iscompact = false
+
 defaults.Hotbar = {}
 defaults.Hotbar.Number = 3
 defaults.Hotbar.HideEmptySlots = false
