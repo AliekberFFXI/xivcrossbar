@@ -810,7 +810,38 @@ function ui:check_recasts(player_hotbar, player_vitals, environment, spells, gam
                             skillchain_prop = skillchains.get_skillchain_result(tonumber(skill.id), 'weapon_skills')
                         elseif (action.type == 'ja' or action_type == 'pet') then
                             skillchain_prop = skillchains.get_skillchain_result(tonumber(skill.icon), 'job_abilities')
+
+                            local tool_info = consumables:get_ability_info_by_name(kebab_casify(action.action))
+
+                            if (tool_info ~= nil and tool_info.tool_count ~= nil and tool_info.master_tool_count ~= nil) then
+
+                                local total_tool_count = tool_info.tool_count + tool_info.master_tool_count
+                                local display_count = total_tool_count .. ''
+                                if (total_tool_count > 99) then
+                                    display_count = '99+'
+                                end
+                                self.hotbars[h].slot_cost[i]:text(display_count)
+                                if (tool_info.tool_count > 50) then
+                                    self.hotbars[h].slot_cost[i]:color(0, 255, 0)
+                                elseif (total_tool_count > 50) then
+                                    self.hotbars[h].slot_cost[i]:color(255, 255, 0)
+                                else
+                                    self.hotbars[h].slot_cost[i]:color(255, 0, 0)
+                                end
+                                self.hotbars[h].slot_cost[i]:show()
+
+                                if (total_tool_count == 0) then
+                                    -- set up "Xed-out" element
+                                    self.hotbars[h].slot_recast[i]:path(windower.addon_path..'/images/other/red-x.png')
+                                    self.hotbars[h].slot_recast[i]:alpha(150)
+                                    self.hotbars[h].slot_recast[i]:size(40, 40)
+                                    self.hotbars[h].slot_recast[i]:pos(self:get_slot_x(h, i), self:get_slot_y(h, i))
+                                    self.hotbars[h].slot_recast[i]:show()
+                                    self.hotbars[h].slot_recast_text[i]:hide()
+                                end
+                            end
                         end
+
                         skill_recasts = windower.ffxi.get_ability_recasts()
                         is_in_seconds = true
                     elseif (action.type == 'enchanteditem') then

@@ -36,6 +36,7 @@ windower.register_event('action', (function(action) consumables:on_action(action
 windower.register_event('add item', (function(bag, index, id, count) consumables:on_add_item(bag, index, id, count) end))
 windower.register_event('remove item', (function(bag, index, id, count) consumables:on_remove_item(bag, index, id, count) end))
 
+-- NIN
 
 local toolbag_lookup = {
     [5308] = 1161, -- Toolbag -> Uchitake
@@ -109,7 +110,20 @@ local ninja_tool_lookup = {
     [510] = 2970, -- Migawari: Ichi -> Mokujin
 }
 
+local ability_tool_lookup = {
+    -- COR
+    ['fire-shot'] = 2176, -- Fire Shot -> Fire Card
+    ['ice-shot'] = 2177, -- Ice Shot -> Ice Card
+    ['wind-shot'] = 2178, -- Wind Shot -> Wind Card
+    ['earth-shot'] = 2179, -- Earth Shot -> Earth Card
+    ['thunder-shot'] = 2180, -- Thunder Shot -> Thunder Card
+    ['water-shot'] = 2181, -- Water Shot -> Water Card
+    ['light-shot'] = 2182, -- Light Shot -> Light Card
+    ['dark-shot'] = 2183, -- Dark Shot -> Dark Card
+}
+
 local master_tool_lookup = {
+    -- NIN
     [1179] = 2972, -- Shihei -> Shikanofuda
     [1194] = 2972, -- Shinobi-Tabi -> Shikanofuda
     [2553] = 2972, -- Sanjaku-Tenugui -> Shikanofuda
@@ -129,6 +143,15 @@ local master_tool_lookup = {
     [1176] = 2971, -- Mizu-Deppo -> Inoshishinofuda
     [1164] = 2971, -- Tsurara -> Inoshishinofuda
     [1161] = 2971, -- Uchitake -> Inoshishinofuda
+    -- COR
+    [2176] = 2974, -- Fire Card -> Trump Card
+    [2177] = 2974, -- Ice Card -> Trump Card
+    [2178] = 2974, -- Wind Card -> Trump Card
+    [2179] = 2974, -- Earth Card -> Trump Card
+    [2180] = 2974, -- Thunder Card -> Trump Card
+    [2181] = 2974, -- Water Card -> Trump Card
+    [2182] = 2974, -- Light Card -> Trump Card
+    [2183] = 2974, -- Dark Card -> Trump Card
 }
 
 -- TODO: Add support for food/usable items, and (stackable) tradable items
@@ -193,6 +216,32 @@ function consumables:get_ninja_tool_info(tool_id)
         tool_count = self.item_counts[tool_id],
         master_tool_count = self.item_counts[master_tool_id]
     }
+end
+
+function consumables:get_ability_info_by_name(ability_name)
+    local tool_id = ability_tool_lookup[kebab_casify(ability_name)]
+    if (tool_id ~= nil) then
+        return self:get_ability_tool_info(tool_id)
+    else
+        return nil
+    end
+end
+
+function consumables:get_ability_tool_info(tool_id)
+    local master_tool_id = master_tool_lookup[tool_id]
+    local tool_count = self.item_counts[tool_id]
+    if (master_tool_id) then
+        local master_tool_count = self.item_counts[master_tool_id]
+        return {
+            tool_count = self.item_counts[tool_id],
+            master_tool_count = self.item_counts[master_tool_id]
+        }
+    else
+        return {
+            tool_count = self.item_counts[tool_id],
+            master_tool_count = 0
+        }
+    end
 end
 
 function consumables:get_item_count_by_name(name)

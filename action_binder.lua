@@ -31,14 +31,15 @@ local action_types = {
     ['SUMMON'] = 8,
     ['BLUE_MAGIC'] = 9,
     ['PHANTOM_ROLL'] = 10,
-    ['STRATAGEMS'] = 11,
-    ['DANCES'] = 12,
-    ['RUNE_ENCHANTMENT'] = 13,
-    ['GEOMANCY'] = 14,
-    ['TRUST'] = 15,
-    ['MOUNT'] = 16,
-    ['USABLE_ITEM'] = 17,
-    ['TRADABLE_ITEM'] = 18
+    ['QUICK_DRAW'] = 11,
+    ['STRATAGEMS'] = 13,
+    ['DANCES'] = 14,
+    ['RUNE_ENCHANTMENT'] = 15,
+    ['GEOMANCY'] = 16,
+    ['TRUST'] = 17,
+    ['MOUNT'] = 18,
+    ['USABLE_ITEM'] = 19,
+    ['TRADABLE_ITEM'] = 20
 }
 
 local prefix_lookup = {
@@ -53,6 +54,7 @@ local prefix_lookup = {
     [action_types.SUMMON] = 'ma',
     [action_types.BLUE_MAGIC] = 'ma',
     [action_types.PHANTOM_ROLL] = 'ja',
+    [action_types.QUICK_DRAW] = 'ja',
     [action_types.STRATAGEMS] = 'ja',
     [action_types.DANCES] = 'ja',
     [action_types.RUNE_ENCHANTMENT] = 'ja',
@@ -564,6 +566,9 @@ function action_binder:display_action_type_selector()
     if (main_job == 'COR' or sub_job == 'COR') then
         action_type_list:append({id = action_types.PHANTOM_ROLL, name = 'Phantom Roll', icon = 'icons/custom/jobs/COR.png'})
     end
+    if (main_job == 'COR' or sub_job == 'COR') then
+        action_type_list:append({id = action_types.QUICK_DRAW, name = 'Quick Draw', icon = 'icons/custom/jobs/COR.png'})
+    end
     if (main_job == 'SCH' or sub_job == 'SCH') then
         action_type_list:append({id = action_types.STRATAGEMS, name = 'Stratagem', icon = 'icons/custom/jobs/SCH.png'})
     end
@@ -607,6 +612,8 @@ function action_binder:display_action_selector()
         self:display_blue_magic_selector()
     elseif (self.action_type == action_types.PHANTOM_ROLL) then
         self:display_phantom_roll_selector()
+    elseif (self.action_type == action_types.QUICK_DRAW) then
+        self:display_quick_draw_selector()
     elseif (self.action_type == action_types.STRATAGEMS) then
         self:display_stratagem_selector()
     elseif (self.action_type == action_types.DANCES) then
@@ -987,6 +994,7 @@ function action_binder:display_ability_selector()
 
     local skip_abilities = {
         ['Phantom Roll'] = true,
+        ['Quick Draw'] = true,
         ['Stratagems'] = true,
         ['Sambas'] = true,
         ['Jigs'] = true,
@@ -1170,6 +1178,29 @@ function action_binder:display_phantom_roll_selector()
         local target_type = res.job_abilities[id].targets
         local skill = database.abilities[name:lower()]
         if (skill ~= nil and skill.type == 'CorsairRoll') then
+            local icon_path = 'icons/abilities/' .. string.format("%05d", skill.icon) .. '.png'
+            ability_list:append({id = id, name = name, icon = icon_path, icon_offset = 4, data = {target_type = target_type}})
+        end
+    end
+
+    ability_list:sort(sortByName)
+
+    self.selector:display_options(ability_list)
+    self:show_control_hints('Confirm', 'Go Back')
+end
+
+function action_binder:display_quick_draw_selector()
+    self.title:text('Select Quick Draw')
+    self.title:show()
+
+    local abilities = windower.ffxi.get_abilities().job_abilities
+    local ability_list = L{}
+
+    for key, id in pairs(abilities) do
+        local name = res.job_abilities[id].name
+        local target_type = res.job_abilities[id].targets
+        local skill = database.abilities[name:lower()]
+        if (skill ~= nil and skill.type == 'CorsairShot') then
             local icon_path = 'icons/abilities/' .. string.format("%05d", skill.icon) .. '.png'
             ability_list:append({id = id, name = name, icon = icon_path, icon_offset = 4, data = {target_type = target_type}})
         end
