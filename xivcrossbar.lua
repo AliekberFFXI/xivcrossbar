@@ -206,7 +206,7 @@ function set_action_command(args)
     local icon = args[8] or nil
 
     if hotbar < 1 or hotbar > theme_options.hotbar_number then
-        print('XIVCROSSBAR: Invalid hotbar. Please use a number between 1 and 3.')
+        print('XIVCROSSBAR: Invalid hotbar. Please use a number between 1 and ' .. theme_options.hotbar_number .. '.')
         return
     end
 
@@ -235,7 +235,7 @@ function delete_action_command(args)
     local slot = tonumber(args[3]) or 0
 
     if hotbar < 1 or hotbar > theme_options.hotbar_number then
-        print('XIVCROSSBAR: Invalid hotbar. Please use a number between 1 and 3.')
+        print('XIVCROSSBAR: Invalid hotbar. Please use a number between 1 and ' .. theme_options.hotbar_number .. '.')
         return
     end
 
@@ -267,7 +267,7 @@ function copy_action_command(args, is_moving)
     local to_slot =  tonumber(args[6]) or 0
 
     if hotbar < 1 or hotbar > 3 or to_hotbar < 1 or to_hotbar > 3 then
-        print('XIVCROSSBAR: Invalid hotbar. Please use a number between 1 and 3.')
+        print('XIVCROSSBAR: Invalid hotbar. Please use a number between 1 and ' .. theme_options.hotbar_number .. '.')
         return
     end
 
@@ -294,7 +294,7 @@ function update_alias_command(args)
     local alias = args[4]
 
     if hotbar < 1 or hotbar > 3 then
-        print('XIVCROSSBAR: Invalid hotbar. Please use a number between 1 and 3.')
+        print('XIVCROSSBAR: Invalid hotbar. Please use a number between 1 and ' .. theme_options.hotbar_number .. '.')
         return
     end
 
@@ -321,7 +321,7 @@ function update_icon_command(args)
     local icon = args[4]
 
     if hotbar < 1 or hotbar > 3 then
-        print('XIVCROSSBAR: Invalid hotbar. Please use a number between 1 and 3.')
+        print('XIVCROSSBAR: Invalid hotbar. Please use a number between 1 and ' .. theme_options.hotbar_number .. '.')
         return
     end
 
