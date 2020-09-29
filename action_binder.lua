@@ -35,12 +35,14 @@ local action_types = {
     ['STRATAGEMS'] = 13,
     ['DANCES'] = 14,
     ['RUNE_ENCHANTMENT'] = 15,
-    ['GEOMANCY'] = 16,
-    ['TRUST'] = 17,
-    ['MOUNT'] = 18,
-    ['USABLE_ITEM'] = 19,
-    ['TRADABLE_ITEM'] = 20,
-    ['RANGED_ATTACK'] = 21
+    ['WARD'] = 16,
+    ['EFFUSION'] = 17,
+    ['GEOMANCY'] = 18,
+    ['TRUST'] = 19,
+    ['MOUNT'] = 20,
+    ['USABLE_ITEM'] = 21,
+    ['TRADABLE_ITEM'] = 22,
+    ['RANGED_ATTACK'] = 23
 }
 
 local prefix_lookup = {
@@ -59,6 +61,8 @@ local prefix_lookup = {
     [action_types.STRATAGEMS] = 'ja',
     [action_types.DANCES] = 'ja',
     [action_types.RUNE_ENCHANTMENT] = 'ja',
+    [action_types.WARD] = 'ja',
+    [action_types.EFFUSION] = 'ja',
     [action_types.GEOMANCY] = 'ma',
     [action_types.TRUST] = 'ma',
     [action_types.MOUNT] = 'ja',
@@ -594,6 +598,8 @@ function action_binder:display_action_type_selector()
     end
     if (main_job == 'RUN' or sub_job == 'RUN') then
         action_type_list:append({id = action_types.RUNE_ENCHANTMENT, name = 'Rune Enchantment', icon = 'icons/custom/jobs/RUN.png'})
+        action_type_list:append({id = action_types.WARD, name = 'Ward', icon = 'icons/custom/jobs/RUN.png'})
+        action_type_list:append({id = action_types.EFFUSION, name = 'Effusion', icon = 'icons/custom/jobs/RUN.png'})
     end
     if (main_job == 'GEO' or sub_job == 'GEO') then
         action_type_list:append({id = action_types.GEOMANCY, name = 'Geomancy', icon = 'icons/custom/jobs/GEO.png'})
@@ -638,6 +644,10 @@ function action_binder:display_action_selector()
         self:display_dance_selector()
     elseif (self.action_type == action_types.RUNE_ENCHANTMENT) then
         self:display_rune_enchantment_selector()
+    elseif (self.action_type == action_types.WARD) then
+        self:display_ward_selector()
+    elseif (self.action_type == action_types.EFFUSION) then
+        self:display_effusion_selector()
     elseif (self.action_type == action_types.GEOMANCY) then
         self:display_geomancy_selector()
     elseif (self.action_type == action_types.TRUST) then
@@ -1297,6 +1307,36 @@ function action_binder:display_rune_enchantment_selector()
     self:show_control_hints('Confirm', 'Go Back')
 end
 
+function action_binder:display_ward_selector()
+    self.title:text('Select Ward')
+    self.title:show()
+
+    local player = windower.ffxi.get_player()
+    local wards = get_wards(player.main_job_id, player.main_job_level)
+
+    for i, ward in ipairs(get_wards(player.sub_job_id, player.sub_job_level)) do
+        wards:append(ward)
+    end
+
+    self.selector:display_options(wards)
+    self:show_control_hints('Confirm', 'Go Back')
+end
+
+function action_binder:display_effusion_selector()
+    self.title:text('Select Effusion')
+    self.title:show()
+
+    local player = windower.ffxi.get_player()
+    local effusions = get_effusions(player.main_job_id, player.main_job_level)
+
+    for i, effusion in ipairs(get_effusions(player.sub_job_id, player.sub_job_level)) do
+        effusions:append(effusion)
+    end
+
+    self.selector:display_options(effusions)
+    self:show_control_hints('Confirm', 'Go Back')
+end
+
 function action_binder:display_trust_selector()
     self.title:text('Select Trust')
     self.title:show()
@@ -1429,6 +1469,65 @@ function get_dances(job_id, job_level)
     end
 
     return dance_list
+end
+
+function get_wards(job_id, job_level)
+    local all_abilities = res.job_abilities
+
+    local wards = L{
+        {name = 'Vallation', id = 366, level = 10},
+        {name = 'Pflug', id = 369, level = 40},
+        {name = 'Valiance', id = 371, level = 50},
+        {name = 'Battuta', id = 376, level = 75},
+        {name = 'Liement', id = 373, level = 85}
+    }
+
+    ward_list = L{}
+
+    if (job_id == 22) then
+        for i, ward in ipairs(wards) do
+            if (job_level >= ward.level) then
+                local skill = database.abilities[ward.name:lower()]
+                local icon_path = 'other/red-x.png'
+                if (skill ~= nil) then
+                    icon_path = 'icons/abilities/' .. string.format("%05d", skill.icon) .. '.png'
+                end
+                local target_type = res.job_abilities[ward.id].targets
+                ward_list:append({id = ward.id, name = ward.name, icon = icon_path, icon_offset = 4, data = {target_type = target_type}})
+            end
+        end
+    end
+
+    return ward_list
+end
+
+function get_effusions(job_id, job_level)
+    local all_abilities = res.job_abilities
+
+    local effusions = L{
+        {name = 'Swipe', id = 344, level = 25},
+        {name = 'Lunge', id = 368, level = 25},
+        {name = 'Gambit', id = 372, level = 70},
+        {name = 'Rayke', id = 375, level = 75}
+    }
+
+    effusion_list = L{}
+
+    if (job_id == 22) then
+        for i, effusion in ipairs(effusions) do
+            if (job_level >= effusion.level) then
+                local skill = database.abilities[effusion.name:lower()]
+                local icon_path = 'other/red-x.png'
+                if (skill ~= nil) then
+                    icon_path = 'icons/abilities/' .. string.format("%05d", skill.icon) .. '.png'
+                end
+                local target_type = res.job_abilities[effusion.id].targets
+                effusion_list:append({id = effusion.id, name = effusion.name, icon = icon_path, icon_offset = 4, data = {target_type = target_type}})
+            end
+        end
+    end
+
+    return effusion_list
 end
 
 local INVENTORY_BAG = 0
