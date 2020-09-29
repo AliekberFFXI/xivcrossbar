@@ -39,7 +39,8 @@ local action_types = {
     ['TRUST'] = 17,
     ['MOUNT'] = 18,
     ['USABLE_ITEM'] = 19,
-    ['TRADABLE_ITEM'] = 20
+    ['TRADABLE_ITEM'] = 20,
+    ['RANGED_ATTACK'] = 21
 }
 
 local prefix_lookup = {
@@ -62,7 +63,8 @@ local prefix_lookup = {
     [action_types.TRUST] = 'ma',
     [action_types.MOUNT] = 'ja',
     [action_types.USABLE_ITEM] = 'item',
-    [action_types.TRADABLE_ITEM] = 'item'
+    [action_types.TRADABLE_ITEM] = 'item',
+    [action_types.RANGED_ATTACK] = 'ct'
 }
 
 local action_targets = {
@@ -409,6 +411,11 @@ function action_binder:submit_selected_option()
         if (self.action_type == action_types.DELETE) then
             self.state = states.SELECT_BUTTON_ASSIGNMENT
             self:display_button_assigner()
+        elseif (self.action_type == action_types.RANGED_ATTACK) then
+            self.action_name = 'Ranged Attack'
+            self.state = states.SELECT_ACTION_TARGET
+            self.target_type = {['Enemy'] = true}
+            self:display_target_selector()
         else
             self.state = states.SELECT_ACTION
             self:display_action_selector()
@@ -468,12 +475,22 @@ function action_binder:go_back()
         self.selector:import_selection_state(self.selection_states[states.SELECT_ACTION_TYPE])
         self.selection_states[states.SELECT_ACTION_TYPE] = nil
     elseif (self.state == states.SELECT_ACTION_TARGET) then
-        self.state = states.SELECT_ACTION
-        self.action_name = nil
-        self.selector:set_page(self.selection_states[states.SELECT_ACTION].page)
-        self:display_action_selector()
-        self.selector:import_selection_state(self.selection_states[states.SELECT_ACTION])
-        self.selection_states[states.SELECT_ACTION] = nil
+        if (self.action_type == action_types.RANGED_ATTACK) then
+            self.state = states.SELECT_ACTION_TYPE
+            self.action_type = nil
+            self.target_type = nil
+            self.selector:set_page(self.selection_states[states.SELECT_ACTION_TYPE].page)
+            self:display_action_type_selector()
+            self.selector:import_selection_state(self.selection_states[states.SELECT_ACTION_TYPE])
+            self.selection_states[states.SELECT_ACTION_TYPE] = nil
+        else
+            self.state = states.SELECT_ACTION
+            self.action_name = nil
+            self.selector:set_page(self.selection_states[states.SELECT_ACTION].page)
+            self:display_action_selector()
+            self.selector:import_selection_state(self.selection_states[states.SELECT_ACTION])
+            self.selection_states[states.SELECT_ACTION] = nil
+        end
     elseif (self.state == states.SELECT_BUTTON_ASSIGNMENT) then
         -- check if we skipped target selection due to "Self" being the only option
         if (self.selection_states[states.SELECT_ACTION_TARGET] == nil) then
@@ -586,6 +603,7 @@ function action_binder:display_action_type_selector()
     -- action_type_list:append({id = action_types.MOUNT, name = 'Call Mount', icon = 'icons/custom/mounts/mount-chocobo.png'})
     action_type_list:append({id = action_types.USABLE_ITEM, name = 'Use Item', icon = 'icons/custom/usable_item.png'})
     action_type_list:append({id = action_types.TRADABLE_ITEM, name = 'Trade Item', icon = 'icons/custom/item.png'})
+    action_type_list:append({id = action_types.RANGED_ATTACK, name = 'Ranged Attack', icon = 'icons/custom/ranged.png'})
     self.selector:display_options(action_type_list)
 
     self:show_control_hints('Confirm', 'Exit')
@@ -629,6 +647,8 @@ function action_binder:display_action_selector()
     elseif (self.action_type == action_types.USABLE_ITEM) then
         self:display_usable_item_selector()
     elseif (self.action_type == action_types.TRADABLE_ITEM) then
+        self:display_tradable_item_selector()
+    elseif (self.action_type == action_types.RANGED_ATTACK) then
         self:display_tradable_item_selector()
     end
 end

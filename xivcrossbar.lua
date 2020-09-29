@@ -81,7 +81,15 @@ local shift_pressed = false
 function set_hotkey(hotbar, slot, action_type, action, target)
     local environment = player.hotbar_settings.active_environment
 
-    local new_action = action_manager:build(action_type, action, target, nil, nil)
+    local alias = nil
+    local icon = nil
+    if (action == 'Ranged Attack') then
+        action = 'ra'
+        alias = 'Ranged Attack'
+        icon = 'ranged'
+    end
+
+    local new_action = action_manager:build(action_type, action, target, alias, icon)
     player:add_action(new_action, environment, hotbar, slot)
     player:save_hotbar()
     reload_hotbar()
