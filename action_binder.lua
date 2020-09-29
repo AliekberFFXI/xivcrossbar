@@ -586,8 +586,6 @@ function action_binder:display_action_type_selector()
     end
     if (main_job == 'COR' or sub_job == 'COR') then
         action_type_list:append({id = action_types.PHANTOM_ROLL, name = 'Phantom Roll', icon = 'icons/custom/jobs/COR.png'})
-    end
-    if (main_job == 'COR' or sub_job == 'COR') then
         action_type_list:append({id = action_types.QUICK_DRAW, name = 'Quick Draw', icon = 'icons/custom/jobs/COR.png'})
     end
     if (main_job == 'SCH' or sub_job == 'SCH') then
