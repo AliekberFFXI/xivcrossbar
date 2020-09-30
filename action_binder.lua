@@ -30,20 +30,22 @@ local action_types = {
     ['READY'] = 7,
     ['NINJUTSU'] = 8,
     ['SUMMON'] = 9,
-    ['BLUE_MAGIC'] = 10,
-    ['PHANTOM_ROLL'] = 11,
-    ['QUICK_DRAW'] = 12,
-    ['STRATAGEMS'] = 13,
-    ['DANCES'] = 14,
-    ['RUNE_ENCHANTMENT'] = 15,
-    ['WARD'] = 16,
-    ['EFFUSION'] = 17,
-    ['GEOMANCY'] = 18,
-    ['TRUST'] = 19,
-    ['MOUNT'] = 20,
-    ['USABLE_ITEM'] = 21,
-    ['TRADABLE_ITEM'] = 22,
-    ['RANGED_ATTACK'] = 23
+    ['BP_RAGE'] = 10,
+    ['BP_WARD'] = 11,
+    ['BLUE_MAGIC'] = 12,
+    ['PHANTOM_ROLL'] = 13,
+    ['QUICK_DRAW'] = 14,
+    ['STRATAGEMS'] = 15,
+    ['DANCES'] = 16,
+    ['RUNE_ENCHANTMENT'] = 17,
+    ['WARD'] = 18,
+    ['EFFUSION'] = 19,
+    ['GEOMANCY'] = 20,
+    ['TRUST'] = 21,
+    ['MOUNT'] = 22,
+    ['USABLE_ITEM'] = 23,
+    ['TRADABLE_ITEM'] = 24,
+    ['RANGED_ATTACK'] = 25
 }
 
 local prefix_lookup = {
@@ -57,6 +59,8 @@ local prefix_lookup = {
     [action_types.READY] = 'pet',
     [action_types.NINJUTSU] = 'ma',
     [action_types.SUMMON] = 'ma',
+    [action_types.BP_RAGE] = 'pet',
+    [action_types.BP_WARD] = 'pet',
     [action_types.BLUE_MAGIC] = 'ma',
     [action_types.PHANTOM_ROLL] = 'ja',
     [action_types.QUICK_DRAW] = 'ja',
@@ -585,6 +589,8 @@ function action_binder:display_action_type_selector()
     end
     if (main_job == 'SMN' or sub_job == 'SMN') then
         action_type_list:append({id = action_types.SUMMON, name = 'Summon', icon = 'icons/custom/jobs/SMN.png'})
+        action_type_list:append({id = action_types.BP_RAGE, name = 'Blood Pact: Rage', icon = 'icons/custom/jobs/SMN.png'})
+        action_type_list:append({id = action_types.BP_WARD, name = 'Blood Pact: Ward', icon = 'icons/custom/jobs/SMN.png'})
     end
     if (main_job == 'BLU' or sub_job == 'BLU') then
         action_type_list:append({id = action_types.BLUE_MAGIC, name = 'Blue Magic', icon = 'icons/custom/jobs/BLU.png'})
@@ -637,6 +643,10 @@ function action_binder:display_action_selector()
         self:display_ninjutsu_selector()
     elseif (self.action_type == action_types.SUMMON) then
         self:display_summoning_selector()
+    elseif (self.action_type == action_types.BP_RAGE) then
+        self:display_bp_rage_selector()
+    elseif (self.action_type == action_types.BP_WARD) then
+        self:display_bp_ward_selector()
     elseif (self.action_type == action_types.BLUE_MAGIC) then
         self:display_blue_magic_selector()
     elseif (self.action_type == action_types.PHANTOM_ROLL) then
@@ -1252,6 +1262,50 @@ function action_binder:display_summoning_selector()
     self.title:show()
 
     self:display_magic_selector_internal('SummonerPact')
+    self:show_control_hints('Confirm', 'Go Back')
+end
+
+function action_binder:display_bp_rage_selector()
+    self.title:text('Select Blood Pact: Rage')
+    self.title:show()
+
+    local ability_list = L{}
+
+    for id, ability in pairs(res.job_abilities) do
+        local name = ability.name
+        local target_type = ability.targets
+        local skill = database.abilities[name:lower()]
+        if (skill ~= nil and skill.type == 'BloodPactRage') then
+            local icon_path = 'icons/abilities/' .. string.format("%05d", skill.icon) .. '.png'
+            ability_list:append({id = id, name = name, icon = icon_path, icon_offset = 4, data = {target_type = target_type}})
+        end
+    end
+
+    ability_list:sort(sortByName)
+
+    self.selector:display_options(ability_list)
+    self:show_control_hints('Confirm', 'Go Back')
+end
+
+function action_binder:display_bp_ward_selector()
+    self.title:text('Select Blood Pact: Ward')
+    self.title:show()
+
+    local ability_list = L{}
+
+    for id, ability in pairs(res.job_abilities) do
+        local name = ability.name
+        local target_type = ability.targets
+        local skill = database.abilities[name:lower()]
+        if (skill ~= nil and skill.type == 'BloodPactWard') then
+            local icon_path = 'icons/abilities/' .. string.format("%05d", skill.icon) .. '.png'
+            ability_list:append({id = id, name = name, icon = icon_path, icon_offset = 4, data = {target_type = target_type}})
+        end
+    end
+
+    ability_list:sort(sortByName)
+
+    self.selector:display_options(ability_list)
     self:show_control_hints('Confirm', 'Go Back')
 end
 
