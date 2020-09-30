@@ -1061,6 +1061,8 @@ function action_binder:display_ability_selector()
         ['Curing Waltz'] = true,
         ['Healing Waltz'] = true,
         ['Divine Waltz'] = true,
+        ['Ward'] = true,
+        ['Effusion'] = true,
     }
 
     for key, id in pairs(abilities) do
