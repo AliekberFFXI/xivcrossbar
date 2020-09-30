@@ -1136,22 +1136,31 @@ function action_binder:display_pet_command_selector()
     self.title:text('Select Pet Command')
     self.title:show()
 
-    local abilities = windower.ffxi.get_abilities().job_abilities
-    local ability_list = L{}
+    local player = windower.ffxi.get_player()
 
-    for key, id in pairs(abilities) do
-        local name = res.job_abilities[id].name
-        local target_type = res.job_abilities[id].targets
-        local skill = database.abilities[name:lower()]
-        if (skill ~= nil and skill.type == 'PetCommand') then
-            local icon_path = 'icons/abilities/' .. string.format("%05d", skill.icon) .. '.png'
-            ability_list:append({id = id, name = name, icon = icon_path, icon_offset = 4, data = {target_type = target_type}})
-        end
+    -- BST
+    local commands = get_bst_pet_commands(player.main_job_id, player.main_job_level)
+    for i, command in ipairs(get_bst_pet_commands(player.sub_job_id, player.sub_job_level)) do
+        commands:append(command)
     end
 
-    ability_list:sort(sortByName)
+    -- SMN
+    for i, command in ipairs(get_smn_pet_commands(player.main_job_id, player.main_job_level)) do
+        commands:append(command)
+    end
+    for i, command in ipairs(get_smn_pet_commands(player.sub_job_id, player.sub_job_level)) do
+        commands:append(command)
+    end
 
-    self.selector:display_options(ability_list)
+    -- PUP
+    for i, command in ipairs(get_pup_pet_commands(player.main_job_id, player.main_job_level)) do
+        commands:append(command)
+    end
+    for i, command in ipairs(get_pup_pet_commands(player.sub_job_id, player.sub_job_level)) do
+        commands:append(command)
+    end
+
+    self.selector:display_options(commands)
     self:show_control_hints('Confirm', 'Go Back')
 end
 
@@ -1498,6 +1507,98 @@ function get_spells_for_job(job_id, job_level, magic_type)
     end
 
     return job_spells:keyset()
+end
+
+function get_bst_pet_commands(job_id, job_level)
+    local commands = L{
+        {name = 'Fight', id = 69, level = 1},
+        {name = 'Heel', id = 70, level = 10},
+        {name = 'Stay', id = 73, level = 15},
+        {name = 'Sic', id = 72, level = 25},
+        {name = 'Leave', id = 71, level = 35},
+        {name = 'Snarl', id = 225, level = 45},
+        {name = 'Spur', id = 281, level = 83},
+        {name = 'Run Wild', id = 282, level = 93}
+    }
+
+    command_list = L{}
+
+    if (job_id == 9) then
+        for i, command in ipairs(commands) do
+            if (job_level >= command.level) then
+                local skill = database.abilities[command.name:lower()]
+                local icon_path = 'other/red-x.png'
+                if (skill ~= nil) then
+                    icon_path = 'icons/abilities/' .. string.format("%05d", skill.icon) .. '.png'
+                end
+                local target_type = res.job_abilities[command.id].targets
+                command_list:append({id = command.id, name = command.name, icon = icon_path, icon_offset = 4, data = {target_type = target_type}})
+            end
+        end
+    end
+
+    return command_list
+end
+
+function get_smn_pet_commands(job_id, job_level)
+    local commands = L{
+        {name = 'Assault', id=88, level = 1},
+        {name = 'Retreat', id=89, level = 1},
+        {name = 'Release', id=90, level = 1},
+        {name = 'Avatar\'s Favor', id=250, level = 55}
+    }
+
+    command_list = L{}
+
+    if (job_id == 15) then
+        for i, command in ipairs(commands) do
+            if (job_level >= command.level) then
+                local skill = database.abilities[command.name:lower()]
+                local icon_path = 'other/red-x.png'
+                if (skill ~= nil) then
+                    icon_path = 'icons/abilities/' .. string.format("%05d", skill.icon) .. '.png'
+                end
+                local target_type = res.job_abilities[command.id].targets
+                command_list:append({id = command.id, name = command.name, icon = icon_path, icon_offset = 4, data = {target_type = target_type}})
+            end
+        end
+    end
+
+    return command_list
+end
+
+function get_pup_pet_commands(job_id, job_level)
+    local commands = L{
+        {name = 'Deploy', id = 138, level = 1},
+        {name = 'Deactivate', id = 139, level = 1},
+        {name = 'Retrieve', id = 140, level = 10},
+        {name = 'Fire Maneuver', id = 141, level = 1},
+        {name = 'Ice Maneuver', id = 142, level = 1},
+        {name = 'Wind Maneuver', id = 143, level = 1},
+        {name = 'Earth Maneuver', id = 144, level = 1},
+        {name = 'Thunder Maneuver', id = 145, level = 1},
+        {name = 'Water Maneuver', id = 146, level = 1},
+        {name = 'Light Maneuver', id = 147, level = 1},
+        {name = 'Dark Maneuver', id = 148, level = 1}
+    }
+
+    command_list = L{}
+
+    if (job_id == 18) then
+        for i, command in ipairs(commands) do
+            if (job_level >= command.level) then
+                local skill = database.abilities[command.name:lower()]
+                local icon_path = 'other/red-x.png'
+                if (skill ~= nil) then
+                    icon_path = 'icons/abilities/' .. string.format("%05d", skill.icon) .. '.png'
+                end
+                local target_type = res.job_abilities[command.id].targets
+                command_list:append({id = command.id, name = command.name, icon = icon_path, icon_offset = 4, data = {target_type = target_type}})
+            end
+        end
+    end
+
+    return command_list
 end
 
 function get_stratagems(job_id, job_level)
