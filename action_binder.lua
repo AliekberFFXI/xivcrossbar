@@ -27,11 +27,12 @@ local action_types = {
     ['WHITE_MAGIC'] = 4,
     ['BLACK_MAGIC'] = 5,
     ['SONG'] = 6,
-    ['NINJUTSU'] = 7,
-    ['SUMMON'] = 8,
-    ['BLUE_MAGIC'] = 9,
-    ['PHANTOM_ROLL'] = 10,
-    ['QUICK_DRAW'] = 11,
+    ['READY'] = 7,
+    ['NINJUTSU'] = 8,
+    ['SUMMON'] = 9,
+    ['BLUE_MAGIC'] = 10,
+    ['PHANTOM_ROLL'] = 11,
+    ['QUICK_DRAW'] = 12,
     ['STRATAGEMS'] = 13,
     ['DANCES'] = 14,
     ['RUNE_ENCHANTMENT'] = 15,
@@ -53,6 +54,7 @@ local prefix_lookup = {
     [action_types.WHITE_MAGIC] = 'ma',
     [action_types.BLACK_MAGIC] = 'ma',
     [action_types.SONG] = 'ma',
+    [action_types.READY] = 'pet',
     [action_types.NINJUTSU] = 'ma',
     [action_types.SUMMON] = 'ma',
     [action_types.BLUE_MAGIC] = 'ma',
@@ -575,6 +577,9 @@ function action_binder:display_action_type_selector()
     if (main_job == 'BRD' or sub_job == 'BRD') then
         action_type_list:append({id = action_types.SONG, name = 'Song', icon = 'icons/custom/jobs/BRD.png'})
     end
+    if (main_job == 'BST' or sub_job == 'BST') then
+        action_type_list:append({id = action_types.READY, name = 'Ready', icon = 'icons/custom/jobs/BST.png'})
+    end
     if (main_job == 'NIN' or sub_job == 'NIN') then
         action_type_list:append({id = action_types.NINJUTSU, name = 'Ninjutsu', icon = 'icons/custom/jobs/NIN.png'})
     end
@@ -626,6 +631,8 @@ function action_binder:display_action_selector()
         self:display_black_magic_selector()
     elseif (self.action_type == action_types.SONG) then
         self:display_song_selector()
+    elseif (self.action_type == action_types.READY) then
+        self:display_ready_selector()
     elseif (self.action_type == action_types.NINJUTSU) then
         self:display_ninjutsu_selector()
     elseif (self.action_type == action_types.SUMMON) then
@@ -1063,6 +1070,7 @@ function action_binder:display_ability_selector()
         ['Divine Waltz'] = true,
         ['Ward'] = true,
         ['Effusion'] = true,
+        ['Ready'] = true,
     }
 
     for key, id in pairs(abilities) do
@@ -1206,6 +1214,28 @@ function action_binder:display_song_selector()
     self.title:show()
 
     self:display_magic_selector_internal('BardSong')
+    self:show_control_hints('Confirm', 'Go Back')
+end
+
+function action_binder:display_ready_selector()
+    self.title:text('Select Ready Ability')
+    self.title:show()
+
+    local ability_list = L{}
+
+    for id, ability in pairs(res.job_abilities) do
+        local name = ability.name
+        local target_type = ability.targets
+        local skill = database.abilities[name:lower()]
+        if (skill ~= nil and skill.type == 'Monster') then
+            local icon_path = 'icons/abilities/' .. string.format("%05d", skill.icon) .. '.png'
+            ability_list:append({id = id, name = name, icon = icon_path, icon_offset = 4, data = {target_type = target_type}})
+        end
+    end
+
+    ability_list:sort(sortByName)
+
+    self.selector:display_options(ability_list)
     self:show_control_hints('Confirm', 'Go Back')
 end
 
