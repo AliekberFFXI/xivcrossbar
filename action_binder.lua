@@ -1081,6 +1081,8 @@ function action_binder:display_ability_selector()
         ['Ward'] = true,
         ['Effusion'] = true,
         ['Ready'] = true,
+        ['Blood Pact: Rage'] = true,
+        ['Blood Pact: Ward'] = true,
     }
 
     for key, id in pairs(abilities) do
