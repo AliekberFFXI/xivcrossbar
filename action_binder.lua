@@ -1137,7 +1137,16 @@ end
 
 function action_binder:display_magic_selector_internal(magic_type)
     local player = windower.ffxi.get_player()
-    local main_spells = get_spells_for_job(player.main_job_id, player.main_job_level, magic_type)
+    local main_job = player.main_job:lower()
+    local jp_spent = player.job_points[main_job].jp_spent
+    local level = player.main_job_level
+
+    -- JP gift spells have a "level" requirement equivalent to their JP spend requirement
+    if (level == 99 and jp_spent > 99) then
+        level = jp_spent
+    end
+
+    local main_spells = get_spells_for_job(player.main_job_id, level, magic_type)
     local sub_spells = get_spells_for_job(player.sub_job_id, player.sub_job_level, magic_type)
     
     local all_spells = T{}
