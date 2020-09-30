@@ -226,6 +226,31 @@ function ui:load(theme_options)
     end
     self.bar_background:alpha(self.button_bg_alpha)
 
+    -- setup button ui hints
+    self.action_binder_icon = images.new(images_setup)
+    self.action_binder_icon:size(40, 40)
+    self.action_binder_icon:pos(self:get_slot_x(1, 1) - 10, self:get_slot_y(1, 4) - 27)
+    self.action_binder_icon:path(windower.addon_path..'/images/other/binding_icons/minus_'..self.theme.button_layout..'.png')
+    self.action_binder_icon:alpha(255)
+    self.action_binder_text = texts.new(text_setup)
+    setup_text(self.action_binder_text, theme_options)
+    self.action_binder_text:pos(self:get_slot_x(1, 1) + 35, self:get_slot_y(1, 4) - 15)
+    self.action_binder_text:text('Bind an action')
+    self.environment_selector_icon = images.new(images_setup)
+    self.environment_selector_icon:path(windower.addon_path..'/images/other/binding_icons/plus_'..self.theme.button_layout..'.png')
+    self.environment_selector_icon:size(40, 40)
+    self.environment_selector_icon:pos(self:get_slot_x(2, 5) - 5, self:get_slot_y(1, 4) - 27)
+    self.environment_selector_icon:alpha(255)
+    self.environment_selector_text = texts.new(text_setup)
+    setup_text(self.environment_selector_text, theme_options)
+    self.environment_selector_text:pos(self:get_slot_x(2, 5) + 40, self:get_slot_y(1, 4) - 15)
+    self.environment_selector_text:text('Change crossbar sets')
+    if (not self.is_compact) then
+        self:show_button_hints()
+    else
+        self:hide_button_hints()
+    end
+
     -- create ui elements for hotbars
     for h=1,theme_options.hotbar_number,1 do
         self.hotbars[h] = {}
@@ -313,6 +338,8 @@ function ui:hide()
     self.battle_notice:hide()
     self.feedback_icon:hide()
 
+    self:hide_button_hints()
+
     for h=1,self.theme.hotbar_number,1 do
         for i=1,8,1 do
             self.hotbars[h].slot_background[i]:hide()
@@ -334,9 +361,18 @@ function ui:hide()
     end
 end
 
+function ui:hide_button_hints()
+    self.action_binder_icon:hide()
+    self.action_binder_text:hide()
+    self.environment_selector_icon:hide()
+    self.environment_selector_text:hide()
+end
+
 -- show ui components
 function ui:show(player_hotbar, environment)
     if self.theme.hide_battle_notice == false and environment == 'battle' then self.battle_notice:show() end
+
+    self:maybe_show_button_hints()
 
     for h=1,self.theme.hotbar_number,1 do
         for i=1,8,1 do
@@ -361,6 +397,19 @@ function ui:show(player_hotbar, environment)
             -- if self.theme.hide_empty_slots == false then self.hotbars[h].slot_key[i]:show() end
         end
     end
+end
+
+function ui:maybe_show_button_hints()
+    if (not self.is_compact) then
+        self:show_button_hints()
+    end
+end
+
+function ui:show_button_hints()
+    self.action_binder_icon:show()
+    self.action_binder_text:show()
+    self.environment_selector_icon:show()
+    self.environment_selector_text:show()
 end
 
 function ui:show_bar_background(hotbar_number)

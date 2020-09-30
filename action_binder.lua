@@ -718,6 +718,7 @@ function action_binder:display_button_assigner()
     local caption = self:create_text(caption_text, caption_x, caption_y)
     caption:size(14)
     self.hints:append(caption)
+    self:show_exit_hint()
 end
 
 function action_binder:display_button_confirmer()
@@ -841,6 +842,8 @@ function action_binder:show_pressed_buttons()
     for i=1,#icons,1 do
         self:show_icon(icons[i], start_x + (i - 1) * 40, start_y)
     end
+
+    self:show_exit_hint()
 end
 
 function action_binder:confirm_buttons()
@@ -920,6 +923,29 @@ function action_binder:show_hint(hint_text, path, x, y)
     self.hints:append(caption)
 end
 
+function action_binder:show_exit_hint()
+    local x = self.base_x + 10
+    local y = self.base_y + self.height - 50
+
+    if (self.button_layout == 'gamecube') then
+        if (self.confirm_button == 'a') then
+            self:show_hint('Exit', 'other/binding_icons/minus_' .. self.button_layout .. '.png', x, y)
+        end
+    elseif (self.button_layout == 'playstation') then
+        if (self.confirm_button == 'cross') then
+            self:show_hint('Exit', 'other/binding_icons/minus_' .. self.button_layout .. '.png', x, y)
+        end
+    elseif (self.button_layout == 'xbox') then
+        if (self.confirm_button == 'a') then
+            self:show_hint('Exit', 'other/binding_icons/minus_' .. self.button_layout .. '.png', x, y)
+        end
+    elseif (self.button_layout == 'nintendo') then
+        if (self.confirm_button == 'b') then
+            self:show_hint('Exit', 'other/binding_icons/minus_' .. self.button_layout .. '.png', x, y)
+        end
+    end
+end
+
 function action_binder:show_control_hints(confirm, go_back)
     for i, hint in ipairs(self.hints) do
         hint:hide()
@@ -927,6 +953,8 @@ function action_binder:show_control_hints(confirm, go_back)
     local y = self.base_y + self.height - 50
     local x1 = self.base_x + self.width - 130
     local x2 = self.base_x + self.width - 250
+
+    self:show_exit_hint()
 
     if (self.button_layout == 'gamecube') then
         if (self.confirm_button == 'a') then

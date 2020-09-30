@@ -602,10 +602,12 @@ windower.register_event('keyboard', function(dik, pressed, flags, blocked)
     if (not gamepad_mapper.is_showing and gamepad_state.capturing and gamepad.is_minus(dik) and pressed) then
         if (action_binder.is_hidden) then
             action_binder:show()
+            ui:hide_button_hints()
             env_chooser:temp_hide_default_sets_tooltip()
         else
             action_binder:hide()
             action_binder:reset_state()
+            ui:maybe_show_button_hints()
             env_chooser:maybe_unhide_default_sets_tooltip()
         end
         return true
@@ -633,6 +635,8 @@ windower.register_event('keyboard', function(dik, pressed, flags, blocked)
     elseif (not action_binder.is_hidden) then
         if (gamepad_state.capturing) then
             if (gamepad.is_face_button_or_dpad(dik)) then
+                local action_binder_was_showing = not action_binder.is_hidden
+
                 if (gamepad.is_dpad_left(dik)) then
                     action_binder:dpad_left(pressed)
                 elseif (gamepad.is_dpad_down(dik)) then
@@ -649,6 +653,9 @@ windower.register_event('keyboard', function(dik, pressed, flags, blocked)
                     action_binder:button_x(pressed)
                 elseif (gamepad.is_button_y(dik)) then
                     action_binder:button_y(pressed)
+                end
+                if (action_binder_was_showing and action_binder.is_hidden) then
+                    ui:maybe_show_button_hints()
                 end
                 return true
             end
