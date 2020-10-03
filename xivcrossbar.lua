@@ -91,6 +91,10 @@ function set_hotkey(hotbar, slot, action_type, action, target)
         action = 'a'
         alias = 'Attack'
         icon = 'attack'
+    elseif (action == 'Last Synth') then
+        action = 'lastsynth'
+        alias = 'Last Synth'
+        icon = 'synth'
     end
 
     local new_action = action_manager:build(action_type, action, target, alias, icon)
