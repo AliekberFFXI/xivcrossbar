@@ -784,9 +784,11 @@ windower.register_event('status change', function(new_status_id)
     -- -- alternate environment on battle
     if xivcrossbar.in_battle == false and (new_status_id == 1 or new_status_id == 3) then
         xivcrossbar.in_battle = true
+        player:set_is_in_battle(true)
     --     set_battle_environment(true)
     elseif xivcrossbar.in_battle and new_status_id ~= 1 and new_status_id ~= 3 then
         xivcrossbar.in_battle = false
+        player:set_is_in_battle(false)
     --     set_battle_environment(false)
     end
 end)

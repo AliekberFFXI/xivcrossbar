@@ -51,7 +51,8 @@ local action_types = {
     ['RANGED_ATTACK'] = 25,
     ['ATTACK'] = 26,
     ['MAP'] = 27,
-    ['LAST_SYNTH'] = 28
+    ['LAST_SYNTH'] = 28,
+    ['SWITCH_TARGET'] = 29
 }
 
 local prefix_lookup = {
@@ -83,7 +84,8 @@ local prefix_lookup = {
     [action_types.RANGED_ATTACK] = 'ct',
     [action_types.ATTACK] = 'a',
     [action_types.MAP] = 'map',
-    [action_types.LAST_SYNTH] = 'ct'
+    [action_types.LAST_SYNTH] = 'ct',
+    [action_types.SWITCH_TARGET] = 'ta'
 }
 
 local action_targets = {
@@ -439,6 +441,11 @@ function action_binder:submit_selected_option()
             self.state = states.SELECT_ACTION_TARGET
             self.target_type = {['Enemy'] = true}
             self:display_target_selector()
+        elseif (self.action_type == action_types.SWITCH_TARGET) then
+            self.action_name = 'Switch Target'
+            self.action_target = 'stnpc'
+            self.state = states.SELECT_BUTTON_ASSIGNMENT
+            self:display_button_assigner()
         elseif (self.action_type == action_types.MAP or self.action_type == action_types.LAST_SYNTH) then
             if (self.action_type == action_types.LAST_SYNTH) then
                 self.action_name = 'Last Synth'
@@ -646,6 +653,7 @@ function action_binder:display_action_type_selector()
     action_type_list:append({id = action_types.TRADABLE_ITEM, name = 'Trade Item', icon = 'icons/custom/item.png'})
     action_type_list:append({id = action_types.RANGED_ATTACK, name = 'Ranged Attack', icon = 'icons/custom/ranged.png'})
     action_type_list:append({id = action_types.ATTACK, name = 'Attack', icon = 'icons/custom/attack.png'})
+    action_type_list:append({id = action_types.SWITCH_TARGET, name = 'Switch Target', icon = 'icons/custom/targetnpc.png'})
     action_type_list:append({id = action_types.MAP, name = 'View Map', icon = 'icons/custom/map.png'})
     action_type_list:append({id = action_types.LAST_SYNTH, name = 'Repeat Last Synth', icon = 'icons/custom/synth.png'})
     self.selector:display_options(action_type_list)

@@ -806,6 +806,14 @@ function ui:check_recasts(player_hotbar, player_vitals, environment, spells, gam
                         self.hotbars[h].slot_icon[i]:path(windower.addon_path..'/images/icons/custom/attack.png')
                         self.hotbars[h].slot_text[i]:text('Attack')
                     end
+                elseif (action ~= nil and action.type == 'ta' and action.action == 'Switch Target' and action.alias == 'Switch Target') then
+                    if (in_battle) then
+                        self.hotbars[h].slot_icon[i]:path(windower.addon_path..'/images/icons/custom/switchtarget.png')
+                        self.hotbars[h].slot_text[i]:text('Switch Target')
+                    else
+                        self.hotbars[h].slot_icon[i]:path(windower.addon_path..'/images/icons/custom/targetnpc.png')
+                        self.hotbars[h].slot_text[i]:text('Target NPC')
+                    end
                 elseif (action ~= nil and action.type == 'map') then
                     self.hotbars[h].slot_icon[i]:path(windower.addon_path..'/images/icons/custom/map.png')
                 end

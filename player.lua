@@ -290,6 +290,10 @@ function player:is_valid_environment(environment)
     return self.hotbar[environment] ~= nil
 end
 
+function player:set_is_in_battle(in_battle)
+    self.in_battle = in_battle
+end
+
 -- set bar environment to battle
 function player:set_battle_environment(in_battle)
     local environment = 'Field'
@@ -409,15 +413,23 @@ function player:execute_action(slot)
         return
     end
 
-    if action.type == 'mount' and action.action == 'Mount Roulette' then
-        mount_roulette:ride_random_mount()
-        return
-    end
-
     local target_string = ''
     if (action.target ~= nil) then
         target_string = '" <' .. action.target .. '>'
     end
+
+    if action.type == 'mount' and action.action == 'Mount Roulette' then
+        mount_roulette:ride_random_mount()
+        return
+    elseif (action.type == 'ta' and action.action == 'Switch Target' and action.alias == 'Switch Target') then
+        if (self.in_battle) then
+            windower.send_command('input /a ' .. target_string)
+        else
+            windower.send_command('input /ta ' .. target_string)
+        end
+        return
+    end
+
     windower.send_command('input /' .. action.type .. ' "' .. action.action .. target_string)
 end
 
