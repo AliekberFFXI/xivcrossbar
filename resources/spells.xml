@@ -892,7 +892,8 @@
   <s id="999" index="950" prefix="/magic" english="Kuyin Hathdenna" japanese="クイン・ハスデンナ" type="Trust" element="None" targets="Self" skill="0" mpcost="0" casttime="2" recast="48" duration="0" alias="" />
   <s id="897" index="951" prefix="/magic" english="Rahal" japanese="ラーアル" type="Trust" element="None" targets="Self" skill="0" mpcost="0" casttime="2" recast="48" duration="0" alias="" />
   <s id="991" index="952" prefix="/magic" english="Koru-Moru" japanese="コルモル" type="Trust" element="None" targets="Self" skill="0" mpcost="0" casttime="2" recast="48" duration="0" alias="" />
-  <s id="1024" index="999" prefix="/magic" english="Monberaux" japanese="モンブロー" type="Trust" element="None" targets="Self" skill="0" mpcost="0" casttime="2" recast="48" duration="0" alias="" />
+  <s id="1024" index="998" prefix="/magic" english="Ygnas" japanese="ユグナス" type="Trust" element="None" targets="Self" skill="0" mpcost="0" casttime="2" recast="48" duration="0" alias="" />
+  <s id="1025" index="999" prefix="/magic" english="Monberaux" japanese="モンブロー" type="Trust" element="None" targets="Self" skill="0" mpcost="0" casttime="2" recast="48" duration="0" alias="" />
   <s id="1021" index="953" prefix="/magic" english="Pieuje (UC)" japanese="ピエージェ(UC)" type="Trust" element="None" targets="Self" skill="0" mpcost="0" casttime="2" recast="48" duration="0" alias="" />
   <s id="1017" index="954" prefix="/magic" english="I. Shield (UC)" japanese="I.シールド(UC)" type="Trust" element="None" targets="Self" skill="0" mpcost="0" casttime="2" recast="48" duration="0" alias="" />
   <s id="1014" index="955" prefix="/magic" english="Apururu (UC)" japanese="アプルル(UC)" type="Trust" element="None" targets="Self" skill="0" mpcost="0" casttime="2" recast="48" duration="0" alias="" />
