@@ -240,40 +240,51 @@ function selectable_list:display_options(options)
     local last_row = self.current_page * self.max_row
     local entries_to_skip = (self.current_page - 1) * self.max_row * self.max_col + 1
 
+    local newlines = 0
+    local col_offset = 0
+
     local count = 0
     for i, value in ipairs(options) do
         count = count + 1
         local option_id = value.id
         local option_caption = value.name
+
         local data = value.data
 
         local abs_row, abs_col = self:get_row_col(i - 1)
         if (first_row <= abs_row and abs_row <= last_row) then
             local row, col = self:get_row_col(i - entries_to_skip)
-            if (row == self.selected_row and col == self.selected_col) then
-                self:highlight_selection()
+            row = row + newlines
+            if (option_caption == 'newline') then
+                newlines = newlines + 1
+                col_offset = col % self.max_col
+            else
+                col = col - col_offset
+                if (row == self.selected_row and col == self.selected_col) then
+                    self:highlight_selection()
+                end
+                self.fields:append(self:create_text(option_caption, row, col))
+
+                local icon = images.new({draggable = false})
+                local icon_path = windower.addon_path .. '/images/' .. value.icon
+                local x, y = self:get_pos(row, col)
+                x = x + 5
+                y = y + 5
+                setup_image(icon, icon_path)
+                local icon_offset = value.icon_offset or 0
+                icon:pos(x + icon_offset, y + icon_offset)
+                self.images:append(icon)
+
+                local frame = images.new({draggable = false})
+                setup_image(frame, self.frame_image_path)
+                frame:pos(x, y)
+                self.images:append(frame)
+
+                -- populate the "collision" map for dpad navigation
+                local field_col = self.field_coords[col] or {}
+                field_col[row] = {['id'] = option_id, ['text'] = option_caption, ['data'] = data}
+                self.field_coords[col] = field_col
             end
-            self.fields:append(self:create_text(option_caption, row, col))
-
-            local icon = images.new({draggable = false})
-            local icon_path = windower.addon_path .. '/images/' .. value.icon
-            local x, y = self:get_pos(row, col)
-            x = x + 5
-            y = y + 5
-            setup_image(icon, icon_path)
-            local icon_offset = value.icon_offset or 0
-            icon:pos(x + icon_offset, y + icon_offset)
-            self.images:append(icon)
-
-            local frame = images.new({draggable = false})
-            setup_image(frame, self.frame_image_path)
-            frame:pos(x, y)
-            self.images:append(frame)
-
-            -- populate the "collision" map for dpad navigation
-            local field_col = self.field_coords[col] or {}
-            field_col[row] = {['id'] = option_id, ['text'] = option_caption, ['data'] = data}
-            self.field_coords[col] = field_col
         end
     end
 

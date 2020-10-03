@@ -19,7 +19,8 @@ local states = {
     ['SELECT_ACTION'] = 2,
     ['SELECT_ACTION_TARGET'] = 3,
     ['SELECT_BUTTON_ASSIGNMENT'] = 4,
-    ['CONFIRM_BUTTON_ASSIGNMENT'] = 5
+    ['CONFIRM_BUTTON_ASSIGNMENT'] = 5,
+    ['SHOW_CREDITS'] = 6
 }
 
 local action_types = {
@@ -52,7 +53,8 @@ local action_types = {
     ['ATTACK'] = 26,
     ['MAP'] = 27,
     ['LAST_SYNTH'] = 28,
-    ['SWITCH_TARGET'] = 29
+    ['SWITCH_TARGET'] = 29,
+    ['SHOW_CREDITS'] = 30
 }
 
 local prefix_lookup = {
@@ -429,7 +431,10 @@ function action_binder:submit_selected_option()
         self.selection_states[states.SELECT_ACTION_TYPE] = self.selector:export_selection_state()
         self.action_type = self.selector:submit_selected_option().id
 
-        if (self.action_type == action_types.DELETE) then
+        if (self.action_type == action_types.SHOW_CREDITS) then
+            self.state = states.SHOW_CREDITS
+            self:display_credits()
+        elseif (self.action_type == action_types.DELETE) then
             self.state = states.SELECT_BUTTON_ASSIGNMENT
             self:display_button_assigner()
         elseif (self.action_type == action_types.ATTACK or self.action_type == action_types.RANGED_ATTACK) then
@@ -510,6 +515,13 @@ function action_binder:go_back()
         self:hide()
         self:reset_state()
         self.selector:reset_state()
+    elseif (self.state == states.SHOW_CREDITS) then
+        self.state = states.SELECT_ACTION_TYPE
+        self.action_type = nil
+        self.selector:set_page(self.selection_states[states.SELECT_ACTION_TYPE].page)
+        self:display_action_type_selector()
+        self.selector:import_selection_state(self.selection_states[states.SELECT_ACTION_TYPE])
+        self.selection_states[states.SELECT_ACTION_TYPE] = nil
     elseif (self.state == states.SELECT_ACTION) then
         self.state = states.SELECT_ACTION_TYPE
         self.action_type = nil
@@ -656,6 +668,7 @@ function action_binder:display_action_type_selector()
     action_type_list:append({id = action_types.SWITCH_TARGET, name = 'Switch Target', icon = 'icons/custom/targetnpc.png'})
     action_type_list:append({id = action_types.MAP, name = 'View Map', icon = 'icons/custom/map.png'})
     action_type_list:append({id = action_types.LAST_SYNTH, name = 'Repeat Last Synth', icon = 'icons/custom/synth.png'})
+    action_type_list:append({id = action_types.SHOW_CREDITS, name = 'XIVCrossbar Credits', icon = 'credit_avatars/xiv.png'})
     self.selector:display_options(action_type_list)
 
     self:show_control_hints('Confirm', 'Exit')
@@ -1538,6 +1551,31 @@ function action_binder:display_tradable_item_selector()
     self:show_control_hints('Confirm', 'Go Back')
 end
 
+function action_binder:display_credits()
+    self.title:text('XIVCrossbar Development Credits')
+    self.title:show()
+
+    local NO_DATA = {target_type = {['None'] = true}}
+
+    local credits = L{
+        {id = 0, name = 'Programming\nAliekber', icon = 'credit_avatars/aliekber.png', data = NO_DATA},
+        {id = 0, name = 'MS Paint Art\nAliekber', icon = 'credit_avatars/aliekber.png', data = NO_DATA},
+        {id = 0, name = 'newline', icon = '', data = NO_DATA},
+        {id = 0, name = 'newline', icon = '', data = NO_DATA},
+        {id = 0, name = 'Based on XIVHotbar by\nSirEdeonX', icon = 'credit_avatars/edeon.png', data = NO_DATA},
+        {id = 0, name = 'newline', icon = '', data = NO_DATA},
+        {id = 0, name = 'Skillchain library\nIvaar', icon = 'credit_avatars/ivaar.png', data = NO_DATA},
+        {id = 0, name = 'MountRoulette library\nXurion', icon = 'credit_avatars/xurion.png', data = NO_DATA},
+        {id = 0, name = 'newline', icon = '', data = NO_DATA},
+        {id = 0, name = 'newline', icon = '', data = NO_DATA},
+        {id = 0, name = 'Beta Testing\nJinxs', icon = 'credit_avatars/jinxs.png', data = NO_DATA},
+        {id = 0, name = 'Beta Testing\nMartel', icon = 'credit_avatars/martel.png', data = NO_DATA},
+    }
+
+    self.selector:display_options(credits)
+    self:show_control_hints('Confirm', 'Go Back')
+end
+
 function get_spells_for_job(job_id, job_level, magic_type)
     local known_spell_ids = T(windower.ffxi.get_spells()):filter(boolean._true):keyset()
     local all_spells = res.spells:type(magic_type)
@@ -1906,7 +1944,7 @@ windower.register_event('mouse', function(type, x, y, delta, blocked)
         return
     end
 
-    if (action_binder.selector.is_showing) then
+    if (action_binder.selector and action_binder.selector.is_showing) then
         -- Mouse left click
         if type == 1 then
             local row, col = action_binder.selector:get_row_col_from_pos(x, y)
