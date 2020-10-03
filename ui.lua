@@ -108,7 +108,17 @@ function setup_text(text, theme_options)
 end
 
 local kebab_casify = function(str)
-    return str:lower():gsub('%p', ''):gsub(':', ''):gsub(' ', '-')
+    return str:lower():gsub('/', '\n'):gsub(':', ''):gsub('%p', ''):gsub(' ', '-'):gsub('\n', '/')
+end
+
+local maybe_get_custom_icon = function(category, action_name)
+    local icon_path = 'icons/custom/' .. kebab_casify(category) .. '/' ..  kebab_casify(action_name) .. '.png'
+    local icon_file = file.new('images/' .. icon_path)
+    if (icon_file:exists()) then
+        return icon_path
+    else
+        return nil
+    end
 end
 
 -- get x position for a given hotbar and slot
@@ -450,6 +460,34 @@ function ui:load_player_hotbar(player_hotbar, player_vitals, environment, gamepa
     end
 end
 
+local SPELL_TYPE_LOOKUP = {
+    ['BardSong'] = 'songs',
+    ['BlackMagic'] = 'black magic',
+    ['BlueMagic'] = 'blue magic',
+    ['WhiteMagic'] = 'white magic',
+    ['SummonerPact'] = 'summoning magic',
+}
+
+local JOB_ABILITY_TYPE_LOOKUP = {
+    ['BloodPactRage'] = 'blood pacts/rage',
+    ['BloodPactWard'] = 'blood pacts/ward',
+    ['CorsairRoll'] = 'phantom rolls',
+    ['CorsairShot'] = 'quick draw',
+    ['Effusion'] = 'effusions',
+    ['Flourish1'] = 'dances',
+    ['Flourish2'] = 'dances',
+    ['Flourish3'] = 'dances',
+    ['Jig'] = 'dances',
+    ['JobAbility'] = 'abilities',
+    ['Monster'] = 'ready',
+    ['Rune'] = 'rune-enchantments',
+    ['Samba'] = 'dances',
+    ['Scholar'] = 'stratagems',
+    ['Step'] = 'dances',
+    ['Waltz'] = 'dances',
+    ['Ward'] = 'wards',
+}
+
 -- load action into a hotbar slot
 function ui:load_action(player_hotbar, hotbar, slot, action, player_vitals, show_when_ready)
     local is_disabled = false
@@ -484,31 +522,43 @@ function ui:load_action(player_hotbar, hotbar, slot, action, player_vitals, show
 
             local spell = res.spells[tonumber(skill.icon)]
             local magic_skill = res.skills[spell.skill].en
-            local icon_path = 'images/icons/custom/' .. kebab_casify(magic_skill) .. '/' .. kebab_casify(action.action) .. '.png'
-            local icon_file = file.new(icon_path)
-            if (icon_file:exists()) then
-                icon_overridden = true
-                self.hotbars[hotbar].slot_icon[slot]:path(windower.addon_path .. icon_path)
-            else
-                self.hotbars[hotbar].slot_icon[slot]:path(windower.addon_path .. '/images/icons/spells/' .. (string.format("%05d", skill.icon)) .. '.png')
+            local category = SPELL_TYPE_LOOKUP[spell.type]
+            if (category == nil) then
+                category = spell.type
             end
+            local icon_path = maybe_get_custom_icon(category, action.action)
+            if (icon_path ~= nil) then
+                icon_overridden = true
+                icon_path = 'images/' .. icon_path
+            else
+                icon_path = '/images/icons/spells/' .. (string.format("%05d", skill.icon)) .. '.png'
+            end
+            self.hotbars[hotbar].slot_icon[slot]:path(windower.addon_path .. icon_path)
         elseif (action.type == 'ja' or action.type == 'ws') and database.abilities[(action.action):lower()] ~= nil then
             skill = database.abilities[(action.action):lower()]
 
             if action.type == 'ja' then
-                self.hotbars[hotbar].slot_icon[slot]:path(windower.addon_path .. '/images/icons/abilities/' .. string.format("%05d", skill.icon) .. '.png')
+                local category = JOB_ABILITY_TYPE_LOOKUP[skill.type]
+                local icon_path = maybe_get_custom_icon(category, action.action)
+                if (icon_path ~= nil) then
+                    icon_overridden = true
+                    icon_path = 'images/' .. icon_path
+                else
+                    icon_path = '/images/icons/abilities/' .. string.format("%05d", skill.icon) .. '.png'
+                end
+                self.hotbars[hotbar].slot_icon[slot]:path(windower.addon_path .. icon_path)
             else
                 if (skill.id ~= nil) then
                     local ws = res.weapon_skills[tonumber(skill.id)]
                     local weapon = res.skills[ws.skill].en:lower()
-                    local icon_path = 'images/icons/custom/weaponskills/' .. weapon .. '/' ..  kebab_casify(ws.en) .. '.png'
-                    local icon_file = file.new(icon_path)
-                    if (icon_file:exists()) then
+                    local icon_path = maybe_get_custom_icon('weaponskills/' .. weapon, ws.en)
+                    if (icon_path ~= nil) then
                         icon_overridden = true
-                        self.hotbars[hotbar].slot_icon[slot]:path(windower.addon_path .. icon_path)
+                        icon_path = 'images/' .. icon_path
                     else
-                        self.hotbars[hotbar].slot_icon[slot]:path(windower.addon_path .. '/images/icons/weapons/' .. weapon .. '.png')
+                        icon_path = '/images/icons/weapons/' .. weapon .. '.png'
                     end
+                    self.hotbars[hotbar].slot_icon[slot]:path(windower.addon_path .. icon_path)
                 else
                     self.hotbars[hotbar].slot_icon[slot]:path(windower.addon_path .. '/images/icons/weapons/sword.png')
                 end
@@ -562,28 +612,31 @@ function ui:load_action(player_hotbar, hotbar, slot, action, player_vitals, show
     elseif action.type == 'item' then
         self.hotbars[hotbar].slot_icon[slot]:pos(self:get_slot_x(hotbar, slot), self:get_slot_y(hotbar, slot))
 
-        if (action.usable ~= nil) then
-            self.hotbars[hotbar].slot_icon[slot]:path(windower.addon_path .. '/images/icons/custom/usable_items/' .. action.action:lower():gsub("%s+", "_") .. '.png')
+        local icon_path = maybe_get_custom_icon('items', action.action)
+        if (icon_path ~= nil) then
+            icon_overridden = true
+            icon_path = 'images/' .. icon_path
+        elseif (action.usable ~= nil) then
+            icon_path = '/images/icons/custom/usable_items/' .. action.action:lower():gsub("%s+", "_") .. '.png'
         elseif (action.target == 'me') then
-            self.hotbars[hotbar].slot_icon[slot]:path(windower.addon_path .. '/images/icons/custom/usable_item.png')
+            icon_path = '/images/icons/custom/usable_item.png'
         else
-            self.hotbars[hotbar].slot_icon[slot]:path(windower.addon_path .. '/images/icons/custom/item.png')
+            icon_path = '/images/icons/custom/item.png'
         end
+        self.hotbars[hotbar].slot_icon[slot]:path(windower.addon_path .. icon_path)
+
         if (show_when_ready) then
             self.hotbars[hotbar].slot_icon[slot]:show()
         end
     elseif (action.type == 'mount') then
-        local mount = kebab_casify(action.action)
-        if (mount == 'mount-roulette') then
-            mount = 'roulette'
-        end
-        local icon_path = '/images/icons/custom/mounts/mount-' .. mount .. '.png'
-        local icon_file = file.new(icon_path)
-        if (icon_file:exists()) then
-            self.hotbars[hotbar].slot_icon[slot]:path(windower.addon_path .. icon_path)
+        local icon_path = maybe_get_custom_icon('mounts', action.action)
+        if (icon_path ~= nil) then
+            icon_overridden = true
+            icon_path = 'images/' .. icon_path
         else
-            self.hotbars[hotbar].slot_icon[slot]:path(windower.addon_path .. '/images/icons/custom/mount.png')
+            icon_path = '/images/icons/custom/mount.png'
         end
+        self.hotbars[hotbar].slot_icon[slot]:path(windower.addon_path .. icon_path)
     else
         self.hotbars[hotbar].slot_icon[slot]:pos(self:get_slot_x(hotbar, slot), self:get_slot_y(hotbar, slot))
     end
