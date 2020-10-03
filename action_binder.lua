@@ -1,5 +1,8 @@
 require("lists")
 require("tables")
+
+local mount_roulette = require('libs/mountroulette/mountroulette')
+
 texts = require('texts')
 
 local database = require('database')  -- TODO: IMPORT FROM RES
@@ -71,7 +74,7 @@ local prefix_lookup = {
     [action_types.EFFUSION] = 'ja',
     [action_types.GEOMANCY] = 'ma',
     [action_types.TRUST] = 'ma',
-    [action_types.MOUNT] = 'ja',
+    [action_types.MOUNT] = 'mount',
     [action_types.USABLE_ITEM] = 'item',
     [action_types.TRADABLE_ITEM] = 'item',
     [action_types.RANGED_ATTACK] = 'ct'
@@ -450,6 +453,10 @@ function action_binder:submit_selected_option()
                 self.action_target = action_targets.SELF
                 self.state = states.SELECT_BUTTON_ASSIGNMENT
                 self:display_button_assigner()
+            elseif (self.target_type['None']) then
+                self.action_target = nil
+                self.state = states.SELECT_BUTTON_ASSIGNMENT
+                self:display_button_assigner()
             else
                 self.state = states.SELECT_ACTION_TARGET
                 self:display_target_selector()
@@ -615,7 +622,7 @@ function action_binder:display_action_type_selector()
     end
     action_type_list:append({id = action_types.TRUST, name = 'Call Trust', icon = 'icons/custom/trusts/trust-yoran-oran.png'})
     -- TODO: Add support for mounts and items
-    -- action_type_list:append({id = action_types.MOUNT, name = 'Call Mount', icon = 'icons/custom/mounts/mount-chocobo.png'})
+    action_type_list:append({id = action_types.MOUNT, name = 'Call Mount', icon = 'icons/custom/mount.png'})
     action_type_list:append({id = action_types.USABLE_ITEM, name = 'Use Item', icon = 'icons/custom/usable_item.png'})
     action_type_list:append({id = action_types.TRADABLE_ITEM, name = 'Trade Item', icon = 'icons/custom/item.png'})
     action_type_list:append({id = action_types.RANGED_ATTACK, name = 'Ranged Attack', icon = 'icons/custom/ranged.png'})
@@ -668,7 +675,7 @@ function action_binder:display_action_selector()
     elseif (self.action_type == action_types.TRUST) then
         self:display_trust_selector()
     elseif (self.action_type == action_types.MOUNT) then
-        -- TODO: Fill this in
+        self:display_mount_selector()
     elseif (self.action_type == action_types.USABLE_ITEM) then
         self:display_usable_item_selector()
     elseif (self.action_type == action_types.TRADABLE_ITEM) then
@@ -1477,6 +1484,14 @@ function action_binder:display_trust_selector()
     self:show_control_hints('Confirm', 'Go Back')
 end
 
+function action_binder:display_mount_selector()
+    self.title:text('Select Mount')
+    self.title:show()
+
+    self.selector:display_options(get_mounts())
+    self:show_control_hints('Confirm', 'Go Back')
+end
+
 function action_binder:display_usable_item_selector()
     self.title:text('Select Usable Item')
     self.title:show()
@@ -1752,6 +1767,62 @@ function get_effusions(job_id, job_level)
     end
 
     return effusion_list
+end
+
+function get_mounts()
+    local allowed_mounts = mount_roulette:get_allowed_mounts()
+    allowed_mounts:append('roulette')
+
+    -- We don't know any id for mount abilities because they're not in resources. We can probably find out eventually, button_layout
+    -- for now we don't know, which means we can't get recast for mounts.
+    local FAKE_ID = 0
+
+    mount_list = L{}
+
+    local mount_names = {
+        ['chocobo'] = "Chocobo",
+        ['raptor'] = "Raptor",
+        ['tiger'] = "Tiger",
+        ['crab'] = "Crab",
+        ['red'] = "Red Crab",
+        ['bomb'] = "Bomb",
+        ['sheep'] = "Sheep",
+        ['morbol'] = "Morbol",
+        ['crawler'] = "Crawler",
+        ['fenrir'] = "Fenrir",
+        ['beetle'] = "Beetle",
+        ['moogle'] = "Moogle",
+        ['magic pot'] = "Magic Pot",
+        ['tulfaire'] = "Tulfaire",
+        ['warmachine'] = "Warmachine",
+        ['xzomit'] = "Xzomit",
+        ['hippogryph'] = "Hippogryph",
+        ['spectral chair'] = "Spectral Chair",
+        ['spheroid'] = "Spheroid",
+        ['omega'] = "Omega",
+        ['coeurl'] = "Coeurl",
+        ['goobbue'] = "Goobbue",
+        ['raaz'] = "Raaz",
+        ['levitus'] = "Levitus",
+        ['adamantoise'] = "Adamantoise",
+        ['dhalmel'] = "Dhalmel",
+        ['doll'] = "Doll",
+        ['roulette'] = "Mount Roulette"
+    }
+
+    local target_type = {['None'] = true}
+    for i, mount_name in ipairs(allowed_mounts) do
+        local icon_path = '/images/icons/custom/mounts/mount-' .. kebab_casify(mount_name) .. '.png'
+        local icon_file = file.new(icon_path)
+        if (icon_file:exists()) then
+            icon_path = 'icons/custom/mounts/mount-' .. kebab_casify(mount_name) .. '.png'
+        else
+            icon_path = 'icons/custom/mount.png'
+        end
+        mount_list:append({id = FAKE_ID, name = mount_names[mount_name], icon = icon_path, data = {target_type = target_type}})
+    end
+
+    return mount_list
 end
 
 local INVENTORY_BAG = 0

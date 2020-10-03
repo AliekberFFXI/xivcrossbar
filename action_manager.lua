@@ -36,7 +36,10 @@ function action_manager:build(type, action, target, alias, icon, equip_slot, war
 
     new_action.type = type
     new_action.action = action
-    new_action.target = target
+
+    if target ~= nil then
+        new_action.target = target
+    end
 
     if alias == nil then alias = action end
     new_action.alias = alias

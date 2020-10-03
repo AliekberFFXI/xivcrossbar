@@ -29,6 +29,7 @@
 local res = require('resources')
 local storage = require('storage')
 local action_manager = require('action_manager')
+local mount_roulette = require('libs/mountroulette/mountroulette')
 
 local player = {}
 
@@ -408,7 +409,16 @@ function player:execute_action(slot)
         return
     end
 
-    windower.send_command('input /' .. action.type .. ' "' .. action.action .. '" <' .. action.target .. '>')
+    if action.type == 'mount' and action.action == 'Mount Roulette' then
+        mount_roulette:ride_random_mount()
+        return
+    end
+
+    local target_string = ''
+    if (action.target ~= nil) then
+        target_string = '" <' .. action.target .. '>'
+    end
+    windower.send_command('input /' .. action.type .. ' "' .. action.action .. target_string)
 end
 
 -- remove action from slot

@@ -572,6 +572,18 @@ function ui:load_action(player_hotbar, hotbar, slot, action, player_vitals, show
         if (show_when_ready) then
             self.hotbars[hotbar].slot_icon[slot]:show()
         end
+    elseif (action.type == 'mount') then
+        local mount = kebab_casify(action.action)
+        if (mount == 'mount-roulette') then
+            mount = 'roulette'
+        end
+        local icon_path = '/images/icons/custom/mounts/mount-' .. mount .. '.png'
+        local icon_file = file.new(icon_path)
+        if (icon_file:exists()) then
+            self.hotbars[hotbar].slot_icon[slot]:path(windower.addon_path .. icon_path)
+        else
+            self.hotbars[hotbar].slot_icon[slot]:path(windower.addon_path .. '/images/icons/custom/mount.png')
+        end
     else
         self.hotbars[hotbar].slot_icon[slot]:pos(self:get_slot_x(hotbar, slot), self:get_slot_y(hotbar, slot))
     end
