@@ -758,7 +758,7 @@ function ui:mark_default_set_action(h, i, environment)
 end
 
 -- check action recasts
-function ui:check_recasts(player_hotbar, player_vitals, environment, spells, gamepad_state, skillchains, consumables, dim_default_slots)
+function ui:check_recasts(player_hotbar, player_vitals, environment, spells, gamepad_state, skillchains, consumables, dim_default_slots, in_battle)
     animation_frame_count = animation_frame_count + 1
     if (animation_frame_count > 40) then
         animation_frame_count = 1
@@ -796,6 +796,16 @@ function ui:check_recasts(player_hotbar, player_vitals, environment, spells, gam
 
                 if (action == nil or action.action == nil) then
                     action = maybe_get_default_action(player_hotbar, environment, h, slot)
+                end
+
+                if (action ~= nil and action.type == 'a' and action.action == 'a' and action.alias == 'Attack') then
+                    if (in_battle) then
+                        self.hotbars[h].slot_icon[i]:path(windower.addon_path..'/images/icons/custom/disengage.png')
+                        self.hotbars[h].slot_text[i]:text('Disengage')
+                    else
+                        self.hotbars[h].slot_icon[i]:path(windower.addon_path..'/images/icons/custom/attack.png')
+                        self.hotbars[h].slot_text[i]:text('Attack')
+                    end
                 end
 
                 if action == nil or (action.type ~= 'ma' and action.type ~= 'ja' and action.type ~= 'ws' and action.type ~= 'pet' and action.type ~= 'enchanteditem') then

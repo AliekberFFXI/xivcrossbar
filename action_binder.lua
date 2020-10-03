@@ -48,7 +48,8 @@ local action_types = {
     ['MOUNT'] = 22,
     ['USABLE_ITEM'] = 23,
     ['TRADABLE_ITEM'] = 24,
-    ['RANGED_ATTACK'] = 25
+    ['RANGED_ATTACK'] = 25,
+    ['ATTACK'] = 26
 }
 
 local prefix_lookup = {
@@ -77,7 +78,8 @@ local prefix_lookup = {
     [action_types.MOUNT] = 'mount',
     [action_types.USABLE_ITEM] = 'item',
     [action_types.TRADABLE_ITEM] = 'item',
-    [action_types.RANGED_ATTACK] = 'ct'
+    [action_types.RANGED_ATTACK] = 'ct',
+    [action_types.ATTACK] = 'a'
 }
 
 local action_targets = {
@@ -424,8 +426,12 @@ function action_binder:submit_selected_option()
         if (self.action_type == action_types.DELETE) then
             self.state = states.SELECT_BUTTON_ASSIGNMENT
             self:display_button_assigner()
-        elseif (self.action_type == action_types.RANGED_ATTACK) then
-            self.action_name = 'Ranged Attack'
+        elseif (self.action_type == action_types.ATTACK or self.action_type == action_types.RANGED_ATTACK) then
+            if (self.action_type == action_types.ATTACK) then
+                self.action_name = 'Attack'
+            elseif (self.action_type == action_types.RANGED_ATTACK) then
+                self.action_name = 'Ranged Attack'
+            end
             self.state = states.SELECT_ACTION_TARGET
             self.target_type = {['Enemy'] = true}
             self:display_target_selector()
@@ -492,7 +498,7 @@ function action_binder:go_back()
         self.selector:import_selection_state(self.selection_states[states.SELECT_ACTION_TYPE])
         self.selection_states[states.SELECT_ACTION_TYPE] = nil
     elseif (self.state == states.SELECT_ACTION_TARGET) then
-        if (self.action_type == action_types.RANGED_ATTACK) then
+        if (self.action_type == action_types.ATTACK or self.action_type == action_types.RANGED_ATTACK) then
             self.state = states.SELECT_ACTION_TYPE
             self.action_type = nil
             self.target_type = nil
@@ -626,6 +632,7 @@ function action_binder:display_action_type_selector()
     action_type_list:append({id = action_types.USABLE_ITEM, name = 'Use Item', icon = 'icons/custom/usable_item.png'})
     action_type_list:append({id = action_types.TRADABLE_ITEM, name = 'Trade Item', icon = 'icons/custom/item.png'})
     action_type_list:append({id = action_types.RANGED_ATTACK, name = 'Ranged Attack', icon = 'icons/custom/ranged.png'})
+    action_type_list:append({id = action_types.ATTACK, name = 'Attack', icon = 'icons/custom/attack.png'})
     self.selector:display_options(action_type_list)
 
     self:show_control_hints('Confirm', 'Exit')

@@ -87,6 +87,10 @@ function set_hotkey(hotbar, slot, action_type, action, target)
         action = 'ra'
         alias = 'Ranged Attack'
         icon = 'ranged'
+    elseif (action == 'Attack') then
+        action = 'a'
+        alias = 'Attack'
+        icon = 'attack'
     end
 
     local new_action = action_manager:build(action_type, action, target, alias, icon)
@@ -733,7 +737,7 @@ windower.register_event('prerender',function()
 
     if ui.is_setup and xivcrossbar.hide_hotbars == false then
         local dim_default_slots = not action_binder.is_hidden        
-        ui:check_recasts(player.hotbar, player.vitals, player.hotbar_settings.active_environment, player.current_spells, gamepad_state, skillchains, consumables, dim_default_slots)
+        ui:check_recasts(player.hotbar, player.vitals, player.hotbar_settings.active_environment, player.current_spells, gamepad_state, skillchains, consumables, dim_default_slots, xivcrossbar.in_battle)
     end
 end)
 
@@ -774,13 +778,13 @@ windower.register_event('status change', function(new_status_id)
 
     -- Disabling this for now, but we might want it later
     -- -- alternate environment on battle
-    -- if xivcrossbar.in_battle == false and (new_status_id == 1 or new_status_id == 3) then
-    --     xivcrossbar.in_battle = true
+    if xivcrossbar.in_battle == false and (new_status_id == 1 or new_status_id == 3) then
+        xivcrossbar.in_battle = true
     --     set_battle_environment(true)
-    -- elseif xivcrossbar.in_battle and new_status_id ~= 1 and new_status_id ~= 3 then
-    --     xivcrossbar.in_battle = false
+    elseif xivcrossbar.in_battle and new_status_id ~= 1 and new_status_id ~= 3 then
+        xivcrossbar.in_battle = false
     --     set_battle_environment(false)
-    -- end
+    end
 end)
 
 -- ON JOB CHANGE
