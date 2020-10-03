@@ -49,7 +49,8 @@ local action_types = {
     ['USABLE_ITEM'] = 23,
     ['TRADABLE_ITEM'] = 24,
     ['RANGED_ATTACK'] = 25,
-    ['ATTACK'] = 26
+    ['ATTACK'] = 26,
+    ['MAP'] = 27
 }
 
 local prefix_lookup = {
@@ -79,7 +80,8 @@ local prefix_lookup = {
     [action_types.USABLE_ITEM] = 'item',
     [action_types.TRADABLE_ITEM] = 'item',
     [action_types.RANGED_ATTACK] = 'ct',
-    [action_types.ATTACK] = 'a'
+    [action_types.ATTACK] = 'a',
+    [action_types.MAP] = 'map'
 }
 
 local action_targets = {
@@ -435,6 +437,11 @@ function action_binder:submit_selected_option()
             self.state = states.SELECT_ACTION_TARGET
             self.target_type = {['Enemy'] = true}
             self:display_target_selector()
+        elseif (self.action_type == action_types.MAP) then
+            self.action_name = 'View Map'
+            self.action_target = nil
+            self.state = states.SELECT_BUTTON_ASSIGNMENT
+            self:display_button_assigner()
         else
             self.state = states.SELECT_ACTION
             self:display_action_selector()
@@ -633,6 +640,7 @@ function action_binder:display_action_type_selector()
     action_type_list:append({id = action_types.TRADABLE_ITEM, name = 'Trade Item', icon = 'icons/custom/item.png'})
     action_type_list:append({id = action_types.RANGED_ATTACK, name = 'Ranged Attack', icon = 'icons/custom/ranged.png'})
     action_type_list:append({id = action_types.ATTACK, name = 'Attack', icon = 'icons/custom/attack.png'})
+    action_type_list:append({id = action_types.MAP, name = 'View Map', icon = 'icons/custom/map.png'})
     self.selector:display_options(action_type_list)
 
     self:show_control_hints('Confirm', 'Exit')

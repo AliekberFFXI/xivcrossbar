@@ -806,6 +806,8 @@ function ui:check_recasts(player_hotbar, player_vitals, environment, spells, gam
                         self.hotbars[h].slot_icon[i]:path(windower.addon_path..'/images/icons/custom/attack.png')
                         self.hotbars[h].slot_text[i]:text('Attack')
                     end
+                elseif (action ~= nil and action.type == 'map') then
+                    self.hotbars[h].slot_icon[i]:path(windower.addon_path..'/images/icons/custom/map.png')
                 end
 
                 if action == nil or (action.type ~= 'ma' and action.type ~= 'ja' and action.type ~= 'ws' and action.type ~= 'pet' and action.type ~= 'enchanteditem') then
