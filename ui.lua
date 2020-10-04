@@ -578,7 +578,7 @@ function ui:load_action(player_hotbar, hotbar, slot, action, player_vitals, show
         elseif (action.type == 'enchanteditem') then
             self.enchanted_items:register(action.action, action.warmup, 2, action.cooldown)
             self.hotbars[hotbar].slot_icon[slot]:pos(self:get_slot_x(hotbar, slot), self:get_slot_y(hotbar, slot))
-            self.hotbars[hotbar].slot_icon[slot]:path(windower.addon_path .. '/images/' .. get_icon_pathbase() .. '/usable_items/' .. action.action:lower():gsub("%s+", "_") .. '.png')
+            self.hotbars[hotbar].slot_icon[slot]:path(windower.addon_path .. '/images/' .. get_icon_pathbase() .. '/items/' .. kebab_casify(action.action) .. '.png')
         end
 
         self.hotbars[hotbar].slot_background[slot]:alpha(200)
@@ -627,9 +627,9 @@ function ui:load_action(player_hotbar, hotbar, slot, action, player_vitals, show
             icon_overridden = true
             icon_path = '/images/' .. icon_path
         elseif (action.usable ~= nil) then
-            icon_path = '/images/' .. get_icon_pathbase() .. '/usable_items/' .. action.action:lower():gsub("%s+", "_") .. '.png'
+            icon_path = '/images/' .. get_icon_pathbase() .. '/items/' .. kebab_casify(action.action) .. '.png'
         elseif (action.target == 'me') then
-            icon_path = '/images/' .. get_icon_pathbase() .. '/usable_item.png'
+            icon_path = '/images/' .. get_icon_pathbase() .. '/usable-item.png'
         else
             icon_path = '/images/' .. get_icon_pathbase() .. '/item.png'
         end

@@ -688,7 +688,7 @@ function action_binder:display_action_type_selector()
     action_type_list:append({id = action_types.TRUST, name = 'Call Trust', icon = get_icon_pathbase() .. '/trust/yoran-oran.png'})
     -- TODO: Add support for mounts and items
     action_type_list:append({id = action_types.MOUNT, name = 'Call Mount', icon = get_icon_pathbase() .. '/mount.png'})
-    action_type_list:append({id = action_types.USABLE_ITEM, name = 'Use Item', icon = get_icon_pathbase() .. '/usable_item.png'})
+    action_type_list:append({id = action_types.USABLE_ITEM, name = 'Use Item', icon = get_icon_pathbase() .. '/usable-item.png'})
     action_type_list:append({id = action_types.TRADABLE_ITEM, name = 'Trade Item', icon = get_icon_pathbase() .. '/item.png'})
     action_type_list:append({id = action_types.RANGED_ATTACK, name = 'Ranged Attack', icon = get_icon_pathbase() .. '/ranged.png'})
     action_type_list:append({id = action_types.ATTACK, name = 'Attack', icon = get_icon_pathbase() .. '/attack.png'})
@@ -1998,7 +1998,7 @@ end
 local INVENTORY_BAG = 0
 
 function get_items(category)
-    local usable_icon_path = get_icon_pathbase() .. '/usable_item.png'
+    local usable_icon_path = get_icon_pathbase() .. '/usable-item.png'
     local tradable_icon_path = get_icon_pathbase() .. '/item.png'
     local inventory = windower.ffxi.get_items(INVENTORY_BAG)
     local ignore_indices = {max = true, count = true, enabled = true}
