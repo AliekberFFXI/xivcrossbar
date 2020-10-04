@@ -31,6 +31,7 @@ local theme = {}
 theme.apply = function (settings)
     local options = {}
 
+    options.iconpack = settings.iconpack
     options.is_compact = settings.iscompact
     options.button_background_alpha = settings.buttonbackgroundalpha or 150
     options.hotbar_number = settings.Hotbar.Number

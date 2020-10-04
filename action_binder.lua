@@ -13,8 +13,15 @@ local kebab_casify = function(str)
     return str:lower():gsub('/', '\n'):gsub(':', ''):gsub('%p', ''):gsub(' ', '-'):gsub('\n', '/')
 end
 
+local icon_pack = nil
+
+local get_icon_pathbase = function()
+    return 'icons/iconpacks/' .. icon_pack
+end
+
 local maybe_get_custom_icon = function(category, action_name)
-    local icon_path = 'icons/custom/' .. kebab_casify(category) .. '/' ..  kebab_casify(action_name) .. '.png'
+    local pathbase = get_icon_pathbase()
+    local icon_path = pathbase .. '/' .. kebab_casify(category) .. '/' ..  kebab_casify(action_name) .. '.png'
     local icon_file = file.new('images/' .. icon_path)
     if (icon_file:exists()) then
         return icon_path
@@ -159,6 +166,8 @@ function action_binder:setup(buttonmapping, save_binding_func, delete_binding_fu
     self.button_y_pressed = false
     self.trigger_left_pressed = false
     self.trigger_right_pressed = false
+
+    icon_pack = theme_options.iconpack
 
     windower.prim.create('dialog_bg')
     windower.prim.set_color('dialog_bg', 150, 0, 0, 0)
@@ -633,59 +642,59 @@ function action_binder:display_action_type_selector()
     action_type_list:append({id = action_types.JOB_ABILITY, name = 'Job Ability', icon = 'icons/abilities/00001.png', icon_offset = 4})
     action_type_list:append({id = action_types.WEAPONSKILL, name = 'Weaponskill', icon = 'icons/weapons/sword.png', icon_offset = 4})
     if (pet_jobs[main_job] or pet_jobs[sub_job]) then
-        action_type_list:append({id = action_types.PET_COMMAND, name = 'Pet Command', icon = 'icons/custom/mounts/mount-crab.png'})
+        action_type_list:append({id = action_types.PET_COMMAND, name = 'Pet Command', icon = get_icon_pathbase() .. '/mounts/crab.png'})
     end
     if (white_magic_jobs[main_job] or white_magic_jobs[sub_job]) then
-        action_type_list:append({id = action_types.WHITE_MAGIC, name = 'White Magic', icon = 'icons/custom/jobs/WHM.png'})
+        action_type_list:append({id = action_types.WHITE_MAGIC, name = 'White Magic', icon = get_icon_pathbase() .. '/jobs/WHM.png'})
     end
     if (black_magic_jobs[main_job] or black_magic_jobs[sub_job]) then
-        action_type_list:append({id = action_types.BLACK_MAGIC, name = 'Black Magic', icon = 'icons/custom/jobs/BLM.png'})
+        action_type_list:append({id = action_types.BLACK_MAGIC, name = 'Black Magic', icon = get_icon_pathbase() .. '/jobs/BLM.png'})
     end
     if (main_job == 'BRD' or sub_job == 'BRD') then
-        action_type_list:append({id = action_types.SONG, name = 'Song', icon = 'icons/custom/jobs/BRD.png'})
+        action_type_list:append({id = action_types.SONG, name = 'Song', icon = get_icon_pathbase() .. '/jobs/BRD.png'})
     end
     if (main_job == 'BST' or sub_job == 'BST') then
-        action_type_list:append({id = action_types.READY, name = 'Ready', icon = 'icons/custom/jobs/BST.png'})
+        action_type_list:append({id = action_types.READY, name = 'Ready', icon = get_icon_pathbase() .. '/jobs/BST.png'})
     end
     if (main_job == 'NIN' or sub_job == 'NIN') then
-        action_type_list:append({id = action_types.NINJUTSU, name = 'Ninjutsu', icon = 'icons/custom/jobs/NIN.png'})
+        action_type_list:append({id = action_types.NINJUTSU, name = 'Ninjutsu', icon = get_icon_pathbase() .. '/jobs/NIN.png'})
     end
     if (main_job == 'SMN' or sub_job == 'SMN') then
-        action_type_list:append({id = action_types.SUMMON, name = 'Summon', icon = 'icons/custom/jobs/SMN.png'})
-        action_type_list:append({id = action_types.BP_RAGE, name = 'Blood Pact: Rage', icon = 'icons/custom/jobs/SMN.png'})
-        action_type_list:append({id = action_types.BP_WARD, name = 'Blood Pact: Ward', icon = 'icons/custom/jobs/SMN.png'})
+        action_type_list:append({id = action_types.SUMMON, name = 'Summon', icon = get_icon_pathbase() .. '/jobs/SMN.png'})
+        action_type_list:append({id = action_types.BP_RAGE, name = 'Blood Pact: Rage', icon = get_icon_pathbase() .. '/jobs/SMN.png'})
+        action_type_list:append({id = action_types.BP_WARD, name = 'Blood Pact: Ward', icon = get_icon_pathbase() .. '/jobs/SMN.png'})
     end
     if (main_job == 'BLU' or sub_job == 'BLU') then
-        action_type_list:append({id = action_types.BLUE_MAGIC, name = 'Blue Magic', icon = 'icons/custom/jobs/BLU.png'})
+        action_type_list:append({id = action_types.BLUE_MAGIC, name = 'Blue Magic', icon = get_icon_pathbase() .. '/jobs/BLU.png'})
     end
     if (main_job == 'COR' or sub_job == 'COR') then
-        action_type_list:append({id = action_types.PHANTOM_ROLL, name = 'Phantom Roll', icon = 'icons/custom/jobs/COR.png'})
-        action_type_list:append({id = action_types.QUICK_DRAW, name = 'Quick Draw', icon = 'icons/custom/jobs/COR.png'})
+        action_type_list:append({id = action_types.PHANTOM_ROLL, name = 'Phantom Roll', icon = get_icon_pathbase() .. '/jobs/COR.png'})
+        action_type_list:append({id = action_types.QUICK_DRAW, name = 'Quick Draw', icon = get_icon_pathbase() .. '/jobs/COR.png'})
     end
     if (main_job == 'SCH' or sub_job == 'SCH') then
-        action_type_list:append({id = action_types.STRATAGEMS, name = 'Stratagem', icon = 'icons/custom/jobs/SCH.png'})
+        action_type_list:append({id = action_types.STRATAGEMS, name = 'Stratagem', icon = get_icon_pathbase() .. '/jobs/SCH.png'})
     end
     if (main_job == 'DNC' or sub_job == 'DNC') then
-        action_type_list:append({id = action_types.DANCES, name = 'Dance', icon = 'icons/custom/jobs/DNC.png'})
+        action_type_list:append({id = action_types.DANCES, name = 'Dance', icon = get_icon_pathbase() .. '/jobs/DNC.png'})
     end
     if (main_job == 'RUN' or sub_job == 'RUN') then
-        action_type_list:append({id = action_types.RUNE_ENCHANTMENT, name = 'Rune Enchantment', icon = 'icons/custom/jobs/RUN.png'})
-        action_type_list:append({id = action_types.WARD, name = 'Ward', icon = 'icons/custom/jobs/RUN.png'})
-        action_type_list:append({id = action_types.EFFUSION, name = 'Effusion', icon = 'icons/custom/jobs/RUN.png'})
+        action_type_list:append({id = action_types.RUNE_ENCHANTMENT, name = 'Rune Enchantment', icon = get_icon_pathbase() .. '/jobs/RUN.png'})
+        action_type_list:append({id = action_types.WARD, name = 'Ward', icon = get_icon_pathbase() .. '/jobs/RUN.png'})
+        action_type_list:append({id = action_types.EFFUSION, name = 'Effusion', icon = get_icon_pathbase() .. '/jobs/RUN.png'})
     end
     if (main_job == 'GEO' or sub_job == 'GEO') then
-        action_type_list:append({id = action_types.GEOMANCY, name = 'Geomancy', icon = 'icons/custom/jobs/GEO.png'})
+        action_type_list:append({id = action_types.GEOMANCY, name = 'Geomancy', icon = get_icon_pathbase() .. '/jobs/GEO.png'})
     end
-    action_type_list:append({id = action_types.TRUST, name = 'Call Trust', icon = 'icons/custom/trust/yoran-oran.png'})
+    action_type_list:append({id = action_types.TRUST, name = 'Call Trust', icon = get_icon_pathbase() .. '/trust/yoran-oran.png'})
     -- TODO: Add support for mounts and items
-    action_type_list:append({id = action_types.MOUNT, name = 'Call Mount', icon = 'icons/custom/mount.png'})
-    action_type_list:append({id = action_types.USABLE_ITEM, name = 'Use Item', icon = 'icons/custom/usable_item.png'})
-    action_type_list:append({id = action_types.TRADABLE_ITEM, name = 'Trade Item', icon = 'icons/custom/item.png'})
-    action_type_list:append({id = action_types.RANGED_ATTACK, name = 'Ranged Attack', icon = 'icons/custom/ranged.png'})
-    action_type_list:append({id = action_types.ATTACK, name = 'Attack', icon = 'icons/custom/attack.png'})
-    action_type_list:append({id = action_types.SWITCH_TARGET, name = 'Switch Target', icon = 'icons/custom/targetnpc.png'})
-    action_type_list:append({id = action_types.MAP, name = 'View Map', icon = 'icons/custom/map.png'})
-    action_type_list:append({id = action_types.LAST_SYNTH, name = 'Repeat Last Synth', icon = 'icons/custom/synth.png'})
+    action_type_list:append({id = action_types.MOUNT, name = 'Call Mount', icon = get_icon_pathbase() .. '/mount.png'})
+    action_type_list:append({id = action_types.USABLE_ITEM, name = 'Use Item', icon = get_icon_pathbase() .. '/usable_item.png'})
+    action_type_list:append({id = action_types.TRADABLE_ITEM, name = 'Trade Item', icon = get_icon_pathbase() .. '/item.png'})
+    action_type_list:append({id = action_types.RANGED_ATTACK, name = 'Ranged Attack', icon = get_icon_pathbase() .. '/ranged.png'})
+    action_type_list:append({id = action_types.ATTACK, name = 'Attack', icon = get_icon_pathbase() .. '/attack.png'})
+    action_type_list:append({id = action_types.SWITCH_TARGET, name = 'Switch Target', icon = get_icon_pathbase() .. '/targetnpc.png'})
+    action_type_list:append({id = action_types.MAP, name = 'View Map', icon = get_icon_pathbase() .. '/map.png'})
+    action_type_list:append({id = action_types.LAST_SYNTH, name = 'Repeat Last Synth', icon = get_icon_pathbase() .. '/synth.png'})
     action_type_list:append({id = action_types.SHOW_CREDITS, name = 'XIVCrossbar Credits', icon = 'credit_avatars/xiv.png'})
     self.selector:display_options(action_type_list)
 
@@ -753,24 +762,24 @@ function action_binder:display_target_selector()
     local target_options = L{}
 
     if (self.target_type['Self']) then
-        target_options:append({id = 'SELF', name = 'Self (<me>)', icon = 'icons/custom/mappoint.png'})
+        target_options:append({id = 'SELF', name = 'Self (<me>)', icon = get_icon_pathbase() .. '/mappoint.png'})
     end
     if (self.target_type['Party'] or self.target_type['Corpse']) then
-        target_options:append({id = 'SELECT_PARTY', name = 'Select Party (<stpt>)', icon = 'icons/custom/mappoint.png'})
+        target_options:append({id = 'SELECT_PARTY', name = 'Select Party (<stpt>)', icon = get_icon_pathbase() .. '/mappoint.png'})
     end
     if (self.target_type['Ally'] or self.target_type['Corpse']) then
-        target_options:append({id = 'SELECT_ALLIANCE', name = 'Select Ally (<stal>)', icon = 'icons/custom/mappoint.png'})
+        target_options:append({id = 'SELECT_ALLIANCE', name = 'Select Ally (<stal>)', icon = get_icon_pathbase() .. '/mappoint.png'})
     end
     if (self.target_type['Player'] or self.target_type['Corpse']) then
-        target_options:append({id = 'SELECT_PLAYER', name = 'Select Player (<stpc>)', icon = 'icons/custom/mappoint.png'})
+        target_options:append({id = 'SELECT_PLAYER', name = 'Select Player (<stpc>)', icon = get_icon_pathbase() .. '/mappoint.png'})
     end
     if (self.target_type['NPC'] or self.target_type['Enemy']) then
-        target_options:append({id = 'SELECT_NPC', name = 'Select NPC (<stnpc>)', icon = 'icons/custom/mappoint.png'})
-        target_options:append({id = 'CURRENT_TARGET', name = 'Current Target (<t>)', icon = 'icons/custom/mappoint.png'})
+        target_options:append({id = 'SELECT_NPC', name = 'Select NPC (<stnpc>)', icon = get_icon_pathbase() .. '/mappoint.png'})
+        target_options:append({id = 'CURRENT_TARGET', name = 'Current Target (<t>)', icon = get_icon_pathbase() .. '/mappoint.png'})
     end
     if (self.target_type['Enemy']) then
-        target_options:append({id = 'SELECT_TARGET', name = 'Select Target (<st>)', icon = 'icons/custom/mappoint.png'})
-        target_options:append({id = 'BATTLE_TARGET', name = 'Battle Target (<bt>)', icon = 'icons/custom/mappoint.png'})
+        target_options:append({id = 'SELECT_TARGET', name = 'Select Target (<st>)', icon = get_icon_pathbase() .. '/mappoint.png'})
+        target_options:append({id = 'BATTLE_TARGET', name = 'Battle Target (<bt>)', icon = get_icon_pathbase() .. '/mappoint.png'})
     end
 
     self.selector:display_options(target_options)
@@ -1533,7 +1542,7 @@ function action_binder:display_rune_enchantment_selector()
         local ability = database.abilities[name:lower()]
         local icon_path = maybe_get_custom_icon('rune-enchantments', name)
         if (icon_path == nil) then
-            icon_path = 'icons/custom/elements/' .. element .. '.png'
+            icon_path = get_icon_pathbase() .. '/elements/' .. element .. '.png'
         end
         ability_list:append({id = id, name = name, icon = icon_path, data = {target_type = target_type}})
     end
@@ -1755,8 +1764,8 @@ end
 function get_stratagems(job_id, job_level)
     local all_abilities = res.job_abilities
 
-    local grimoire_white = 'icons/custom/abilities/book_white.png'
-    local grimoire_black = 'icons/custom/abilities/book_black.png'
+    local grimoire_white = get_icon_pathbase() .. '/abilities/book_white.png'
+    local grimoire_black = get_icon_pathbase() .. '/abilities/book_black.png'
 
     local stratagems = L{
         {name = 'Penury', id = 215, level = 10, icon = grimoire_white},
@@ -1968,7 +1977,7 @@ function get_mounts()
     for i, mount_name in ipairs(allowed_mounts) do
         local icon_path = maybe_get_custom_icon('mounts', mount_name)
         if (icon_path == nil) then
-            icon_path = 'icons/custom/mount.png'
+            icon_path = get_icon_pathbase() .. '/mount.png'
         end
 
         if (not mount_names[mount_name]) then
@@ -1983,7 +1992,7 @@ function get_mounts()
     local mount_name = 'mount roulette'
     local icon_path = maybe_get_custom_icon('mounts', mount_name)
     if (icon_path == nil) then
-        icon_path = 'icons/custom/mount.png'
+        icon_path = get_icon_pathbase() .. '/mount.png'
     end
     mount_list:append({id = FAKE_ID, name = mount_names[mount_name], icon = icon_path, data = {target_type = target_type}})
 
@@ -1993,8 +2002,8 @@ end
 local INVENTORY_BAG = 0
 
 function get_items(category)
-    local usable_icon_path = 'icons/custom/usable_item.png'
-    local tradable_icon_path = 'icons/custom/item.png'
+    local usable_icon_path = get_icon_pathbase() .. '/usable_item.png'
+    local tradable_icon_path = get_icon_pathbase() .. '/item.png'
     local inventory = windower.ffxi.get_items(INVENTORY_BAG)
     local ignore_indices = {max = true, count = true, enabled = true}
 

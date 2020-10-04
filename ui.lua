@@ -111,8 +111,15 @@ local kebab_casify = function(str)
     return str:lower():gsub('/', '\n'):gsub(':', ''):gsub('%p', ''):gsub(' ', '-'):gsub('\n', '/')
 end
 
+local icon_pack = nil
+
+local get_icon_pathbase = function()
+    return 'icons/iconpacks/' .. icon_pack
+end
+
 local maybe_get_custom_icon = function(category, action_name)
-    local icon_path = 'icons/custom/' .. kebab_casify(category) .. '/' ..  kebab_casify(action_name) .. '.png'
+    local pathbase = get_icon_pathbase()
+    local icon_path = pathbase .. '/' .. kebab_casify(category) .. '/' ..  kebab_casify(action_name) .. '.png'
     local icon_file = file.new('images/' .. icon_path)
     if (icon_file:exists()) then
         return icon_path
@@ -202,6 +209,8 @@ function ui:setup(theme_options, enchanted_items)
 
     self:setup_metrics(theme_options)
     self:load(theme_options)
+
+    icon_pack = theme_options.iconpack
 
     self.is_setup = true
 end
@@ -568,7 +577,7 @@ function ui:load_action(player_hotbar, hotbar, slot, action, player_vitals, show
         elseif (action.type == 'enchanteditem') then
             self.enchanted_items:register(action.action, action.warmup, 2, action.cooldown)
             self.hotbars[hotbar].slot_icon[slot]:pos(self:get_slot_x(hotbar, slot), self:get_slot_y(hotbar, slot))
-            self.hotbars[hotbar].slot_icon[slot]:path(windower.addon_path .. '/images/icons/custom/usable_items/' .. action.action:lower():gsub("%s+", "_") .. '.png')
+            self.hotbars[hotbar].slot_icon[slot]:path(windower.addon_path .. '/images/' .. get_icon_pathbase() .. '/usable_items/' .. action.action:lower():gsub("%s+", "_") .. '.png')
         end
 
         self.hotbars[hotbar].slot_background[slot]:alpha(200)
@@ -617,11 +626,11 @@ function ui:load_action(player_hotbar, hotbar, slot, action, player_vitals, show
             icon_overridden = true
             icon_path = 'images/' .. icon_path
         elseif (action.usable ~= nil) then
-            icon_path = '/images/icons/custom/usable_items/' .. action.action:lower():gsub("%s+", "_") .. '.png'
+            icon_path = '/images/' .. get_icon_pathbase() .. '/usable_items/' .. action.action:lower():gsub("%s+", "_") .. '.png'
         elseif (action.target == 'me') then
-            icon_path = '/images/icons/custom/usable_item.png'
+            icon_path = '/images/' .. get_icon_pathbase() .. '/usable_item.png'
         else
-            icon_path = '/images/icons/custom/item.png'
+            icon_path = '/images/' .. get_icon_pathbase() .. '/item.png'
         end
         self.hotbars[hotbar].slot_icon[slot]:path(windower.addon_path .. icon_path)
 
@@ -634,7 +643,7 @@ function ui:load_action(player_hotbar, hotbar, slot, action, player_vitals, show
             icon_overridden = true
             icon_path = 'images/' .. icon_path
         else
-            icon_path = '/images/icons/custom/mount.png'
+            icon_path = '/images/' .. get_icon_pathbase() .. '/mount.png'
         end
         self.hotbars[hotbar].slot_icon[slot]:path(windower.addon_path .. icon_path)
     else
@@ -645,7 +654,7 @@ function ui:load_action(player_hotbar, hotbar, slot, action, player_vitals, show
     if (not icon_overridden and action.icon ~= nil) then
         self.hotbars[hotbar].slot_background[slot]:alpha(200)
         self.hotbars[hotbar].slot_icon[slot]:pos(self:get_slot_x(hotbar, slot), self:get_slot_y(hotbar, slot))
-        self.hotbars[hotbar].slot_icon[slot]:path(windower.addon_path .. '/images/icons/custom/' .. action.icon .. '.png')
+        self.hotbars[hotbar].slot_icon[slot]:path(windower.addon_path .. '/images/' .. get_icon_pathbase() .. '/' .. action.icon .. '.png')
         if (show_when_ready) then
             self.hotbars[hotbar].slot_icon[slot]:show()
         end
@@ -853,22 +862,22 @@ function ui:check_recasts(player_hotbar, player_vitals, environment, spells, gam
 
                 if (action ~= nil and action.type == 'a' and action.action == 'a' and action.alias == 'Attack') then
                     if (in_battle) then
-                        self.hotbars[h].slot_icon[i]:path(windower.addon_path..'/images/icons/custom/disengage.png')
+                        self.hotbars[h].slot_icon[i]:path(windower.addon_path..'/images/' .. get_icon_pathbase() .. '/disengage.png')
                         self.hotbars[h].slot_text[i]:text('Disengage')
                     else
-                        self.hotbars[h].slot_icon[i]:path(windower.addon_path..'/images/icons/custom/attack.png')
+                        self.hotbars[h].slot_icon[i]:path(windower.addon_path..'/images/' .. get_icon_pathbase() .. '/attack.png')
                         self.hotbars[h].slot_text[i]:text('Attack')
                     end
                 elseif (action ~= nil and action.type == 'ta' and action.action == 'Switch Target' and action.alias == 'Switch Target') then
                     if (in_battle) then
-                        self.hotbars[h].slot_icon[i]:path(windower.addon_path..'/images/icons/custom/switchtarget.png')
+                        self.hotbars[h].slot_icon[i]:path(windower.addon_path..'/images/' .. get_icon_pathbase() .. '/switchtarget.png')
                         self.hotbars[h].slot_text[i]:text('Switch Target')
                     else
-                        self.hotbars[h].slot_icon[i]:path(windower.addon_path..'/images/icons/custom/targetnpc.png')
+                        self.hotbars[h].slot_icon[i]:path(windower.addon_path..'/images/' .. get_icon_pathbase() .. '/targetnpc.png')
                         self.hotbars[h].slot_text[i]:text('Target NPC')
                     end
                 elseif (action ~= nil and action.type == 'map') then
-                    self.hotbars[h].slot_icon[i]:path(windower.addon_path..'/images/icons/custom/map.png')
+                    self.hotbars[h].slot_icon[i]:path(windower.addon_path..'/images/' .. get_icon_pathbase() .. '/map.png')
                 end
 
                 if action == nil or (action.type ~= 'ma' and action.type ~= 'ja' and action.type ~= 'ws' and action.type ~= 'pet' and action.type ~= 'enchanteditem') then
@@ -1140,7 +1149,7 @@ function ui:check_recasts(player_hotbar, player_vitals, environment, spells, gam
                         end
 
                         self.hotbars[h].slot_frame[i]:path(windower.addon_path..'/images/other/frame_step' .. frame_step .. '.png')
-                        self.hotbars[h].slot_warmup[i]:path(windower.addon_path..'/images/icons/custom/skillchain/' .. skillchain_prop:lower() .. '.png')
+                        self.hotbars[h].slot_warmup[i]:path(windower.addon_path..'/images/' .. get_icon_pathbase() .. '/skillchain/' .. skillchain_prop:lower() .. '.png')
                         self.hotbars[h].slot_warmup[i]:size(40, 40)
                         self.hotbars[h].slot_warmup[i]:pos(self:get_slot_x(h, i), self:get_slot_y(h, i))
                         self.hotbars[h].slot_warmup[i]:show()
