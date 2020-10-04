@@ -655,7 +655,7 @@ function action_binder:display_action_type_selector()
     local black_magic_jobs = {BLM = true, RDM = true, DRK = true, SCH = true, GEO = true, RUN = true}
 
     local action_type_list = L{}
-    action_type_list:append({id = action_types.DELETE, name = 'Remove a Binding', icon = 'ui/red-x.png'})
+    action_type_list:append({id = action_types.DELETE, name = 'Remove a Binding', icon = get_icon_pathbase() .. '/ui/red-x.png'})
     action_type_list:append({id = action_types.JOB_ABILITY, name = 'Job Ability', icon = 'icons/abilities/00001.png', icon_offset = 4})
     action_type_list:append({id = action_types.WEAPONSKILL, name = 'Weaponskill', icon = 'icons/weapons/sword.png', icon_offset = 4})
     if (pet_jobs[main_job] or pet_jobs[sub_job]) then
