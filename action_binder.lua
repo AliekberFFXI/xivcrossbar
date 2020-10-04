@@ -703,7 +703,6 @@ function action_binder:display_action_type_selector()
         action_type_list:append({id = action_types.GEOMANCY, name = 'Geomancy', icon = get_icon_pathbase() .. '/jobs/GEO.png'})
     end
     action_type_list:append({id = action_types.TRUST, name = 'Call Trust', icon = get_icon_pathbase() .. '/trust/yoran-oran.png'})
-    -- TODO: Add support for mounts and items
     action_type_list:append({id = action_types.MOUNT, name = 'Call Mount', icon = get_icon_pathbase() .. '/mount.png'})
     action_type_list:append({id = action_types.USABLE_ITEM, name = 'Use Item', icon = get_icon_pathbase() .. '/usable-item.png'})
     action_type_list:append({id = action_types.TRADABLE_ITEM, name = 'Trade Item', icon = get_icon_pathbase() .. '/item.png'})
