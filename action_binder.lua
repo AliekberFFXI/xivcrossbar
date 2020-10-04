@@ -35,9 +35,10 @@ local states = {
     ['SELECT_ACTION_TYPE'] = 1,
     ['SELECT_ACTION'] = 2,
     ['SELECT_ACTION_TARGET'] = 3,
-    ['SELECT_BUTTON_ASSIGNMENT'] = 4,
-    ['CONFIRM_BUTTON_ASSIGNMENT'] = 5,
-    ['SHOW_CREDITS'] = 6
+    ['SELECT_PLAYER_BINDING'] = 4,
+    ['SELECT_BUTTON_ASSIGNMENT'] = 5,
+    ['CONFIRM_BUTTON_ASSIGNMENT'] = 6,
+    ['SHOW_CREDITS'] = 7
 }
 
 local action_types = {
@@ -68,10 +69,11 @@ local action_types = {
     ['TRADABLE_ITEM'] = 24,
     ['RANGED_ATTACK'] = 25,
     ['ATTACK'] = 26,
-    ['MAP'] = 27,
-    ['LAST_SYNTH'] = 28,
-    ['SWITCH_TARGET'] = 29,
-    ['SHOW_CREDITS'] = 30
+    ['ASSIST'] = 27,
+    ['MAP'] = 28,
+    ['LAST_SYNTH'] = 29,
+    ['SWITCH_TARGET'] = 30,
+    ['SHOW_CREDITS'] = 31
 }
 
 local prefix_lookup = {
@@ -102,6 +104,7 @@ local prefix_lookup = {
     [action_types.TRADABLE_ITEM] = 'item',
     [action_types.RANGED_ATTACK] = 'ct',
     [action_types.ATTACK] = 'a',
+    [action_types.ASSIST] = 'assist',
     [action_types.MAP] = 'map',
     [action_types.LAST_SYNTH] = 'ct',
     [action_types.SWITCH_TARGET] = 'ta'
@@ -464,6 +467,9 @@ function action_binder:submit_selected_option()
         elseif (self.action_type == action_types.DELETE) then
             self.state = states.SELECT_BUTTON_ASSIGNMENT
             self:display_button_assigner()
+        elseif (self.action_type == action_types.ASSIST) then
+            self.state = states.SELECT_PLAYER_BINDING
+            self:display_player_selector(false)
         elseif (self.action_type == action_types.ATTACK or self.action_type == action_types.RANGED_ATTACK) then
             if (self.action_type == action_types.ATTACK) then
                 self.action_name = 'Attack'
@@ -491,6 +497,10 @@ function action_binder:submit_selected_option()
             self.state = states.SELECT_ACTION
             self:display_action_selector()
         end
+    elseif (self.state == states.SELECT_PLAYER_BINDING) then
+        self.action_name = 'Assist ' .. self.selector:submit_selected_option().text
+        self.state = states.SELECT_BUTTON_ASSIGNMENT
+        self:display_button_assigner()
     elseif (self.state == states.SELECT_ACTION) then
         self.selection_states[states.SELECT_ACTION] = self.selector:export_selection_state()
         local option = self.selector:submit_selected_option()
@@ -550,6 +560,13 @@ function action_binder:go_back()
         self.selector:import_selection_state(self.selection_states[states.SELECT_ACTION_TYPE])
         self.selection_states[states.SELECT_ACTION_TYPE] = nil
     elseif (self.state == states.SELECT_ACTION) then
+        self.state = states.SELECT_ACTION_TYPE
+        self.action_type = nil
+        self.selector:set_page(self.selection_states[states.SELECT_ACTION_TYPE].page)
+        self:display_action_type_selector()
+        self.selector:import_selection_state(self.selection_states[states.SELECT_ACTION_TYPE])
+        self.selection_states[states.SELECT_ACTION_TYPE] = nil
+    elseif (self.state == states.SELECT_PLAYER_BINDING) then
         self.state = states.SELECT_ACTION_TYPE
         self.action_type = nil
         self.selector:set_page(self.selection_states[states.SELECT_ACTION_TYPE].page)
@@ -692,6 +709,7 @@ function action_binder:display_action_type_selector()
     action_type_list:append({id = action_types.TRADABLE_ITEM, name = 'Trade Item', icon = get_icon_pathbase() .. '/item.png'})
     action_type_list:append({id = action_types.RANGED_ATTACK, name = 'Ranged Attack', icon = get_icon_pathbase() .. '/ranged.png'})
     action_type_list:append({id = action_types.ATTACK, name = 'Attack', icon = get_icon_pathbase() .. '/attack.png'})
+    action_type_list:append({id = action_types.ASSIST, name = 'Assist', icon = get_icon_pathbase() .. '/assist.png'})
     action_type_list:append({id = action_types.SWITCH_TARGET, name = 'Switch Target', icon = get_icon_pathbase() .. '/targetnpc.png'})
     action_type_list:append({id = action_types.MAP, name = 'View Map', icon = get_icon_pathbase() .. '/map.png'})
     action_type_list:append({id = action_types.LAST_SYNTH, name = 'Repeat Last Synth', icon = get_icon_pathbase() .. '/synth.png'})
@@ -1613,6 +1631,14 @@ function action_binder:display_tradable_item_selector()
     self:show_control_hints('Confirm', 'Go Back')
 end
 
+function action_binder:display_player_selector(include_self)
+    self.title:text('Select Player to Assist')
+    self.title:show()
+
+    self.selector:display_options(get_party_names(include_self))
+    self:show_control_hints('Confirm', 'Go Back')
+end
+
 function action_binder:display_credits()
     self.title:text('XIVCrossbar Development Credits')
     self.title:show()
@@ -1993,6 +2019,25 @@ function get_mounts()
     mount_list:append({id = FAKE_ID, name = mount_names[mount_name], icon = icon_path, data = {target_type = target_type}})
 
     return mount_list
+end
+
+function get_party_names(include_self)
+    local player_name = windower.ffxi.get_player().name
+    local party = windower.ffxi.get_party()
+
+    icon_path = get_icon_pathbase() .. '/party-member.png'
+
+    local party_names = L{}
+
+    for key, person in pairs(party) do
+        if (person ~= nil and type(person) ~= 'number') then
+            if (include_self or person.name ~= player_name) then
+                party_names:append({id = FAKE_ID, name = person.name, icon = icon_path, data = NO_DATA})
+            end
+        end
+    end
+
+    return party_names
 end
 
 local INVENTORY_BAG = 0

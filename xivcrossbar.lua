@@ -91,6 +91,11 @@ function set_hotkey(hotbar, slot, action_type, action, target)
         action = 'a'
         alias = 'Attack'
         icon = 'attack'
+    elseif (action_type == 'assist') then
+        action_type = 'ct'
+        alias = action
+        action = action:lower()
+        icon = 'assist'
     elseif (action == 'Last Synth') then
         action = 'lastsynth'
         alias = 'Last Synth'
