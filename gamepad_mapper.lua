@@ -14,6 +14,12 @@ local states = {
     ['COMPLETE'] = 8
 }
 
+local icon_pack = nil
+
+local get_icon_pathbase = function()
+    return 'icons/iconpacks/' .. icon_pack
+end
+
 function gamepad_mapper:setup(buttonmapping, start_controller_wrappers_func, theme_options, base_x, base_y, max_width, max_height)
     self.is_showing = false
     self.buttonmapping = buttonmapping
@@ -41,6 +47,8 @@ function gamepad_mapper:setup(buttonmapping, start_controller_wrappers_func, the
     self.nintendo_hint = nil
     self.xbox_hint = nil
     self.gamecube_hint = nil
+
+    icon_pack = theme_options.iconpack
 
     self.images = L{}
     self.hints = L{}
@@ -175,10 +183,10 @@ function gamepad_mapper:display_gamepad_type_selector()
     local image_y = midpoint_y - 60
     local hint_y = midpoint_y + 80
 
-    self:create_image('other/binding_icons/playstation.png', playstation_x, image_y)
-    self:create_image('other/binding_icons/nintendo.png', nintendo_x, image_y)
-    self:create_image('other/binding_icons/xbox.png', xbox_x, image_y)
-    self:create_image('other/binding_icons/gamecube.png', gamecube_x, image_y)
+    self:create_image('ui/binding_icons/playstation.png', playstation_x, image_y)
+    self:create_image('ui/binding_icons/nintendo.png', nintendo_x, image_y)
+    self:create_image('ui/binding_icons/xbox.png', xbox_x, image_y)
+    self:create_image('ui/binding_icons/gamecube.png', gamecube_x, image_y)
 
     self.playstation_hint = self:create_hint('Playstation', playstation_x + 15, hint_y)
     self.nintendo_hint = self:create_hint('Nintendo', nintendo_x + 22, hint_y)
@@ -360,7 +368,8 @@ end
 
 function gamepad_mapper:create_image(path, x, y)
     local image = images.new({draggable = false})
-    local image_path = windower.addon_path .. '/images/' .. path
+
+    local image_path = windower.addon_path .. '/images/' .. get_icon_pathbase() .. '/' .. path
     setup_image(image, image_path)
     image:pos(x, y)
     self.images:append(image)
@@ -455,7 +464,7 @@ end
 
 function gamepad_mapper:build_button_icon(button_name, x, y)
     local button = self:get_standardized_button_name(button_name)
-    local path = 'other/binding_icons/facebuttons_' .. self.button_layout .. '_' .. button .. '.png'
+    local path = 'ui/binding_icons/facebuttons_' .. self.button_layout .. '_' .. button .. '.png'
     self:create_image(path, x, y)
 end
 
@@ -476,27 +485,27 @@ function gamepad_mapper:build_activewindow_icon(x, y)
 end
 
 function gamepad_mapper:build_minus_icon(x, y)
-    local path = 'other/binding_icons/minus_' .. self.button_layout .. '.png'
+    local path = 'ui/binding_icons/minus_' .. self.button_layout .. '.png'
     self:create_image(path, x, y)
 end
 
 function gamepad_mapper:build_plus_icon(x, y)
-    local path = 'other/binding_icons/plus_' .. self.button_layout .. '.png'
+    local path = 'ui/binding_icons/plus_' .. self.button_layout .. '.png'
     self:create_image(path, x, y)
 end
 
 function gamepad_mapper:build_left_trigger_icon(x, y)
-    local path = 'other/binding_icons/trigger_' .. self.button_layout .. '_left.png'
+    local path = 'ui/binding_icons/trigger_' .. self.button_layout .. '_left.png'
     self:create_image(path, x, y)
 end
 
 function gamepad_mapper:build_right_trigger_icon(x, y)
-    local path = 'other/binding_icons/trigger_' .. self.button_layout .. '_right.png'
+    local path = 'ui/binding_icons/trigger_' .. self.button_layout .. '_right.png'
     self:create_image(path, x, y)
 end
 
 function gamepad_mapper:show_connector_plus(x, y)
-    local path = 'other/binding_icons/plus.png'
+    local path = 'ui/binding_icons/plus.png'
     self:create_image(path, x, y)
 end
 
