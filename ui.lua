@@ -185,6 +185,8 @@ function ui:setup(theme_options, enchanted_items)
     self.enchanted_items = enchanted_items
     database:import()
 
+    icon_pack = theme_options.iconpack
+
     self.theme.hide_empty_slots = theme_options.hide_empty_slots
     self.theme.hide_action_names = theme_options.hide_action_names
     self.theme.hide_action_cost = theme_options.hide_action_cost
@@ -210,7 +212,6 @@ function ui:setup(theme_options, enchanted_items)
     self:setup_metrics(theme_options)
     self:load(theme_options)
 
-    icon_pack = theme_options.iconpack
 
     self.is_setup = true
 end
@@ -238,10 +239,10 @@ function ui:load(theme_options)
     self.bar_background = images.new(images_setup)
     if (self.is_compact) then
         self.bar_background:size(330, 180)
-        self.bar_background:path(windower.addon_path..'/images/other/bar_bg_compact.png')
+        self.bar_background:path(windower.addon_path .. 'images/' .. get_icon_pathbase() .. '/ui/bar_bg_compact.png')
     else
         self.bar_background:size(330, 220)
-        self.bar_background:path(windower.addon_path..'/images/other/bar_bg.png')
+        self.bar_background:path(windower.addon_path .. 'images/' .. get_icon_pathbase() .. '/ui/bar_bg.png')
     end
     self.bar_background:alpha(self.button_bg_alpha)
 
@@ -249,14 +250,14 @@ function ui:load(theme_options)
     self.action_binder_icon = images.new(images_setup)
     self.action_binder_icon:size(40, 40)
     self.action_binder_icon:pos(self:get_slot_x(1, 1) - 10, self:get_slot_y(1, 4) - 27)
-    self.action_binder_icon:path(windower.addon_path..'/images/other/binding_icons/minus_'..self.theme.button_layout..'.png')
+    self.action_binder_icon:path(windower.addon_path .. 'images/' .. get_icon_pathbase() .. '/ui/binding_icons/minus_'..self.theme.button_layout..'.png')
     self.action_binder_icon:alpha(255)
     self.action_binder_text = texts.new(text_setup)
     setup_text(self.action_binder_text, theme_options)
     self.action_binder_text:pos(self:get_slot_x(1, 1) + 35, self:get_slot_y(1, 4) - 15)
     self.action_binder_text:text('Bind an action')
     self.environment_selector_icon = images.new(images_setup)
-    self.environment_selector_icon:path(windower.addon_path..'/images/other/binding_icons/plus_'..self.theme.button_layout..'.png')
+    self.environment_selector_icon:path(windower.addon_path .. 'images/' .. get_icon_pathbase() .. '/ui/binding_icons/plus_'..self.theme.button_layout..'.png')
     self.environment_selector_icon:size(40, 40)
     self.environment_selector_icon:pos(self:get_slot_x(2, 5) - 5, self:get_slot_y(1, 4) - 27)
     self.environment_selector_icon:alpha(255)
@@ -301,9 +302,9 @@ function ui:load(theme_options)
             self.hotbars[h].slot_icon[i]:size(30, 30)
         
             setup_image(self.hotbars[h].slot_background[i], windower.addon_path..'/themes/' .. (theme_options.slot_theme:lower()) .. '/slot.png')
-            setup_image(self.hotbars[h].slot_icon[i], windower.addon_path..'/images/other/blank.png')
+            setup_image(self.hotbars[h].slot_icon[i], windower.addon_path .. '/images/' .. get_icon_pathbase() .. '/ui/blank.png')
             setup_image(self.hotbars[h].slot_frame[i], self.frame_image_path)
-            setup_image(self.hotbars[h].slot_element[i], windower.addon_path..'/images/other/blank.png')
+            setup_image(self.hotbars[h].slot_element[i], windower.addon_path .. '/images/' .. get_icon_pathbase() .. '/ui/blank.png')
             setup_text(self.hotbars[h].slot_text[i], theme_options)
             setup_text(self.hotbars[h].slot_cost[i], theme_options)
             setup_text(self.hotbars[h].slot_recast_text[i], theme_options)
@@ -329,7 +330,7 @@ function ui:load(theme_options)
 
     -- load feedback icon last so it stays above everything else
     self.feedback_icon = images.new(images_setup)
-    setup_image(self.feedback_icon, windower.addon_path .. '/images/other/feedback.png')
+    setup_image(self.feedback_icon, windower.addon_path .. '/images/' .. get_icon_pathbase() .. '/ui/feedback.png')
     self.feedback.max_opacity = theme_options.feedback_max_opacity
     self.feedback.speed = theme_options.feedback_speed
     self.feedback.current_opacity = self.feedback.max_opacity
@@ -624,7 +625,7 @@ function ui:load_action(player_hotbar, hotbar, slot, action, player_vitals, show
         local icon_path = maybe_get_custom_icon('items', action.action)
         if (icon_path ~= nil) then
             icon_overridden = true
-            icon_path = 'images/' .. icon_path
+            icon_path = '/images/' .. icon_path
         elseif (action.usable ~= nil) then
             icon_path = '/images/' .. get_icon_pathbase() .. '/usable_items/' .. action.action:lower():gsub("%s+", "_") .. '.png'
         elseif (action.target == 'me') then
@@ -641,7 +642,7 @@ function ui:load_action(player_hotbar, hotbar, slot, action, player_vitals, show
         local icon_path = maybe_get_custom_icon('mounts', action.action)
         if (icon_path ~= nil) then
             icon_overridden = true
-            icon_path = 'images/' .. icon_path
+            icon_path = '/images/' .. icon_path
         else
             icon_path = '/images/' .. get_icon_pathbase() .. '/mount.png'
         end
@@ -692,11 +693,11 @@ end
 function ui:clear_slot(hotbar, slot)
     self.hotbars[hotbar].slot_background[slot]:alpha(self.theme.slot_opacity)
     self.hotbars[hotbar].slot_frame[slot]:hide()
-    self.hotbars[hotbar].slot_icon[slot]:path(windower.addon_path .. '/images/other/blank.png')
+    self.hotbars[hotbar].slot_icon[slot]:path(windower.addon_path .. '/images/' .. get_icon_pathbase() .. '/ui/blank.png')
     self.hotbars[hotbar].slot_icon[slot]:hide()
     self.hotbars[hotbar].slot_icon[slot]:alpha(255)
     self.hotbars[hotbar].slot_icon[slot]:color(255, 255, 255)
-    self.hotbars[hotbar].slot_element[slot]:path(windower.addon_path .. '/images/other/blank.png')
+    self.hotbars[hotbar].slot_element[slot]:path(windower.addon_path .. '/images/' .. get_icon_pathbase() .. '/ui/blank.png')
     self.hotbars[hotbar].slot_element[slot]:alpha(255)
     self.hotbars[hotbar].slot_element[slot]:hide()
     self.hotbars[hotbar].slot_text[slot]:text('')
@@ -809,7 +810,7 @@ local last_log = os.clock()
 
 function ui:mark_default_set_action(h, i, environment)
     if (environment ~= nil) then
-        self.hotbars[h].slot_recast[i]:path(windower.addon_path..'/images/other/' .. environment ..'.png')
+        self.hotbars[h].slot_recast[i]:path(windower.addon_path .. '/images/' .. get_icon_pathbase() .. '/ui/' .. environment ..'.png')
         self.hotbars[h].slot_recast[i]:alpha(255)
         self.hotbars[h].slot_recast[i]:size(40, 40)
         self.hotbars[h].slot_recast[i]:pos(self:get_slot_x(h, i), self:get_slot_y(h, i))
@@ -939,7 +940,7 @@ function ui:check_recasts(player_hotbar, player_vitals, environment, spells, gam
 
                             if (total_tool_count == 0) then
                                 -- set up "Xed-out" element
-                                self.hotbars[h].slot_recast[i]:path(windower.addon_path..'/images/other/red-x.png')
+                                self.hotbars[h].slot_recast[i]:path(windower.addon_path .. '/images/' .. get_icon_pathbase() .. '/ui/red-x.png')
                                 self.hotbars[h].slot_recast[i]:alpha(150)
                                 self.hotbars[h].slot_recast[i]:size(40, 40)
                                 self.hotbars[h].slot_recast[i]:pos(self:get_slot_x(h, i), self:get_slot_y(h, i))
@@ -975,7 +976,7 @@ function ui:check_recasts(player_hotbar, player_vitals, environment, spells, gam
 
                                 if (total_tool_count == 0) then
                                     -- set up "Xed-out" element
-                                    self.hotbars[h].slot_recast[i]:path(windower.addon_path..'/images/other/red-x.png')
+                                    self.hotbars[h].slot_recast[i]:path(windower.addon_path .. '/images/' .. get_icon_pathbase() .. '/ui/red-x.png')
                                     self.hotbars[h].slot_recast[i]:alpha(150)
                                     self.hotbars[h].slot_recast[i]:size(40, 40)
                                     self.hotbars[h].slot_recast[i]:pos(self:get_slot_x(h, i), self:get_slot_y(h, i))
@@ -997,7 +998,7 @@ function ui:check_recasts(player_hotbar, player_vitals, environment, spells, gam
                                 self.disabled_slots.on_warmup[action.action] = self.enchanted_items:get_warmup_time(action.action)
 
                                 -- setup recast elements
-                                self.hotbars[h].slot_warmup[i]:path(windower.addon_path..'/images/other/blue-square.png')
+                                self.hotbars[h].slot_warmup[i]:path(windower.addon_path .. '/images/' .. get_icon_pathbase() .. '/ui/blue-square.png')
                             end
                         end
 
@@ -1014,7 +1015,7 @@ function ui:check_recasts(player_hotbar, player_vitals, environment, spells, gam
                                 self.disabled_slots.on_cooldown[action.action] = self.enchanted_items:get_cooldown_time(action.action)
 
                                 -- setup recast elements
-                                self.hotbars[h].slot_recast[i]:path(windower.addon_path..'/images/other/black-square.png')
+                                self.hotbars[h].slot_recast[i]:path(windower.addon_path .. '/images/' .. get_icon_pathbase() .. '/ui/black-square.png')
                             end
                         end
 
@@ -1028,7 +1029,7 @@ function ui:check_recasts(player_hotbar, player_vitals, environment, spells, gam
                             self.disabled_slots.on_cooldown[action.action] = skill_recasts[tonumber(skill.icon)]
 
                             -- setup recast elements
-                            self.hotbars[h].slot_recast[i]:path(windower.addon_path..'/images/other/black-square.png')
+                            self.hotbars[h].slot_recast[i]:path(windower.addon_path .. '/images/' .. get_icon_pathbase() .. '/ui/black-square.png')
                         end
 
                         in_cooldown = true
@@ -1091,10 +1092,10 @@ function ui:check_recasts(player_hotbar, player_vitals, environment, spells, gam
                         if (action.source_environment == environment or not dim_default_slots) then
                             if database.spells[(action.action):lower()] ~= nil and spellsThatRequireJA:contains((action.action):lower()) then
                                 -- set up "needs JA" element
-                                self.hotbars[h].slot_recast[i]:path(windower.addon_path..'/images/other/needs_job_ability.png')
+                                self.hotbars[h].slot_recast[i]:path(windower.addon_path .. '/images/' .. get_icon_pathbase() .. '/ui/needs_job_ability.png')
                             else
                                 -- set up "Xed-out" element
-                                self.hotbars[h].slot_recast[i]:path(windower.addon_path..'/images/other/red-x.png')
+                                self.hotbars[h].slot_recast[i]:path(windower.addon_path .. '/images/' .. get_icon_pathbase() .. '/ui/red-x.png')
                             end
                             self.hotbars[h].slot_recast[i]:alpha(150)
                             self.hotbars[h].slot_recast[i]:size(40, 40)
@@ -1148,7 +1149,7 @@ function ui:check_recasts(player_hotbar, player_vitals, environment, spells, gam
                             self.hotbars[h].slot_cost[i]:show()
                         end
 
-                        self.hotbars[h].slot_frame[i]:path(windower.addon_path..'/images/other/frame_step' .. frame_step .. '.png')
+                        self.hotbars[h].slot_frame[i]:path(windower.addon_path .. '/images/' .. get_icon_pathbase() .. '/ui/frame_step' .. frame_step .. '.png')
                         self.hotbars[h].slot_warmup[i]:path(windower.addon_path..'/images/' .. get_icon_pathbase() .. '/skillchain/' .. skillchain_prop:lower() .. '.png')
                         self.hotbars[h].slot_warmup[i]:size(40, 40)
                         self.hotbars[h].slot_warmup[i]:pos(self:get_slot_x(h, i), self:get_slot_y(h, i))
@@ -1197,7 +1198,7 @@ end
 function ui:show_controller_icons(h)
     -- set up dpad element
     local dpadSlot = 9
-    self.hotbars[h].slot_recast[dpadSlot]:path(windower.addon_path..'/images/other/dpad_'..self.theme.button_layout..'.png')
+    self.hotbars[h].slot_recast[dpadSlot]:path(windower.addon_path .. '/images/' .. get_icon_pathbase() .. '/ui/dpad_'..self.theme.button_layout..'.png')
     self.hotbars[h].slot_recast[dpadSlot]:alpha(255)
     self.hotbars[h].slot_recast[dpadSlot]:size(40, 40)
     self.hotbars[h].slot_recast[dpadSlot]:pos(self:get_slot_x(h, dpadSlot), self:get_slot_y(h, dpadSlot) + 5)
@@ -1205,7 +1206,7 @@ function ui:show_controller_icons(h)
 
     -- set up face buttons element
     local faceSlot = 10
-    self.hotbars[h].slot_recast[faceSlot]:path(windower.addon_path..'/images/other/facebuttons_'..self.theme.button_layout..'.png')
+    self.hotbars[h].slot_recast[faceSlot]:path(windower.addon_path .. '/images/' .. get_icon_pathbase() .. '/ui/facebuttons_'..self.theme.button_layout..'.png')
     self.hotbars[h].slot_recast[faceSlot]:alpha(255)
     self.hotbars[h].slot_recast[faceSlot]:size(40, 40)
     self.hotbars[h].slot_recast[faceSlot]:pos(self:get_slot_x(h, faceSlot), self:get_slot_y(h, faceSlot) + 5)

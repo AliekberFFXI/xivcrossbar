@@ -638,7 +638,7 @@ function action_binder:display_action_type_selector()
     local black_magic_jobs = {BLM = true, RDM = true, DRK = true, SCH = true, GEO = true, RUN = true}
 
     local action_type_list = L{}
-    action_type_list:append({id = action_types.DELETE, name = 'Remove a Binding', icon = 'other/red-x.png'})
+    action_type_list:append({id = action_types.DELETE, name = 'Remove a Binding', icon = 'ui/red-x.png'})
     action_type_list:append({id = action_types.JOB_ABILITY, name = 'Job Ability', icon = 'icons/abilities/00001.png', icon_offset = 4})
     action_type_list:append({id = action_types.WEAPONSKILL, name = 'Weaponskill', icon = 'icons/weapons/sword.png', icon_offset = 4})
     if (pet_jobs[main_job] or pet_jobs[sub_job]) then
@@ -857,7 +857,7 @@ end
 
 function action_binder:show_icon(path, x, y)
     local icon = images.new({draggable = false})
-    local icon_path = windower.addon_path .. '/images/' .. path
+    local icon_path = windower.addon_path .. 'images/' .. get_icon_pathbase() .. '/' .. path
     icon:path(icon_path)
     icon:repeat_xy(1, 1)
     icon:draggable(false)
@@ -876,56 +876,56 @@ function action_binder:show_pressed_buttons()
 
     if (self.theme_options.hotbar_number == 4) then
         if (self.active_crossbar == 1) then
-            icons:append('other/binding_icons/trigger_' .. self.button_layout .. '_left.png')
-            icons:append('other/binding_icons/plus.png')
+            icons:append('ui/binding_icons/trigger_' .. self.button_layout .. '_left.png')
+            icons:append('ui/binding_icons/plus.png')
         elseif (self.active_crossbar == 2) then
-            icons:append('other/binding_icons/trigger_' .. self.button_layout .. '_right.png')
-            icons:append('other/binding_icons/plus.png')
+            icons:append('ui/binding_icons/trigger_' .. self.button_layout .. '_right.png')
+            icons:append('ui/binding_icons/plus.png')
         elseif (self.active_crossbar == 3) then
-            icons:append('other/binding_icons/trigger_' .. self.button_layout .. '_right.png')
-            icons:append('other/binding_icons/arrow_right.png')
-            icons:append('other/binding_icons/trigger_' .. self.button_layout .. '_left.png')
-            icons:append('other/binding_icons/plus.png')
+            icons:append('ui/binding_icons/trigger_' .. self.button_layout .. '_right.png')
+            icons:append('ui/binding_icons/arrow_right.png')
+            icons:append('ui/binding_icons/trigger_' .. self.button_layout .. '_left.png')
+            icons:append('ui/binding_icons/plus.png')
         elseif (self.active_crossbar == 4) then
-            icons:append('other/binding_icons/trigger_' .. self.button_layout .. '_left.png')
-            icons:append('other/binding_icons/arrow_right.png')
-            icons:append('other/binding_icons/trigger_' .. self.button_layout .. '_right.png')
-            icons:append('other/binding_icons/plus.png')
+            icons:append('ui/binding_icons/trigger_' .. self.button_layout .. '_left.png')
+            icons:append('ui/binding_icons/arrow_right.png')
+            icons:append('ui/binding_icons/trigger_' .. self.button_layout .. '_right.png')
+            icons:append('ui/binding_icons/plus.png')
         end
     else
         if (self.trigger_left_pressed) then
-            icons:append('other/binding_icons/trigger_' .. self.button_layout .. '_left.png')
-            icons:append('other/binding_icons/plus.png')
+            icons:append('ui/binding_icons/trigger_' .. self.button_layout .. '_left.png')
+            icons:append('ui/binding_icons/plus.png')
         end
         if (self.trigger_right_pressed) then
-            icons:append('other/binding_icons/trigger_' .. self.button_layout .. '_right.png')
-            icons:append('other/binding_icons/plus.png')
+            icons:append('ui/binding_icons/trigger_' .. self.button_layout .. '_right.png')
+            icons:append('ui/binding_icons/plus.png')
         end
     end
 
     if (self.dpad_left_pressed) then
-        icons:append('other/binding_icons/dpad_' .. self.button_layout .. '_left.png')
+        icons:append('ui/binding_icons/dpad_' .. self.button_layout .. '_left.png')
     end
     if (self.dpad_right_pressed) then
-        icons:append('other/binding_icons/dpad_' .. self.button_layout .. '_right.png')
+        icons:append('ui/binding_icons/dpad_' .. self.button_layout .. '_right.png')
     end
     if (self.dpad_down_pressed) then
-        icons:append('other/binding_icons/dpad_' .. self.button_layout .. '_down.png')
+        icons:append('ui/binding_icons/dpad_' .. self.button_layout .. '_down.png')
     end
     if (self.dpad_up_pressed) then
-        icons:append('other/binding_icons/dpad_' .. self.button_layout .. '_up.png')
+        icons:append('ui/binding_icons/dpad_' .. self.button_layout .. '_up.png')
     end
     if (self.button_a_pressed) then
-        icons:append('other/binding_icons/facebuttons_' .. self.button_layout .. '_a.png')
+        icons:append('ui/binding_icons/facebuttons_' .. self.button_layout .. '_a.png')
     end
     if (self.button_b_pressed) then
-        icons:append('other/binding_icons/facebuttons_' .. self.button_layout .. '_b.png')
+        icons:append('ui/binding_icons/facebuttons_' .. self.button_layout .. '_b.png')
     end
     if (self.button_x_pressed) then
-        icons:append('other/binding_icons/facebuttons_' .. self.button_layout .. '_x.png')
+        icons:append('ui/binding_icons/facebuttons_' .. self.button_layout .. '_x.png')
     end
     if (self.button_y_pressed) then
-        icons:append('other/binding_icons/facebuttons_' .. self.button_layout .. '_y.png')
+        icons:append('ui/binding_icons/facebuttons_' .. self.button_layout .. '_y.png')
     end
     
     local all_icon_width = #icons * 40
@@ -948,56 +948,56 @@ function action_binder:confirm_buttons()
 
     if (self.theme_options.hotbar_number == 4) then
         if (self.active_crossbar == 1) then
-            icons:append('other/binding_icons/trigger_' .. self.button_layout .. '_left.png')
-            icons:append('other/binding_icons/plus.png')
+            icons:append('ui/binding_icons/trigger_' .. self.button_layout .. '_left.png')
+            icons:append('ui/binding_icons/plus.png')
         elseif (self.active_crossbar == 2) then
-            icons:append('other/binding_icons/trigger_' .. self.button_layout .. '_right.png')
-            icons:append('other/binding_icons/plus.png')
+            icons:append('ui/binding_icons/trigger_' .. self.button_layout .. '_right.png')
+            icons:append('ui/binding_icons/plus.png')
         elseif (self.active_crossbar == 3) then
-            icons:append('other/binding_icons/trigger_' .. self.button_layout .. '_right.png')
-            icons:append('other/binding_icons/arrow_right.png')
-            icons:append('other/binding_icons/trigger_' .. self.button_layout .. '_left.png')
-            icons:append('other/binding_icons/plus.png')
+            icons:append('ui/binding_icons/trigger_' .. self.button_layout .. '_right.png')
+            icons:append('ui/binding_icons/arrow_right.png')
+            icons:append('ui/binding_icons/trigger_' .. self.button_layout .. '_left.png')
+            icons:append('ui/binding_icons/plus.png')
         elseif (self.active_crossbar == 4) then
-            icons:append('other/binding_icons/trigger_' .. self.button_layout .. '_left.png')
-            icons:append('other/binding_icons/arrow_right.png')
-            icons:append('other/binding_icons/trigger_' .. self.button_layout .. '_right.png')
-            icons:append('other/binding_icons/plus.png')
+            icons:append('ui/binding_icons/trigger_' .. self.button_layout .. '_left.png')
+            icons:append('ui/binding_icons/arrow_right.png')
+            icons:append('ui/binding_icons/trigger_' .. self.button_layout .. '_right.png')
+            icons:append('ui/binding_icons/plus.png')
         end
     else
         if (self.trigger_left_pressed) then
-            icons:append('other/binding_icons/trigger_' .. self.button_layout .. '_left.png')
-            icons:append('other/binding_icons/plus.png')
+            icons:append('ui/binding_icons/trigger_' .. self.button_layout .. '_left.png')
+            icons:append('ui/binding_icons/plus.png')
         end
         if (self.trigger_right_pressed) then
-            icons:append('other/binding_icons/trigger_' .. self.button_layout .. '_right.png')
-            icons:append('other/binding_icons/plus.png')
+            icons:append('ui/binding_icons/trigger_' .. self.button_layout .. '_right.png')
+            icons:append('ui/binding_icons/plus.png')
         end
     end
 
     if (self.hotkey == 1) then
-        icons:append('other/binding_icons/dpad_' .. self.button_layout .. '_left.png')
+        icons:append('ui/binding_icons/dpad_' .. self.button_layout .. '_left.png')
     end
     if (self.hotkey == 3) then
-        icons:append('other/binding_icons/dpad_' .. self.button_layout .. '_right.png')
+        icons:append('ui/binding_icons/dpad_' .. self.button_layout .. '_right.png')
     end
     if (self.hotkey == 2) then
-        icons:append('other/binding_icons/dpad_' .. self.button_layout .. '_down.png')
+        icons:append('ui/binding_icons/dpad_' .. self.button_layout .. '_down.png')
     end
     if (self.hotkey == 4) then
-        icons:append('other/binding_icons/dpad_' .. self.button_layout .. '_up.png')
+        icons:append('ui/binding_icons/dpad_' .. self.button_layout .. '_up.png')
     end
     if (self.hotkey == 6) then
-        icons:append('other/binding_icons/facebuttons_' .. self.button_layout .. '_a.png')
+        icons:append('ui/binding_icons/facebuttons_' .. self.button_layout .. '_a.png')
     end
     if (self.hotkey == 5) then
-        icons:append('other/binding_icons/facebuttons_' .. self.button_layout .. '_b.png')
+        icons:append('ui/binding_icons/facebuttons_' .. self.button_layout .. '_b.png')
     end
     if (self.hotkey == 7) then
-        icons:append('other/binding_icons/facebuttons_' .. self.button_layout .. '_x.png')
+        icons:append('ui/binding_icons/facebuttons_' .. self.button_layout .. '_x.png')
     end
     if (self.hotkey == 8) then
-        icons:append('other/binding_icons/facebuttons_' .. self.button_layout .. '_y.png')
+        icons:append('ui/binding_icons/facebuttons_' .. self.button_layout .. '_y.png')
     end
 
     local all_icon_width = #icons * 40
@@ -1023,19 +1023,19 @@ function action_binder:show_exit_hint()
 
     if (self.button_layout == 'gamecube') then
         if (self.confirm_button == 'a') then
-            self:show_hint('Exit', 'other/binding_icons/minus_' .. self.button_layout .. '.png', x, y)
+            self:show_hint('Exit', 'ui/binding_icons/minus_' .. self.button_layout .. '.png', x, y)
         end
     elseif (self.button_layout == 'playstation') then
         if (self.confirm_button == 'cross') then
-            self:show_hint('Exit', 'other/binding_icons/minus_' .. self.button_layout .. '.png', x, y)
+            self:show_hint('Exit', 'ui/binding_icons/minus_' .. self.button_layout .. '.png', x, y)
         end
     elseif (self.button_layout == 'xbox') then
         if (self.confirm_button == 'a') then
-            self:show_hint('Exit', 'other/binding_icons/minus_' .. self.button_layout .. '.png', x, y)
+            self:show_hint('Exit', 'ui/binding_icons/minus_' .. self.button_layout .. '.png', x, y)
         end
     elseif (self.button_layout == 'nintendo') then
         if (self.confirm_button == 'b') then
-            self:show_hint('Exit', 'other/binding_icons/minus_' .. self.button_layout .. '.png', x, y)
+            self:show_hint('Exit', 'ui/binding_icons/minus_' .. self.button_layout .. '.png', x, y)
         end
     end
 end
@@ -1052,85 +1052,85 @@ function action_binder:show_control_hints(confirm, go_back)
 
     if (self.button_layout == 'gamecube') then
         if (self.confirm_button == 'a') then
-            self:show_hint(confirm, 'other/binding_icons/facebuttons_' .. self.button_layout .. '_a.png', x2, y)
+            self:show_hint(confirm, 'ui/binding_icons/facebuttons_' .. self.button_layout .. '_a.png', x2, y)
         elseif (self.confirm_button == 'b') then
-            self:show_hint(confirm, 'other/binding_icons/facebuttons_' .. self.button_layout .. '_b.png', x2, y)
+            self:show_hint(confirm, 'ui/binding_icons/facebuttons_' .. self.button_layout .. '_b.png', x2, y)
         elseif (self.confirm_button == 'x') then
-            self:show_hint(confirm, 'other/binding_icons/facebuttons_' .. self.button_layout .. '_x.png', x2, y)
+            self:show_hint(confirm, 'ui/binding_icons/facebuttons_' .. self.button_layout .. '_x.png', x2, y)
         elseif (self.confirm_button == 'y') then
-            self:show_hint(confirm, 'other/binding_icons/facebuttons_' .. self.button_layout .. '_y.png', x2, y)
+            self:show_hint(confirm, 'ui/binding_icons/facebuttons_' .. self.button_layout .. '_y.png', x2, y)
         end
     elseif (self.button_layout == 'playstation') then
         if (self.confirm_button == 'cross') then
-            self:show_hint(confirm, 'other/binding_icons/facebuttons_' .. self.button_layout .. '_a.png', x2, y)
+            self:show_hint(confirm, 'ui/binding_icons/facebuttons_' .. self.button_layout .. '_a.png', x2, y)
         elseif (self.confirm_button == 'square') then
-            self:show_hint(confirm, 'other/binding_icons/facebuttons_' .. self.button_layout .. '_b.png', x2, y)
+            self:show_hint(confirm, 'ui/binding_icons/facebuttons_' .. self.button_layout .. '_b.png', x2, y)
         elseif (self.confirm_button == 'circle') then
-            self:show_hint(confirm, 'other/binding_icons/facebuttons_' .. self.button_layout .. '_x.png', x2, y)
+            self:show_hint(confirm, 'ui/binding_icons/facebuttons_' .. self.button_layout .. '_x.png', x2, y)
         elseif (self.confirm_button == 'triangle') then
-            self:show_hint(confirm, 'other/binding_icons/facebuttons_' .. self.button_layout .. '_y.png', x2, y)
+            self:show_hint(confirm, 'ui/binding_icons/facebuttons_' .. self.button_layout .. '_y.png', x2, y)
         end
     elseif (self.button_layout == 'xbox') then
         if (self.confirm_button == 'a') then
-            self:show_hint(confirm, 'other/binding_icons/facebuttons_' .. self.button_layout .. '_a.png', x2, y)
+            self:show_hint(confirm, 'ui/binding_icons/facebuttons_' .. self.button_layout .. '_a.png', x2, y)
         elseif (self.confirm_button == 'x') then
-            self:show_hint(confirm, 'other/binding_icons/facebuttons_' .. self.button_layout .. '_b.png', x2, y)
+            self:show_hint(confirm, 'ui/binding_icons/facebuttons_' .. self.button_layout .. '_b.png', x2, y)
         elseif (self.confirm_button == 'b') then
-            self:show_hint(confirm, 'other/binding_icons/facebuttons_' .. self.button_layout .. '_x.png', x2, y)
+            self:show_hint(confirm, 'ui/binding_icons/facebuttons_' .. self.button_layout .. '_x.png', x2, y)
         elseif (self.confirm_button == 'y') then
-            self:show_hint(confirm, 'other/binding_icons/facebuttons_' .. self.button_layout .. '_y.png', x2, y)
+            self:show_hint(confirm, 'ui/binding_icons/facebuttons_' .. self.button_layout .. '_y.png', x2, y)
         end
     elseif (self.button_layout == 'nintendo') then
         if (self.confirm_button == 'b') then
-            self:show_hint(confirm, 'other/binding_icons/facebuttons_' .. self.button_layout .. '_a.png', x2, y)
+            self:show_hint(confirm, 'ui/binding_icons/facebuttons_' .. self.button_layout .. '_a.png', x2, y)
         elseif (self.confirm_button == 'y') then
-            self:show_hint(confirm, 'other/binding_icons/facebuttons_' .. self.button_layout .. '_b.png', x2, y)
+            self:show_hint(confirm, 'ui/binding_icons/facebuttons_' .. self.button_layout .. '_b.png', x2, y)
         elseif (self.confirm_button == 'a') then
-            self:show_hint(confirm, 'other/binding_icons/facebuttons_' .. self.button_layout .. '_x.png', x2, y)
+            self:show_hint(confirm, 'ui/binding_icons/facebuttons_' .. self.button_layout .. '_x.png', x2, y)
         elseif (self.confirm_button == 'x') then
-            self:show_hint(confirm, 'other/binding_icons/facebuttons_' .. self.button_layout .. '_y.png', x2, y)
+            self:show_hint(confirm, 'ui/binding_icons/facebuttons_' .. self.button_layout .. '_y.png', x2, y)
         end
     end
 
     if (self.button_layout == 'gamecube') then
         if (self.cancel_button == 'a') then
-            self:show_hint(go_back, 'other/binding_icons/facebuttons_' .. self.button_layout .. '_a.png', x1, y)
+            self:show_hint(go_back, 'ui/binding_icons/facebuttons_' .. self.button_layout .. '_a.png', x1, y)
         elseif (self.cancel_button == 'b') then
-            self:show_hint(go_back, 'other/binding_icons/facebuttons_' .. self.button_layout .. '_b.png', x1, y)
+            self:show_hint(go_back, 'ui/binding_icons/facebuttons_' .. self.button_layout .. '_b.png', x1, y)
         elseif (self.cancel_button == 'x') then
-            self:show_hint(go_back, 'other/binding_icons/facebuttons_' .. self.button_layout .. '_x.png', x1, y)
+            self:show_hint(go_back, 'ui/binding_icons/facebuttons_' .. self.button_layout .. '_x.png', x1, y)
         elseif (self.cancel_button == 'y') then
-            self:show_hint(go_back, 'other/binding_icons/facebuttons_' .. self.button_layout .. '_y.png', x1, y)
+            self:show_hint(go_back, 'ui/binding_icons/facebuttons_' .. self.button_layout .. '_y.png', x1, y)
         end
     elseif (self.button_layout == 'playstation') then
         if (self.cancel_button == 'cross') then
-            self:show_hint(go_back, 'other/binding_icons/facebuttons_' .. self.button_layout .. '_a.png', x1, y)
+            self:show_hint(go_back, 'ui/binding_icons/facebuttons_' .. self.button_layout .. '_a.png', x1, y)
         elseif (self.cancel_button == 'square') then
-            self:show_hint(go_back, 'other/binding_icons/facebuttons_' .. self.button_layout .. '_b.png', x1, y)
+            self:show_hint(go_back, 'ui/binding_icons/facebuttons_' .. self.button_layout .. '_b.png', x1, y)
         elseif (self.cancel_button == 'circle') then
-            self:show_hint(go_back, 'other/binding_icons/facebuttons_' .. self.button_layout .. '_x.png', x1, y)
+            self:show_hint(go_back, 'ui/binding_icons/facebuttons_' .. self.button_layout .. '_x.png', x1, y)
         elseif (self.cancel_button == 'triangle') then
-            self:show_hint(go_back, 'other/binding_icons/facebuttons_' .. self.button_layout .. '_y.png', x1, y)
+            self:show_hint(go_back, 'ui/binding_icons/facebuttons_' .. self.button_layout .. '_y.png', x1, y)
         end
     elseif (self.button_layout == 'xbox') then
         if (self.cancel_button == 'a') then
-            self:show_hint(go_back, 'other/binding_icons/facebuttons_' .. self.button_layout .. '_a.png', x1, y)
+            self:show_hint(go_back, 'ui/binding_icons/facebuttons_' .. self.button_layout .. '_a.png', x1, y)
         elseif (self.cancel_button == 'x') then
-            self:show_hint(go_back, 'other/binding_icons/facebuttons_' .. self.button_layout .. '_b.png', x1, y)
+            self:show_hint(go_back, 'ui/binding_icons/facebuttons_' .. self.button_layout .. '_b.png', x1, y)
         elseif (self.cancel_button == 'b') then
-            self:show_hint(go_back, 'other/binding_icons/facebuttons_' .. self.button_layout .. '_x.png', x1, y)
+            self:show_hint(go_back, 'ui/binding_icons/facebuttons_' .. self.button_layout .. '_x.png', x1, y)
         elseif (self.cancel_button == 'y') then
-            self:show_hint(go_back, 'other/binding_icons/facebuttons_' .. self.button_layout .. '_y.png', x1, y)
+            self:show_hint(go_back, 'ui/binding_icons/facebuttons_' .. self.button_layout .. '_y.png', x1, y)
         end
     elseif (self.button_layout == 'nintendo') then
         if (self.cancel_button == 'b') then
-            self:show_hint(go_back, 'other/binding_icons/facebuttons_' .. self.button_layout .. '_a.png', x1, y)
+            self:show_hint(go_back, 'ui/binding_icons/facebuttons_' .. self.button_layout .. '_a.png', x1, y)
         elseif (self.cancel_button == 'y') then
-            self:show_hint(go_back, 'other/binding_icons/facebuttons_' .. self.button_layout .. '_b.png', x1, y)
+            self:show_hint(go_back, 'ui/binding_icons/facebuttons_' .. self.button_layout .. '_b.png', x1, y)
         elseif (self.cancel_button == 'a') then
-            self:show_hint(go_back, 'other/binding_icons/facebuttons_' .. self.button_layout .. '_x.png', x1, y)
+            self:show_hint(go_back, 'ui/binding_icons/facebuttons_' .. self.button_layout .. '_x.png', x1, y)
         elseif (self.cancel_button == 'x') then
-            self:show_hint(go_back, 'other/binding_icons/facebuttons_' .. self.button_layout .. '_y.png', x1, y)
+            self:show_hint(go_back, 'ui/binding_icons/facebuttons_' .. self.button_layout .. '_y.png', x1, y)
         end
     end
 end
@@ -1673,7 +1673,7 @@ function get_bst_pet_commands(job_id, job_level)
             if (job_level >= command.level) then
                 local skill = database.abilities[command.name:lower()]
                 local target_type = res.job_abilities[command.id].targets
-                local icon_path = 'other/red-x.png'
+                local icon_path = 'ui/red-x.png'
                 local icon_offset = 0
                 if (skill ~= nil) then
                     icon_path = maybe_get_custom_icon('pet-commands', name)
@@ -1705,7 +1705,7 @@ function get_smn_pet_commands(job_id, job_level)
             if (job_level >= command.level) then
                 local skill = database.abilities[command.name:lower()]
                 local target_type = res.job_abilities[command.id].targets
-                local icon_path = 'other/red-x.png'
+                local icon_path = 'ui/red-x.png'
                 local icon_offset = 0
                 if (skill ~= nil) then
                     icon_path = maybe_get_custom_icon('pet-commands', name)
@@ -1744,7 +1744,7 @@ function get_pup_pet_commands(job_id, job_level)
             if (job_level >= command.level) then
                 local skill = database.abilities[command.name:lower()]
                 local target_type = res.job_abilities[command.id].targets
-                local icon_path = 'other/red-x.png'
+                local icon_path = 'ui/red-x.png'
                 local icon_offset = 0
                 if (skill ~= nil) then
                     icon_path = maybe_get_custom_icon('pet-commands', name)
@@ -1847,7 +1847,7 @@ function get_dances(job_id, job_level)
             if (job_level >= dance.level) then
                 local skill = database.abilities[dance.name:lower()]
                 local target_type = res.job_abilities[dance.id].targets
-                local icon_path = 'other/red-x.png'
+                local icon_path = 'ui/red-x.png'
                 local icon_offset = 0
                 if (skill ~= nil) then
                     icon_path = maybe_get_custom_icon('dances', dance.name)
@@ -1882,7 +1882,7 @@ function get_wards(job_id, job_level)
             if (job_level >= ward.level) then
                 local skill = database.abilities[ward.name:lower()]
                 local target_type = res.job_abilities[ward.id].targets
-                local icon_path = 'other/red-x.png'
+                local icon_path = 'ui/red-x.png'
                 local icon_offset = 0
                 if (skill ~= nil) then
                     icon_path = maybe_get_custom_icon('wards', ward.name)
@@ -1916,7 +1916,7 @@ function get_effusions(job_id, job_level)
             if (job_level >= effusion.level) then
                 local skill = database.abilities[effusion.name:lower()]
                 local target_type = res.job_abilities[effusion.id].targets
-                local icon_path = 'other/red-x.png'
+                local icon_path = 'ui/red-x.png'
                 local icon_offset = 0
                 if (skill ~= nil) then
                     icon_path = maybe_get_custom_icon('effusions', effusion.name)
@@ -1978,10 +1978,6 @@ function get_mounts()
         local icon_path = maybe_get_custom_icon('mounts', mount_name)
         if (icon_path == nil) then
             icon_path = get_icon_pathbase() .. '/mount.png'
-        end
-
-        if (not mount_names[mount_name]) then
-            windower.send_command('input /echo ' .. mount_name)
         end
 
         mount_list:append({id = FAKE_ID, name = mount_names[mount_name], icon = icon_path, data = {target_type = target_type}})
