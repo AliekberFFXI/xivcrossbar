@@ -465,7 +465,7 @@ function ui:load_player_hotbar(player_hotbar, player_vitals, environment, gamepa
                 action = player_hotbar[environment]['hotbar_' .. h]['slot_' .. slot]
             end
 
-            self:load_action(player_hotbar, h, slot, action, player_vitals, shouldDrawThisBar)
+            self:load_action(player_hotbar, environment, h, slot, action, player_vitals, shouldDrawThisBar)
         end
     end
 end
@@ -499,7 +499,7 @@ local JOB_ABILITY_TYPE_LOOKUP = {
 }
 
 -- load action into a hotbar slot
-function ui:load_action(player_hotbar, hotbar, slot, action, player_vitals, show_when_ready)
+function ui:load_action(player_hotbar, environment, hotbar, slot, action, player_vitals, show_when_ready)
     local is_disabled = false
 
     self:clear_slot(hotbar, slot)
@@ -508,7 +508,7 @@ function ui:load_action(player_hotbar, hotbar, slot, action, player_vitals, show
 
     -- if slot is empty, check if there is an entry in the default crossbar
     if (action == nil or action.action == nil) then
-        action = maybe_get_default_action(player_hotbar, '', hotbar, slot)
+        action = maybe_get_default_action(player_hotbar, environment, hotbar, slot)
 
         -- if default crossbar slot is empty, then hide the slot
         if (action == nil) then

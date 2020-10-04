@@ -352,17 +352,18 @@ end
 -- execute action from given slot
 function player:execute_action(slot)
     local h = self.hotbar_settings.active_hotbar
+    local env = self.hotbar_settings.active_environment
 
-    local action = self.hotbar[self.hotbar_settings.active_environment]['hotbar_' .. h]['slot_' .. slot]
+    local action = self.hotbar[env]['hotbar_' .. h]['slot_' .. slot]
     local is_missing = action == nil or action.action == nil
 
-    if (is_missing and self.hotbar['default'] and self.hotbar['default']['hotbar_' .. h] and
+    if (is_missing and env ~= 'default' and env ~= 'job-default' and env ~= 'all-jobs-default' and self.hotbar['default'] and self.hotbar['default']['hotbar_' .. h] and
         self.hotbar['default']['hotbar_' .. h]['slot_' .. slot]) then
         action = self.hotbar['default']['hotbar_' .. h]['slot_' .. slot]
-    elseif (is_missing and self.hotbar['job-default'] and self.hotbar['job-default']['hotbar_' .. h] and
+    elseif (is_missing and env ~= 'job-default' and env ~= 'all-jobs-default' and self.hotbar['job-default'] and self.hotbar['job-default']['hotbar_' .. h] and
         self.hotbar['job-default']['hotbar_' .. h]['slot_' .. slot]) then
         action = self.hotbar['job-default']['hotbar_' .. h]['slot_' .. slot]
-    elseif (is_missing and self.hotbar['all-jobs-default'] and self.hotbar['all-jobs-default']['hotbar_' .. h] and
+    elseif (is_missing and env ~= 'all-jobs-default' and self.hotbar['all-jobs-default'] and self.hotbar['all-jobs-default']['hotbar_' .. h] and
         self.hotbar['all-jobs-default']['hotbar_' .. h]['slot_' .. slot]) then
         action = self.hotbar['all-jobs-default']['hotbar_' .. h]['slot_' .. slot]
     end
