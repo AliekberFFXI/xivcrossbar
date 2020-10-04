@@ -639,6 +639,8 @@ function ui:load_action(player_hotbar, environment, hotbar, slot, action, player
             self.hotbars[hotbar].slot_icon[slot]:show()
         end
     elseif (action.type == 'mount') then
+        self.hotbars[hotbar].slot_icon[slot]:pos(self:get_slot_x(hotbar, slot), self:get_slot_y(hotbar, slot))
+
         local icon_path = maybe_get_custom_icon('mounts', action.action)
         if (icon_path ~= nil) then
             icon_overridden = true
