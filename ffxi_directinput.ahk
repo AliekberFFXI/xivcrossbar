@@ -34,25 +34,25 @@ If WinActive("ahk_class FFXiClass") {
   GetKeyState, joyp, JoyPOV
   If (joyp == 0) {
     If (lastKeyPressed != "dpad_up") {
-      SendInput {f3}
+      SendInput {f1}
 
       lastKeyPressed:= "dpad_up"
     }
   } else If (joyp == 9000) {
     If (lastKeyPressed != "dpad_right") {
-      SendInput {f4}
+      SendInput {f2}
 
       lastKeyPressed:= "dpad_right"
     }
   } else If (joyp == 18000) {
     If (lastKeyPressed != "dpad_down") {
-      SendInput {f5}
+      SendInput {f3}
 
       lastKeyPressed:= "dpad_down"
     }
   } else If (joyp == 27000) {
     If (lastKeyPressed != "dpad_left") {
-      SendInput {f6}
+      SendInput {f4}
 
       lastKeyPressed:= "dpad_left"
     }
@@ -80,7 +80,7 @@ return
 Joy1::
 If WinActive("ahk_class FFXiClass") {
   If (isLeftTriggerDown or isRightTriggerDown) {
-    SendInput {f10}
+    SendInput {f8}
   } else {
     If (ButtonLayout == "GAMECUBE" or ButtonLayout == "XBOX") {
       If (ConfirmButton == "Y") {
@@ -121,7 +121,7 @@ return
 Joy2::
 If WinActive("ahk_class FFXiClass") {
   If (isLeftTriggerDown or isRightTriggerDown) {
-    SendInput {f8}
+    SendInput {f6}
   } else {
     If (ButtonLayout == "GAMECUBE") {
       If (ConfirmButton == "B") {
@@ -172,7 +172,7 @@ return
 Joy3::
 If WinActive("ahk_class FFXiClass") {
   If (isLeftTriggerDown or isRightTriggerDown) {
-    SendInput {f7}
+    SendInput {f5}
   } else {
     If (ButtonLayout == "GAMECUBE" or ButtonLayout == "XBOX") {
       If (ConfirmButton == "A") {
@@ -213,7 +213,7 @@ return
 Joy4::
 If WinActive("ahk_class FFXiClass") {
   If (isLeftTriggerDown or isRightTriggerDown) {
-    SendInput {f9}
+    SendInput {f7}
   } else {
     If (ButtonLayout == "GAMECUBE") {
       If (ConfirmButton == "X") {
@@ -312,7 +312,7 @@ return
 Joy9::
 If WinActive("ahk_class FFXiClass") {
   SendInput {Ctrl down}
-  SendInput {f1 down}
+  SendInput {f9 down}
   SetTimer, WaitForButtonUp9, 10 ; Poll for button setting every 10ms
 }
 return
@@ -322,7 +322,7 @@ If WinActive("ahk_class FFXiClass") {
   if GetKeyState("Joy9")  ; The button is still, down, so keep waiting.
       return
   ; Otherwise, the button has been released.
-  SendInput {f1 up}
+  SendInput {f9 up}
   SendInput {Ctrl up}
   SetTimer, WaitForButtonUp9, Off ; Turn off polling
 }
@@ -332,7 +332,7 @@ return
 Joy10::
 If WinActive("ahk_class FFXiClass") {
   SendInput {Ctrl down}
-  SendInput {f2 down}
+  SendInput {f10 down}
   SetTimer, WaitForButtonUp10, 10 ; Poll for button setting every 10ms
 }
 return
@@ -342,7 +342,7 @@ If WinActive("ahk_class FFXiClass") {
   if GetKeyState("Joy10")  ; The button is still, down, so keep waiting.
       return
   ; Otherwise, the button has been released.
-  SendInput {f2 up}
+  SendInput {f10 up}
   SendInput {Ctrl up}
   SetTimer, WaitForButtonUp10, Off ; Turn off polling
 }

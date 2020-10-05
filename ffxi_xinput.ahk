@@ -281,28 +281,28 @@ Loop {
                 }
 
                 If (!isDpadUpDown and State.wButtons & XINPUT_GAMEPAD_DPAD_UP) {
-                    SendInput {f3}
+                    SendInput {f1}
 
                     isDpadUpDown := true
                 } else If (isDpadUpDown and !(State.wButtons & XINPUT_GAMEPAD_DPAD_UP)) {
                     isDpadUpDown := false
                 }
                 If (!isDpadRightDown and State.wButtons & XINPUT_GAMEPAD_DPAD_RIGHT) {
-                    SendInput {f4}
+                    SendInput {f2}
 
                     isDpadRightDown := true
                 } else If (isDpadRightDown and !(State.wButtons & XINPUT_GAMEPAD_DPAD_RIGHT)) {
                     isDpadRightDown := false
                 }
                 If (!isDpadDownDown and State.wButtons & XINPUT_GAMEPAD_DPAD_DOWN) {
-                    SendInput {f5}
+                    SendInput {f3}
 
                     isDpadDownDown := true
                 } else If (isDpadDownDown and !(State.wButtons & XINPUT_GAMEPAD_DPAD_DOWN)) {
                     isDpadDownDown := false
                 }
                 If (!isDpadLeftDown and State.wButtons & XINPUT_GAMEPAD_DPAD_LEFT) {
-                    SendInput {f6}
+                    SendInput {f4}
 
                     isDpadLeftDown := true
                 } else If (isDpadLeftDown and !(State.wButtons & XINPUT_GAMEPAD_DPAD_LEFT)) {
@@ -310,7 +310,7 @@ Loop {
                 }
                 If (!isButtonADown and State.wButtons & XINPUT_GAMEPAD_A) {
                     If (isLeftTriggerDown or isRightTriggerDown) {
-                        SendInput {f7}
+                        SendInput {f5}
                     } else {
                         If (ButtonLayout == "GAMECUBE" or ButtonLayout == "XBOX") {
                             If (ConfirmButton == "A") {
@@ -351,7 +351,7 @@ Loop {
                 }
                 If (!isButtonBDown and State.wButtons & XINPUT_GAMEPAD_B) {
                     If (isLeftTriggerDown or isRightTriggerDown) {
-                        SendInput {f9}
+                        SendInput {f7}
                     } else {
                         If (ButtonLayout == "GAMECUBE") {
                             If (ConfirmButton == "X") {
@@ -402,7 +402,7 @@ Loop {
                 }
                 If (!isButtonXDown and State.wButtons & XINPUT_GAMEPAD_X) {
                     If (isLeftTriggerDown or isRightTriggerDown) {
-                        SendInput {f8}
+                        SendInput {f6}
                     } else {
                         If (ButtonLayout == "GAMECUBE") {
                             If (ConfirmButton == "B") {
@@ -453,7 +453,7 @@ Loop {
                 }
                 If (!isButtonYDown and State.wButtons & XINPUT_GAMEPAD_Y) {
                     If (isLeftTriggerDown or isRightTriggerDown) {
-                        SendInput {f10}
+                        SendInput {f8}
                     } else {
                         If (ButtonLayout == "GAMECUBE" or ButtonLayout == "XBOX") {
                             If (ConfirmButton == "Y") {
@@ -495,22 +495,22 @@ Loop {
 
                 If (!isButtonBackDown and State.wButtons & XINPUT_GAMEPAD_BACK) {
                     SendInput {Ctrl down}
-                    SendInput {f1 down}
+                    SendInput {f9 down}
 
                     isButtonBackDown := true
                 } else If (isButtonBackDown and !(State.wButtons & XINPUT_GAMEPAD_BACK)) {
-                    SendInput {f1 up}
+                    SendInput {f9 up}
                     SendInput {Ctrl up}
 
                     isButtonBackDown := false
                 }
                 If (!isButtonStartDown and State.wButtons & XINPUT_GAMEPAD_START) {
                     SendInput {Ctrl down}
-                    SendInput {f2 down}
+                    SendInput {f10 down}
 
                     isButtonStartDown := true
                 } else If (isButtonStartDown and !(State.wButtons & XINPUT_GAMEPAD_START)) {
-                    SendInput {f2 up}
+                    SendInput {f10 up}
                     SendInput {Ctrl up}
 
                     isButtonStartDown := false

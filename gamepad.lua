@@ -1,8 +1,8 @@
 local gamepad = {}
 
 local face_buttons = {
-  [59] = true,
-  [60] = true,
+  [63] = true,
+  [64] = true,
   [65] = true,
   [66] = true,
   [67] = true,
@@ -10,22 +10,22 @@ local face_buttons = {
 }
 
 local dpad_button = {
+  [59] = true,
+  [60] = true,
   [61] = true,
-  [62] = true,
-  [63] = true,
-  [64] = true
+  [62] = true
 }
 
-local minus = 59
-local plus = 60
-local dpad_up = 61
-local dpad_right = 62
-local dpad_down = 63
-local dpad_left = 64
-local button_a = 65
-local button_b = 66
-local button_x = 67
-local button_y = 68
+local dpad_up = 59
+local dpad_right = 60
+local dpad_down = 61
+local dpad_left = 62
+local button_a = 63
+local button_b = 64
+local button_x = 65
+local button_y = 66
+local minus = 67
+local plus = 68
 local left_trigger = 87
 local right_trigger = 88
 
