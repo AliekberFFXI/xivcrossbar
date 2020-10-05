@@ -565,7 +565,7 @@ windower.register_event('keyboard', function(dik, pressed, flags, blocked)
 
     -- If the user presses Ctrl+F1 through Ctrl+F10 and neither trigger is down, then activate their bound command
     local no_triggers_pressed = not gamepad_state.left_trigger and not gamepad_state.right_trigger
-    if (gamepad_state.capturing and no_triggers_pressed and dik >= keyboard.f1 and dik <= keyboard.f10 and pressed) then
+    if (gamepad_state.capturing and no_triggers_pressed and dik >= keyboard.f1 and dik <= keyboard.f8 and pressed) then
         local function_key = (dik - keyboard.f1) + 1
         local natural_binding_key = 'CtrlF' .. function_key .. 'Command'
         local command = function_key_bindings[natural_binding_key]
