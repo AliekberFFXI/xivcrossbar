@@ -31,6 +31,14 @@ local theme = {}
 theme.apply = function (settings)
     local options = {}
 
+    options.skillchain_window_opacity = settings.SkillchainIndicator.Opacity
+    options.skillchain_waiting_color_red = settings.SkillchainIndicator.WindowWaitingColor.Red
+    options.skillchain_waiting_color_green = settings.SkillchainIndicator.WindowWaitingColor.Green
+    options.skillchain_waiting_color_blue = settings.SkillchainIndicator.WindowWaitingColor.Blue
+    options.skillchain_open_color_red = settings.SkillchainIndicator.WindowOpenColor.Red
+    options.skillchain_open_color_green = settings.SkillchainIndicator.WindowOpenColor.Green
+    options.skillchain_open_color_blue = settings.SkillchainIndicator.WindowOpenColor.Blue
+
     options.iconpack = settings.iconpack
     options.is_compact = settings.iscompact
     options.button_background_alpha = settings.buttonbackgroundalpha or 150

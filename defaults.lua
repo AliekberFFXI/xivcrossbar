@@ -33,6 +33,17 @@ defaults.iscompact = false
 
 defaults.iconpack = 'default'
 
+defaults.SkillchainIndicator = {}
+defaults.SkillchainIndicator.Opacity = 220
+defaults.SkillchainIndicator.WindowWaitingColor = {}
+defaults.SkillchainIndicator.WindowWaitingColor.Red = 237
+defaults.SkillchainIndicator.WindowWaitingColor.Green = 28
+defaults.SkillchainIndicator.WindowWaitingColor.Blue = 36
+defaults.SkillchainIndicator.WindowOpenColor = {}
+defaults.SkillchainIndicator.WindowOpenColor.Red = 15
+defaults.SkillchainIndicator.WindowOpenColor.Green = 205
+defaults.SkillchainIndicator.WindowOpenColor.Blue = 5
+
 defaults.Hotbar = {}
 defaults.Hotbar.Number = 3
 defaults.Hotbar.HideEmptySlots = false

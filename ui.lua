@@ -195,6 +195,14 @@ function ui:setup(theme_options, enchanted_items)
     self.theme.hide_recast_text = theme_options.hide_recast_text
     self.theme.hide_battle_notice = theme_options.hide_battle_notice
 
+    self.theme.skillchain_window_opacity = theme_options.skillchain_window_opacity
+    self.theme.skillchain_waiting_color_red = theme_options.skillchain_waiting_color_red
+    self.theme.skillchain_waiting_color_green = theme_options.skillchain_waiting_color_green
+    self.theme.skillchain_waiting_color_blue = theme_options.skillchain_waiting_color_blue
+    self.theme.skillchain_open_color_red = theme_options.skillchain_open_color_red
+    self.theme.skillchain_open_color_green = theme_options.skillchain_open_color_green
+    self.theme.skillchain_open_color_blue = theme_options.skillchain_open_color_blue
+
     self.theme.slot_opacity = theme_options.slot_opacity
     self.theme.disabled_slot_opacity = theme_options.disabled_slot_opacity
     self.theme.hotbar_number = theme_options.hotbar_number
@@ -761,7 +769,7 @@ function ui:check_vitals(player_hotbar, player_vitals, environment)
     end
 end
 
-local skillchain_indicator_color = ''
+local skillchain_indicator_state = ''
 
 function ui:display_skillchain_indicator(player_vitals, skillchain_delay, skillchain_window)
     local target = windower.ffxi.get_mob_by_target('t', 'bt')
@@ -771,9 +779,13 @@ function ui:display_skillchain_indicator(player_vitals, skillchain_delay, skillc
             local base_width = math.round(600 * (1 - fraction))
             local left_spacer = math.round(300 * fraction)
 
-            if (skillchain_indicator_color ~= 'red') then
-                skillchain_indicator_color = 'red'
-                windower.prim.set_color('skillchain_indicator', 220, 237, 28, 36)
+            if (skillchain_indicator_state ~= 'waiting') then
+                skillchain_indicator_state = 'waiting'
+                windower.prim.set_color('skillchain_indicator',
+                    self.theme.skillchain_window_opacity,
+                    self.theme.skillchain_waiting_color_red,
+                    self.theme.skillchain_waiting_color_green,
+                    self.theme.skillchain_waiting_color_blue)
             end
             windower.prim.set_size('skillchain_indicator', base_width, 4)
             windower.prim.set_position('skillchain_indicator', left_spacer + self:get_slot_x(1, 1) - 10, self:get_slot_y(1, 4) - 27)
@@ -787,9 +799,13 @@ function ui:display_skillchain_indicator(player_vitals, skillchain_delay, skillc
             local base_width = math.round(600 * fraction)
             local left_spacer = math.round(300 * (1 - fraction))
 
-            if (skillchain_indicator_color ~= 'green') then
-                skillchain_indicator_color = 'green'
-                windower.prim.set_color('skillchain_indicator', 220, 15, 205, 5)
+            if (skillchain_indicator_state ~= 'open') then
+                skillchain_indicator_state = 'open'
+                windower.prim.set_color('skillchain_indicator',
+                    self.theme.skillchain_window_opacity,
+                    self.theme.skillchain_open_color_red,
+                    self.theme.skillchain_open_color_green,
+                    self.theme.skillchain_open_color_blue)
             end
             windower.prim.set_size('skillchain_indicator', base_width, 10)
             windower.prim.set_position('skillchain_indicator', left_spacer + self:get_slot_x(1, 1) - 10, self:get_slot_y(1, 4) - 30)
