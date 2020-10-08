@@ -748,8 +748,16 @@ windower.register_event('keyboard', function(dik, pressed, flags, blocked)
     end
 end)
 
+local frame = 0
+
 -- ON PRERENDER
 windower.register_event('prerender',function()
+    -- allow settings to skip rendering frames
+    frame = (frame + 1)  % (theme_options.frame_skip + 1)
+    if (frame > 0) then
+        return
+    end
+
     skillchains.prerender()
     if xivcrossbar.ready == false then
         return

@@ -187,6 +187,8 @@ function ui:setup(theme_options, enchanted_items)
 
     icon_pack = theme_options.iconpack
 
+    self.frame_skip = theme_options.frame_skip
+
     self.theme.hide_empty_slots = theme_options.hide_empty_slots
     self.theme.hide_action_names = theme_options.hide_action_names
     self.theme.hide_action_cost = theme_options.hide_action_cost
@@ -840,7 +842,7 @@ end
 
 -- check action recasts
 function ui:check_recasts(player_hotbar, player_vitals, environment, spells, gamepad_state, skillchains, consumables, dim_default_slots, in_battle)
-    animation_frame_count = animation_frame_count + 1
+    animation_frame_count = animation_frame_count + self.frame_skip + 1
     if (animation_frame_count > 40) then
         animation_frame_count = 1
     end

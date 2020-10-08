@@ -33,6 +33,8 @@ defaults.iscompact = false
 
 defaults.iconpack = 'default'
 
+defaults.FrameSkip = 0
+
 defaults.SkillchainIndicator = {}
 defaults.SkillchainIndicator.Opacity = 220
 defaults.SkillchainIndicator.WindowWaitingColor = {}
