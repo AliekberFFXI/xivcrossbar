@@ -77,6 +77,7 @@ gamepad_state.left_trigger = false
 gamepad_state.right_trigger = false
 gamepad_state.active_bar = 0
 local shift_pressed = false
+local ui_dirty = false
 
 -- command to set a crossbar action in action_binder
 function set_hotkey(hotbar, slot, action_type, action, target)
@@ -550,6 +551,10 @@ local keys = {
 windower.register_event('keyboard', function(dik, pressed, flags, blocked)
     local left_trigger_just_pressed = pressed and gamepad.is_left_trigger(dik) and not gamepad_state.left_trigger
     local right_trigger_just_pressed = pressed and gamepad.is_right_trigger(dik) and not gamepad_state.right_trigger
+    local left_trigger_just_released = (not pressed) and gamepad.is_left_trigger(dik) and gamepad_state.left_trigger
+    local right_trigger_just_released = (not pressed) and gamepad.is_right_trigger(dik) and gamepad_state.right_trigger
+
+    ui_dirty = left_trigger_just_pressed or right_trigger_just_pressed or left_trigger_just_released or right_trigger_just_released
 
     if (gamepad.is_left_trigger(dik)) then
         gamepad_state.left_trigger = pressed
@@ -754,7 +759,7 @@ local frame = 0
 windower.register_event('prerender',function()
     -- allow settings to skip rendering frames
     frame = (frame + 1)  % (theme_options.frame_skip + 1)
-    if (frame > 0) then
+    if (frame > 0 and not ui_dirty) then
         return
     end
 
@@ -771,6 +776,8 @@ windower.register_event('prerender',function()
         local dim_default_slots = not action_binder.is_hidden        
         ui:check_recasts(player.hotbar, player.vitals, player.hotbar_settings.active_environment, player.current_spells, gamepad_state, skillchains, consumables, dim_default_slots, xivcrossbar.in_battle)
     end
+
+    ui_dirty = false
 end)
 
 -- ON ACTIONS (filtered to Job Abilities)
