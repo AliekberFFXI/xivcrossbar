@@ -594,6 +594,8 @@ function ui:load_action(player_hotbar, environment, hotbar, slot, action, player
         self.hotbars[hotbar].slot_background[slot]:alpha(200)
         if (action.type ~= 'enchanteditem' and not icon_overridden) then
             self.hotbars[hotbar].slot_icon[slot]:pos(self:get_slot_x(hotbar, slot) + 4, self:get_slot_y(hotbar, slot) + 4) -- temporary fix for 32 x 32 icons
+        else
+            self.hotbars[hotbar].slot_icon[slot]:pos(self:get_slot_x(hotbar, slot), self:get_slot_y(hotbar, slot)) -- temporary fix for 32 x 32 icons
         end
         if (show_when_ready) then
             self.hotbars[hotbar].slot_icon[slot]:show()
