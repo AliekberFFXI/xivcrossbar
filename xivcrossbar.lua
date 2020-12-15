@@ -470,6 +470,7 @@ end)
 -- ON LOGIN
 windower.register_event('login',function()
     initialize()
+    skillchains.login()
 end)
 
 -- ON LOGOUT

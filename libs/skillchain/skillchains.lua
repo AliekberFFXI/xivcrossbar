@@ -48,14 +48,15 @@ function build_module()
     local info = {}
     local resonating = {}
     local buffs = {}
+    local is_logged_in = false
 
-    if not windower.ffxi.get_info().logged_in then
-        return nil
-    end
-    if not info.job then
-        local player = windower.ffxi.get_player()
-        info.job = player.main_job
-        info.player = player.id
+    if windower.ffxi.get_info().logged_in then
+        if not info.job then
+            local player = windower.ffxi.get_player()
+            info.job = player.main_job
+            info.player = player.id
+            is_logged_in = true
+        end
     end
 
     local skillchains = {'Light','Darkness','Gravitation','Fragmentation','Distortion','Fusion','Compression','Liquefaction','Induration','Reverberation','Transfixion','Scission','Detonation','Impaction','Radiance','Umbra'}
@@ -281,17 +282,19 @@ function build_module()
     ActionPacket.open_listener(action_handler)
 
     myself.incoming_chunk = function(id, data)
-        if id == 0x29 and data:unpack('H', 25) == 206 and data:unpack('I', 9) == info.player then
-            buffs[info.player][data:unpack('H', 13)] = nil
-        elseif id == 0x63 and data:byte(5) == 9 then
-            local set_buff = {}
-            for n=1,32 do
-                local buff = data:unpack('H', n*2+7)
-                if buff_dur[buff] or buff > 269 and buff < 273 then
-                    set_buff[buff] = true
+        if (is_logged_in) then
+            if id == 0x29 and data:unpack('H', 25) == 206 and data:unpack('I', 9) == info.player then
+                buffs[info.player][data:unpack('H', 13)] = nil
+            elseif id == 0x63 and data:byte(5) == 9 then
+                local set_buff = {}
+                for n=1,32 do
+                    local buff = data:unpack('H', n*2+7)
+                    if buff_dur[buff] or buff > 269 and buff < 273 then
+                        set_buff[buff] = true
+                    end
                 end
+                buffs[info.player] = set_buff
             end
-            buffs[info.player] = set_buff
         end
     end
 
@@ -312,10 +315,18 @@ function build_module()
         end
     end
 
+    myself.login = function()
+        local player = windower.ffxi.get_player()
+        info.job = player.main_job
+        info.player = player.id
+        is_logged_in = true
+    end
+
     myself.logout = function()
         info = {}
         resonating = {}
         buffs = {}
+        is_logged_in = false
     end
 
     return myself
