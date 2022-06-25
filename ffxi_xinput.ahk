@@ -264,6 +264,7 @@ Loop {
                         SendInput {Ctrl up}
                     }
                 }
+                
                 if (State.bRightTrigger and !isRightTriggerDown) {
                     isRightTriggerDown := true
                     If (!isCtrlDown) {
@@ -279,35 +280,38 @@ Loop {
                         SendInput {Ctrl up}
                     }
                 }
+                
+                If (isLeftTriggerDown or isRightTriggerDown or isButtonStartDown) {
+                    If (!isDpadUpDown and State.wButtons & XINPUT_GAMEPAD_DPAD_UP) {
+                        SendInput {f1}
 
-                If (!isDpadUpDown and State.wButtons & XINPUT_GAMEPAD_DPAD_UP) {
-                    SendInput {f1}
+                        isDpadUpDown := true
+                    } else If (isDpadUpDown and !(State.wButtons & XINPUT_GAMEPAD_DPAD_UP)) {
+                        isDpadUpDown := false
+                    }
+                    If (!isDpadRightDown and State.wButtons & XINPUT_GAMEPAD_DPAD_RIGHT) {
+                        SendInput {f2}
 
-                    isDpadUpDown := true
-                } else If (isDpadUpDown and !(State.wButtons & XINPUT_GAMEPAD_DPAD_UP)) {
-                    isDpadUpDown := false
+                        isDpadRightDown := true
+                    } else If (isDpadRightDown and !(State.wButtons & XINPUT_GAMEPAD_DPAD_RIGHT)) {
+                        isDpadRightDown := false
+                    }
+                    If (!isDpadDownDown and State.wButtons & XINPUT_GAMEPAD_DPAD_DOWN) {
+                        SendInput {f3}
+
+                        isDpadDownDown := true
+                    } else If (isDpadDownDown and !(State.wButtons & XINPUT_GAMEPAD_DPAD_DOWN)) {
+                        isDpadDownDown := false
+                    }
+                    If (!isDpadLeftDown and State.wButtons & XINPUT_GAMEPAD_DPAD_LEFT) {
+                        SendInput {f4}
+
+                        isDpadLeftDown := true
+                    } else If (isDpadLeftDown and !(State.wButtons & XINPUT_GAMEPAD_DPAD_LEFT)) {
+                        isDpadLeftDown := false
+                    }
                 }
-                If (!isDpadRightDown and State.wButtons & XINPUT_GAMEPAD_DPAD_RIGHT) {
-                    SendInput {f2}
-
-                    isDpadRightDown := true
-                } else If (isDpadRightDown and !(State.wButtons & XINPUT_GAMEPAD_DPAD_RIGHT)) {
-                    isDpadRightDown := false
-                }
-                If (!isDpadDownDown and State.wButtons & XINPUT_GAMEPAD_DPAD_DOWN) {
-                    SendInput {f3}
-
-                    isDpadDownDown := true
-                } else If (isDpadDownDown and !(State.wButtons & XINPUT_GAMEPAD_DPAD_DOWN)) {
-                    isDpadDownDown := false
-                }
-                If (!isDpadLeftDown and State.wButtons & XINPUT_GAMEPAD_DPAD_LEFT) {
-                    SendInput {f4}
-
-                    isDpadLeftDown := true
-                } else If (isDpadLeftDown and !(State.wButtons & XINPUT_GAMEPAD_DPAD_LEFT)) {
-                    isDpadLeftDown := false
-                }
+                
                 If (!isButtonADown and State.wButtons & XINPUT_GAMEPAD_A) {
                     If (isLeftTriggerDown or isRightTriggerDown) {
                         SendInput {f5}

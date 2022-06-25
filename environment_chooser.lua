@@ -428,7 +428,9 @@ end
 
 function kebab_casify(str)
     if (str ~= nil) then
-        if (str.lower) then
+        if (type(str) == 'number') then
+            return nil
+        elseif (str.lower) then
             return str:lower():gsub(' ', '-'):gsub('\'', '')
         else
             return str

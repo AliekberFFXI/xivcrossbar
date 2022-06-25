@@ -25,6 +25,7 @@ StringUpper, ActiveWindowButton, ActiveWindowButton
 lastKeyPressed := ""
 isLeftTriggerDown := false
 isRightTriggerDown := false
+isEnvironmentDialogOpen := false
 
 #Persistent  ; Keep this script running until the user explicitly exits it.
 SetTimer, CheckPOVState, 10 ; Poll for POV hat every 10ms
@@ -32,31 +33,36 @@ SetTimer, CheckPOVState, 10 ; Poll for POV hat every 10ms
 CheckPOVState:
 If WinActive("ahk_class FFXiClass") {
   GetKeyState, joyp, JoyPOV
-  If (joyp == 0) {
-    If (lastKeyPressed != "dpad_up") {
-      SendInput {f1}
 
-      lastKeyPressed:= "dpad_up"
-    }
-  } else If (joyp == 9000) {
-    If (lastKeyPressed != "dpad_right") {
-      SendInput {f2}
+  If (isLeftTriggerDown or isRightTriggerDown or isEnvironmentDialogOpen) {
+    If (joyp == 0) {
+      If (lastKeyPressed != "dpad_up") {
+        SendInput {f1}
 
-      lastKeyPressed:= "dpad_right"
-    }
-  } else If (joyp == 18000) {
-    If (lastKeyPressed != "dpad_down") {
-      SendInput {f3}
+        lastKeyPressed:= "dpad_up"
+      }
+    } else If (joyp == 9000) {
+      If (lastKeyPressed != "dpad_right") {
+        SendInput {f2}
 
-      lastKeyPressed:= "dpad_down"
-    }
-  } else If (joyp == 27000) {
-    If (lastKeyPressed != "dpad_left") {
-      SendInput {f4}
+        lastKeyPressed:= "dpad_right"
+      }
+    } else If (joyp == 18000) {
+      If (lastKeyPressed != "dpad_down") {
+        SendInput {f3}
 
-      lastKeyPressed:= "dpad_left"
+        lastKeyPressed:= "dpad_down"
+      }
+    } else If (joyp == 27000) {
+      If (lastKeyPressed != "dpad_left") {
+        SendInput {f4}
+
+        lastKeyPressed:= "dpad_left"
+      }
     }
-  } else If (joyp == -1 and lastKeyPressed != "") {
+  }
+
+  If (joyp == -1 and lastKeyPressed != "") {
       lastKeyPressed:= ""
   }
 }
@@ -333,6 +339,7 @@ Joy10::
 If WinActive("ahk_class FFXiClass") {
   SendInput {Ctrl down}
   SendInput {f10 down}
+  isEnvironmentDialogOpen := true
   SetTimer, WaitForButtonUp10, 10 ; Poll for button setting every 10ms
 }
 return
@@ -344,6 +351,7 @@ If WinActive("ahk_class FFXiClass") {
   ; Otherwise, the button has been released.
   SendInput {f10 up}
   SendInput {Ctrl up}
+  isEnvironmentDialogOpen := false
   SetTimer, WaitForButtonUp10, Off ; Turn off polling
 }
 return
