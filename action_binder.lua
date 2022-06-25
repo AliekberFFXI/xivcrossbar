@@ -1778,7 +1778,7 @@ function get_bst_pet_commands(job_id, job_level)
                 local icon_path = 'ui/red-x.png'
                 local icon_offset = 0
                 if (skill ~= nil) then
-                    icon_path = maybe_get_custom_icon('pet-commands', name)
+                    icon_path = maybe_get_custom_icon('pet-commands', command.name)
                     if (icon_path == nil) then
                         icon_path = 'icons/abilities/' .. string.format("%05d", skill.icon) .. '.png'
                         icon_offset = 4
@@ -1810,7 +1810,7 @@ function get_smn_pet_commands(job_id, job_level)
                 local icon_path = 'ui/red-x.png'
                 local icon_offset = 0
                 if (skill ~= nil) then
-                    icon_path = maybe_get_custom_icon('pet-commands', name)
+                    icon_path = maybe_get_custom_icon('pet-commands', command.name)
                     if (icon_path == nil) then
                         icon_path = 'icons/abilities/' .. string.format("%05d", skill.icon) .. '.png'
                         icon_offset = 4
@@ -1849,7 +1849,7 @@ function get_pup_pet_commands(job_id, job_level)
                 local icon_path = 'ui/red-x.png'
                 local icon_offset = 0
                 if (skill ~= nil) then
-                    icon_path = maybe_get_custom_icon('pet-commands', name)
+                    icon_path = maybe_get_custom_icon('pet-commands', command.name)
                     if (icon_path == nil) then
                         icon_path = 'icons/abilities/' .. string.format("%05d", skill.icon) .. '.png'
                         icon_offset = 4
@@ -1894,7 +1894,7 @@ function get_stratagems(job_id, job_level)
         for i, stratagem in ipairs(stratagems) do
             if (job_level >= stratagem.level) then
                 local target_type = res.job_abilities[stratagem.id].targets
-                local icon_path = maybe_get_custom_icon('stratagems', name)
+                local icon_path = maybe_get_custom_icon('stratagems', stratagem.name)
                 if (icon_path == nil) then
                     icon_path = stratagem.icon
                 end
