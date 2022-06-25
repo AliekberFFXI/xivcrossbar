@@ -663,7 +663,7 @@ windower.register_event('keyboard', function(dik, pressed, flags, blocked)
     end
 
     if (gamepad_state.capturing and gamepad_state.left_trigger and not gamepad_state.right_trigger) then
-        if (gamepad_state.left_trigger_doublepress) then
+        if (gamepad_state.left_trigger_doublepress and theme_options.hotbar_number >= 5) then
             change_active_hotbar(5)
             gamepad_state.active_bar = 5
         else
@@ -671,7 +671,7 @@ windower.register_event('keyboard', function(dik, pressed, flags, blocked)
             gamepad_state.active_bar = 1
         end
     elseif (gamepad_state.capturing and gamepad_state.right_trigger and not gamepad_state.left_trigger) then
-        if (gamepad_state.right_trigger_doublepress) then
+        if (gamepad_state.right_trigger_doublepress and theme_options.hotbar_number >= 6) then
             change_active_hotbar(6)
             gamepad_state.active_bar = 6
         else
