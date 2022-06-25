@@ -30,6 +30,21 @@ local maybe_get_custom_icon = function(category, action_name)
     end
 end
 
+local left_trigger_lifted_during_doublepress_window = false
+local right_trigger_lifted_during_doublepress_window = false
+local is_left_doublepress_window_open = false
+local is_right_doublepress_window_open = false
+
+function close_left_doublepress_window()
+    is_left_doublepress_window_open = false
+    left_trigger_lifted_during_doublepress_window = false
+end
+
+function close_right_doublepress_window()
+    is_right_doublepress_window_open = false
+    right_trigger_lifted_during_doublepress_window = false
+end
+
 local states = {
     ['HIDDEN'] = 0,
     ['SELECT_ACTION_TYPE'] = 1,
@@ -242,7 +257,7 @@ end
 
 function action_binder:update_active_crossbar(left_trigger_just_pressed, right_trigger_just_pressed)
     if (self.trigger_left_pressed and self.trigger_right_pressed) then
-        if (self.theme_options.hotbar_number == 4) then
+        if (self.theme_options.hotbar_number > 3) then
             if (left_trigger_just_pressed) then
                 -- R -> L = bar 3
                 self.active_crossbar = 3
@@ -254,9 +269,17 @@ function action_binder:update_active_crossbar(left_trigger_just_pressed, right_t
             self.active_crossbar = 3
         end
     elseif (self.trigger_left_pressed) then
-        self.active_crossbar = 1
+        if (self.trigger_left_doublepressed) then
+            self.active_crossbar = 5
+        else
+            self.active_crossbar = 1
+        end
     elseif (self.trigger_right_pressed) then
-        self.active_crossbar = 2
+        if (self.trigger_right_doublepressed) then
+            self.active_crossbar = 6
+        else
+            self.active_crossbar = 2
+        end
     else
         self.active_crossbar = nil
     end
@@ -425,6 +448,25 @@ end
 function action_binder:trigger_left(pressed)
     if (self.state == states.SELECT_BUTTON_ASSIGNMENT) then
         local just_pressed = pressed and not self.trigger_left_pressed
+        local just_released = self.trigger_left_pressed and not pressed
+        local only_left_trigger_just_pressed = just_pressed and not self.trigger_right_pressed
+
+        if (not is_left_doublepress_window_open and only_left_trigger_just_pressed) then
+            is_left_doublepress_window_open = true
+            is_right_doublepress_window_open = false
+            coroutine.schedule(close_left_doublepress_window, 0.5)
+        end
+        local only_left_trigger_just_released = just_released and not self.trigger_right_pressed
+        if (is_left_doublepress_window_open and only_left_trigger_just_released) then
+            left_trigger_lifted_during_doublepress_window = true
+        end
+        if (only_left_trigger_just_pressed and is_left_doublepress_window_open and left_trigger_lifted_during_doublepress_window) then
+            self.trigger_left_doublepressed = true
+        end
+        if (just_released and self.trigger_left_doublepressed) then
+            self.trigger_left_doublepressed = false
+        end
+
         self.trigger_left_pressed = pressed
         self:update_active_crossbar(just_pressed, false)
         self:show_pressed_buttons()
@@ -434,6 +476,25 @@ end
 function action_binder:trigger_right(pressed)
     if (self.state == states.SELECT_BUTTON_ASSIGNMENT) then
         local just_pressed = pressed and not self.trigger_right_pressed
+        local just_released = self.trigger_right_pressed and not pressed
+        local only_right_trigger_just_pressed = just_pressed and not self.trigger_left_pressed
+
+        if (not is_right_doublepress_window_open and only_right_trigger_just_pressed) then
+            is_right_doublepress_window_open = true
+            is_left_doublepress_window_open = false
+            coroutine.schedule(close_right_doublepress_window, 0.5)
+        end
+        local only_right_trigger_just_released = just_released and not self.trigger_left_pressed
+        if (is_right_doublepress_window_open and only_right_trigger_just_released) then
+            right_trigger_lifted_during_doublepress_window = true
+        end
+        if (only_right_trigger_just_pressed and is_right_doublepress_window_open and right_trigger_lifted_during_doublepress_window) then
+            self.trigger_right_doublepressed = true
+        end
+        if (just_released and self.trigger_right_doublepressed) then
+            self.trigger_right_doublepressed = false
+        end
+
         self.trigger_right_pressed = pressed
         self:update_active_crossbar(false, just_pressed)
         self:show_pressed_buttons()
@@ -891,7 +952,7 @@ function action_binder:show_pressed_buttons()
         image:hide()
     end
 
-    if (self.theme_options.hotbar_number == 4) then
+    if (self.theme_options.hotbar_number > 3) then
         if (self.active_crossbar == 1) then
             icons:append('ui/binding_icons/trigger_' .. self.button_layout .. '_left.png')
             icons:append('ui/binding_icons/plus.png')
@@ -907,6 +968,14 @@ function action_binder:show_pressed_buttons()
             icons:append('ui/binding_icons/trigger_' .. self.button_layout .. '_left.png')
             icons:append('ui/binding_icons/arrow_right.png')
             icons:append('ui/binding_icons/trigger_' .. self.button_layout .. '_right.png')
+            icons:append('ui/binding_icons/plus.png')
+        elseif (self.active_crossbar == 5) then
+            icons:append('ui/binding_icons/trigger_' .. self.button_layout .. '_left.png')
+            icons:append('ui/binding_icons/x2.png')
+            icons:append('ui/binding_icons/plus.png')
+        elseif (self.active_crossbar == 6) then
+            icons:append('ui/binding_icons/trigger_' .. self.button_layout .. '_right.png')
+            icons:append('ui/binding_icons/x2.png')
             icons:append('ui/binding_icons/plus.png')
         end
     else
@@ -963,7 +1032,7 @@ function action_binder:confirm_buttons()
         image:hide()
     end
 
-    if (self.theme_options.hotbar_number == 4) then
+    if (self.theme_options.hotbar_number > 3) then
         if (self.active_crossbar == 1) then
             icons:append('ui/binding_icons/trigger_' .. self.button_layout .. '_left.png')
             icons:append('ui/binding_icons/plus.png')
@@ -979,6 +1048,14 @@ function action_binder:confirm_buttons()
             icons:append('ui/binding_icons/trigger_' .. self.button_layout .. '_left.png')
             icons:append('ui/binding_icons/arrow_right.png')
             icons:append('ui/binding_icons/trigger_' .. self.button_layout .. '_right.png')
+            icons:append('ui/binding_icons/plus.png')
+        elseif (self.active_crossbar == 5) then
+            icons:append('ui/binding_icons/trigger_' .. self.button_layout .. '_left.png')
+            icons:append('ui/binding_icons/x2.png')
+            icons:append('ui/binding_icons/plus.png')
+        elseif (self.active_crossbar == 6) then
+            icons:append('ui/binding_icons/trigger_' .. self.button_layout .. '_right.png')
+            icons:append('ui/binding_icons/x2.png')
             icons:append('ui/binding_icons/plus.png')
         end
     else

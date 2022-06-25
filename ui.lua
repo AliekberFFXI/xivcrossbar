@@ -133,8 +133,12 @@ function ui:get_slot_x(h, i)
     local base = self.pos_x - 50
     if (h == 2) then
         base = base + 300
-    elseif (h > 2) then
+    elseif (h == 3 or h == 4) then
         base = base + 150
+    elseif (h == 5) then
+        base = base - 70 -- left doublepress crossbar
+    elseif (h == 6) then
+        base = base + 370 -- right doublepress crossbar
     end
 
     -- move the last icon in each group of 4 to the middle create the cross
@@ -160,6 +164,15 @@ end
 -- get y position for a given hotbar and slot
 function ui:get_slot_y(h, i)
     local base = self.pos_y
+    local spacing = self.hotbar_spacing
+    if (self.is_compact) then
+        spacing = spacing / 2
+    end
+
+    -- the doublepress crossbars are up higher than the others
+    if (h > 4) then
+        base = base - spacing * 3.5
+    end
 
     -- move the second icon in each group of 4 to the top and move the
     -- fourth icon in each group of 4 to the bottom to create the cross
@@ -168,10 +181,6 @@ function ui:get_slot_y(h, i)
         row = 1
     elseif (i == 4 or i == 8) then
         row = 3
-    end
-    local spacing = self.hotbar_spacing
-    if (self.is_compact) then
-        spacing = spacing / 2
     end
     return base - (((row - 1) * spacing))
 end
@@ -466,7 +475,10 @@ function ui:load_player_hotbar(player_hotbar, player_vitals, environment, gamepa
     self.disabled_slots.on_warmup = {}
 
     for h=1,self.theme.hotbar_number,1 do
-        local shouldDrawThisBar = (gamepad_state.active_bar < 3 and (h == 1 or h == 2)) or (gamepad_state.active_bar == h)
+        local isThisBarActive = gamepad_state.active_bar == h
+        local isThisBarVisibleByDefault = h < 3 or h > 4
+        local shouldDrawDefaultVisibleBars = gamepad_state.active_bar < 3 or gamepad_state.active_bar > 4
+        local shouldDrawThisBar = isThisBarActive or isThisBarVisibleByDefault and shouldDrawDefaultVisibleBars
         for slot=1,8,1 do
             local action = nil
 
@@ -861,7 +873,10 @@ function ui:check_recasts(player_hotbar, player_vitals, environment, spells, gam
     end
 
     for h=1,self.theme.hotbar_number,1 do
-        local shouldDrawThisBar = (gamepad_state.active_bar < 3 and (h == 1 or h == 2)) or (gamepad_state.active_bar == h)
+        local isThisBarActive = gamepad_state.active_bar == h
+        local isThisBarVisibleByDefault = h < 3 or h > 4
+        local shouldDrawDefaultVisibleBars = gamepad_state.active_bar < 3 or gamepad_state.active_bar > 4
+        local shouldDrawThisBar = isThisBarActive or isThisBarVisibleByDefault and shouldDrawDefaultVisibleBars
         if (shouldDrawThisBar) then
             for i=1,8,1 do
                 local slot = i
