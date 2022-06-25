@@ -1363,7 +1363,7 @@ function action_binder:display_magic_selector_internal(magic_type)
     local spell_list = L{}
     for id in pairs(all_spells) do
         local name = res.spells[id].name
-        local target_type = res.spells[id].targets
+        local target_type = fix_target_types(id, magic_type, res.spells[id].targets)
         local spell = database.spells[name:lower()]
 
         if (spell ~= nil and spell.type == magic_type) then
@@ -2171,6 +2171,32 @@ end
 
 function get_tradable_items()
     return get_items('General')
+end
+
+function fix_target_types(id, magic_type, targets)
+    local needs_player_target_added = {
+        [14] = true, -- POISONA
+        [15] = true, -- PARALYNA
+        [16] = true, -- BLINDNA
+        [17] = true, -- SILENA
+        [18] = true, -- STONA
+        [19] = true, -- VIRUNA
+        [20] = true, -- CURSNA
+        [57] = true, -- HASTE
+        [51] = true  -- HASTE_II
+    }
+
+    if (needs_player_target_added[id]) then
+        targets['Player'] = true
+    end
+
+    local need_to_account_for_pianissimo = magic_type == 'BardSong' and targets['Self']
+    if (need_to_account_for_pianissimo) then
+        targets['Player'] = true
+        targets['Party'] = true
+    end
+
+    return targets
 end
 
 local click_row = nil
