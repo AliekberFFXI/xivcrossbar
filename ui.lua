@@ -373,6 +373,41 @@ function ui:setup_metrics(theme_options)
     self.hotbar_spacing = theme_options.hotbar_spacing
 end
 
+function ui:update_offsets(offset_x, offset_y)
+    self.pos_x = (windower.get_windower_settings().ui_x_res / 2) - (self.hotbar_width / 2) + offset_x
+    self.pos_y = (windower.get_windower_settings().ui_y_res - 120) + offset_y
+
+    for h=1,self.theme.hotbar_number,1 do
+        for i=1,8,1 do
+            local slot_pos_x = self:get_slot_x(h, i)
+            local slot_pos_y = self:get_slot_y(h, i)
+            local right_slot_pos_x = slot_pos_x - windower.get_windower_settings().ui_x_res + 16
+
+            self.hotbars[h].slot_background[i]:pos(slot_pos_x, slot_pos_y)
+            self.hotbars[h].slot_icon[i]:pos(slot_pos_x, slot_pos_y)
+            self.hotbars[h].slot_frame[i]:pos(slot_pos_x, slot_pos_y)
+            self.hotbars[h].slot_element[i]:pos(slot_pos_x + 28, slot_pos_y - 4)
+
+            self.hotbars[h].slot_text[i]:pos(slot_pos_x - 2, slot_pos_y + 40)
+            self.hotbars[h].slot_cost[i]:pos(right_slot_pos_x + 30, slot_pos_y + 28)
+            self.hotbars[h].slot_recast_text[i]:pos(right_slot_pos_x + 20, slot_pos_y + 14)
+        end
+
+        if (not self.is_compact) then
+            local dpadSlot = 9
+            self.hotbars[h].slot_recast[dpadSlot]:pos(self:get_slot_x(h, dpadSlot), self:get_slot_y(h, dpadSlot) + 5)
+
+            local faceSlot = 10
+            self.hotbars[h].slot_recast[faceSlot]:pos(self:get_slot_x(h, faceSlot), self:get_slot_y(h, faceSlot) + 5)
+        end
+    end
+
+    if (not self.is_compact) then
+        self.action_binder_icon:pos(self:get_slot_x(1, 1) - 10, self:get_slot_y(1, 4) - 27)
+        self.environment_selector_text:pos(self:get_slot_x(2, 5) + 40, self:get_slot_y(1, 4) - 15)
+    end
+end
+
 -- hide all ui components
 function ui:hide()
     self.battle_notice:hide()

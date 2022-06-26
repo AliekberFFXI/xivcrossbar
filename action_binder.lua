@@ -89,7 +89,8 @@ local action_types = {
     ['MAP'] = 28,
     ['LAST_SYNTH'] = 29,
     ['SWITCH_TARGET'] = 30,
-    ['SHOW_CREDITS'] = 31
+    ['MOVE_CROSSBARS'] = 31,
+    ['SHOW_CREDITS'] = 32
 }
 
 local prefix_lookup = {
@@ -256,6 +257,10 @@ function action_binder:create_text(caption, x, y)
     return text_field
 end
 
+function action_binder:set_ui_offset_callback(update_offsets)
+    self.update_offsets = update_offsets
+end
+
 function action_binder:update_active_crossbar(left_trigger_just_pressed, right_trigger_just_pressed)
     if (self.trigger_left_pressed and self.trigger_right_pressed) then
         if (self.theme_options.hotbar_number > 3) then
@@ -296,6 +301,9 @@ function action_binder:dpad_left(pressed)
             self.hotkey = 1
             self:submit_selected_option()
         end
+    elseif (pressed and self.state == states.MOVE_CROSSBARS) then
+        self.theme_options.offset_x = self.theme_options.offset_x - 10
+        self.update_offsets(self.theme_options.offset_x, self.theme_options.offset_y)
     elseif (pressed) then
         self:decrement_col()
     end
@@ -311,6 +319,9 @@ function action_binder:dpad_right(pressed)
             self.hotkey = 3
             self:submit_selected_option()
         end
+    elseif (pressed and self.state == states.MOVE_CROSSBARS) then
+        self.theme_options.offset_x = self.theme_options.offset_x + 10
+        self.update_offsets(self.theme_options.offset_x, self.theme_options.offset_y)
     elseif (pressed) then
         self:increment_col()
     end
@@ -326,6 +337,9 @@ function action_binder:dpad_down(pressed)
             self.hotkey = 2
             self:submit_selected_option()
         end
+    elseif (pressed and self.state == states.MOVE_CROSSBARS) then
+        self.theme_options.offset_y = self.theme_options.offset_y + 10
+        self.update_offsets(self.theme_options.offset_x, self.theme_options.offset_y)
     elseif (pressed) then
         self:increment_row()
     end
@@ -341,6 +355,9 @@ function action_binder:dpad_up(pressed)
             self.hotkey = 4
             self:submit_selected_option()
         end
+    elseif (pressed and self.state == states.MOVE_CROSSBARS) then
+        self.theme_options.offset_y = self.theme_options.offset_y - 10
+        self.update_offsets(self.theme_options.offset_x, self.theme_options.offset_y)
     elseif (pressed) then
         self:decrement_row()
     end
@@ -526,6 +543,9 @@ function action_binder:submit_selected_option()
         if (self.action_type == action_types.SHOW_CREDITS) then
             self.state = states.SHOW_CREDITS
             self:display_credits()
+        elseif (self.action_type == action_types.MOVE_CROSSBARS) then
+            self.state = states.MOVE_CROSSBARS
+            self:display_crossbar_mover()
         elseif (self.action_type == action_types.DELETE) then
             self.state = states.SELECT_BUTTON_ASSIGNMENT
             self:display_button_assigner()
@@ -559,6 +579,13 @@ function action_binder:submit_selected_option()
             self.state = states.SELECT_ACTION
             self:display_action_selector()
         end
+    elseif (self.state == states.MOVE_CROSSBARS or self.state == states.SHOW_CREDITS) then
+        self.state = states.SELECT_ACTION_TYPE
+        self.action_type = nil
+        self.selector:set_page(self.selection_states[states.SELECT_ACTION_TYPE].page)
+        self:display_action_type_selector()
+        self.selector:import_selection_state(self.selection_states[states.SELECT_ACTION_TYPE])
+        self.selection_states[states.SELECT_ACTION_TYPE] = nil
     elseif (self.state == states.SELECT_PLAYER_BINDING) then
         self.action_name = 'Assist ' .. self.selector:submit_selected_option().text
         self.state = states.SELECT_BUTTON_ASSIGNMENT
@@ -615,6 +642,13 @@ function action_binder:go_back()
         self:reset_state()
         self.selector:reset_state()
     elseif (self.state == states.SHOW_CREDITS) then
+        self.state = states.SELECT_ACTION_TYPE
+        self.action_type = nil
+        self.selector:set_page(self.selection_states[states.SELECT_ACTION_TYPE].page)
+        self:display_action_type_selector()
+        self.selector:import_selection_state(self.selection_states[states.SELECT_ACTION_TYPE])
+        self.selection_states[states.SELECT_ACTION_TYPE] = nil
+    elseif (self.state == states.MOVE_CROSSBARS) then
         self.state = states.SELECT_ACTION_TYPE
         self.action_type = nil
         self.selector:set_page(self.selection_states[states.SELECT_ACTION_TYPE].page)
@@ -774,6 +808,7 @@ function action_binder:display_action_type_selector()
     action_type_list:append({id = action_types.SWITCH_TARGET, name = 'Switch Target', icon = get_icon_pathbase() .. '/targetnpc.png'})
     action_type_list:append({id = action_types.MAP, name = 'View Map', icon = get_icon_pathbase() .. '/map.png'})
     action_type_list:append({id = action_types.LAST_SYNTH, name = 'Repeat Last Synth', icon = get_icon_pathbase() .. '/synth.png'})
+    action_type_list:append({id = action_types.MOVE_CROSSBARS, name = 'Move Crossbar', icon = get_icon_pathbase() .. '/ui/dpad_' .. self.button_layout .. '.png'})
     action_type_list:append({id = action_types.SHOW_CREDITS, name = 'XIVCrossbar Credits', icon = 'credit_avatars/xiv.png'})
     self.selector:display_options(action_type_list)
 
@@ -1740,6 +1775,12 @@ function action_binder:display_credits()
     }
 
     self.selector:display_options(credits)
+    self:show_control_hints('Confirm', 'Go Back')
+end
+
+function action_binder:display_crossbar_mover()
+    self.title:text('Move Crossbars with D-Pad')
+    self.title:show()
     self:show_control_hints('Confirm', 'Go Back')
 end
 

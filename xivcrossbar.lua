@@ -169,6 +169,16 @@ function initialize()
     player:initialize(windower_player, server, theme_options, enchanted_items)
     player:load_hotbar()
     ui:setup(theme_options, enchanted_items)
+    action_binder:set_ui_offset_callback(function(x, y)
+        ui:update_offsets(x, y)
+        if (settings.Style.OffsetX ~= x) then
+            settings.Style.OffsetX = x
+        end
+        if (settings.Style.OffsetY ~= y) then
+            settings.Style.OffsetY = y
+        end
+        config.save(settings)
+    end)
 
     local default_active_environment = env_chooser:get_default_active_environment(player.hotbar)
     set_active_environment(default_active_environment)
