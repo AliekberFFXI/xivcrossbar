@@ -2075,6 +2075,10 @@ function get_mounts()
         ['adamantoise'] = "Adamantoise",
         ['dhalmel'] = "Dhalmel",
         ['doll'] = "Doll",
+        ['noble chocobo'] = "Noble Chocobo",
+        ['wivre'] = "Wivre",
+        ['iron giant'] = "Iron Giant",
+        ['golden bomb'] = "Golden Bomb",
         ['mount roulette'] = "Mount Roulette"
     }
 
@@ -2085,7 +2089,9 @@ function get_mounts()
             icon_path = get_icon_pathbase() .. '/mount.png'
         end
 
-        mount_list:append({id = FAKE_ID, name = mount_names[mount_name], icon = icon_path, data = {target_type = target_type}})
+        if (mount_names[mount_name] ~= nil) then
+            mount_list:append({id = FAKE_ID, name = mount_names[mount_name], icon = icon_path, data = {target_type = target_type}})
+        end
     end
 
     mount_list:sort(sortByName)
