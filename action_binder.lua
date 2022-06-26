@@ -2,6 +2,7 @@ require("lists")
 require("tables")
 
 local mount_roulette = require('libs/mountroulette/mountroulette')
+local icon_extractor = require('ui/icon_extractor')
 
 texts = require('texts')
 
@@ -1730,6 +1731,8 @@ function action_binder:display_credits()
         {id = 0, name = 'newline', icon = '', data = NO_DATA},
         {id = 0, name = 'Skillchain library\nIvaar', icon = 'credit_avatars/ivaar.png', data = NO_DATA},
         {id = 0, name = 'MountRoulette library\nXurion', icon = 'credit_avatars/xurion.png', data = NO_DATA},
+        {id = 0, name = 'IconExtractor library\nRubenator', icon = 'credit_avatars/rubenator.png', data = NO_DATA},
+        {id = 0, name = 'newline', icon = '', data = NO_DATA},
         {id = 0, name = 'newline', icon = '', data = NO_DATA},
         {id = 0, name = 'newline', icon = '', data = NO_DATA},
         {id = 0, name = 'Beta Testing\nJinxs', icon = 'credit_avatars/jinxs.png', data = NO_DATA},
@@ -2134,6 +2137,31 @@ function get_items(category)
                 if (not already_included_ids[item.id]) then
                     already_included_ids[item.id] = true
                     local icon_path = maybe_get_custom_icon('items', item.en)
+                    local is_32_by_32 = false
+                    if (icon_path == nil) then
+                        local icon_dir = string.format('%simages/extracted_icons', windower.addon_path)
+                        local full_icon_path = string.format('%simages/extracted_icons/%s.bmp', windower.addon_path, kebab_casify(item.en))
+
+                        if not windower.dir_exists(icon_dir) then
+                            windower.create_dir(icon_dir)
+                        end
+                        if not windower.file_exists(full_icon_path) then
+                            local item_id = nil
+                            for id, resource_item in pairs(res.items) do
+                                if (resource_item.en == item.name) then
+                                    item_id = id
+                                    break;
+                                end
+                            end
+                            if (item_id ~= nil) then
+                                icon_extractor.item_by_id(item_id, full_icon_path)
+                            end
+                        end
+                        if windower.file_exists(full_icon_path) then
+                            is_32_by_32 = true
+                            icon_path = '/extracted_icons/' .. kebab_casify(item.name) .. '.bmp'
+                        end
+                    end
                     local target_type = nil
 
                     local is_usable = item.category == 'Usable' and category == 'Usable'
@@ -2149,9 +2177,13 @@ function get_items(category)
                             icon_path = tradable_icon_path
                         end
                     end
+                    local offset = 0
+                    if (is_32_by_32) then
+                        offset = 4
+                    end
 
                     if (is_usable or is_tradable) then
-                        all_items:append({id = item.id, name = item.en, icon = icon_path, data = {target_type = target_type}})
+                        all_items:append({id = item.id, name = item.en, icon = icon_path, icon_offset = offset, data = {target_type = target_type}})
                     end
                 end
             end

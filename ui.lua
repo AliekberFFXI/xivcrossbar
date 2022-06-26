@@ -27,6 +27,7 @@
 ]]
 
 local database = require('database')  -- TODO: IMPORT FROM RES
+local icon_extractor = require('ui/icon_extractor')
 
 local ui = {}
 
@@ -650,12 +651,41 @@ function ui:load_action(player_hotbar, environment, hotbar, slot, action, player
         if (icon_path ~= nil) then
             icon_overridden = true
             icon_path = '/images/' .. icon_path
-        elseif (action.usable ~= nil) then
-            icon_path = '/images/' .. get_icon_pathbase() .. '/items/' .. kebab_casify(action.action) .. '.png'
-        elseif (action.target == 'me') then
-            icon_path = '/images/' .. get_icon_pathbase() .. '/usable-item.png'
         else
-            icon_path = '/images/' .. get_icon_pathbase() .. '/item.png'
+            local icon_dir = string.format('%simages/extracted_icons', windower.addon_path)
+            local full_icon_path = string.format('%simages/extracted_icons/%s.bmp', windower.addon_path, kebab_casify(action.action))
+
+            if not windower.dir_exists(icon_dir) then
+                windower.create_dir(icon_dir)
+            end
+            if not windower.file_exists(full_icon_path) then
+                local item_id = nil
+                for id, item in pairs(res.items) do
+                    if (item.en == action.action) then
+                        item_id = id
+                        break;
+                    end
+                end
+                if (item_id ~= nil) then
+                    icon_extractor.item_by_id(item_id, full_icon_path)
+                end
+            end
+            if windower.file_exists(full_icon_path) then
+                icon_overridden = true
+                icon_path = '/images/extracted_icons/' .. kebab_casify(action.action) .. '.bmp'
+            elseif (action.usable ~= nil) then
+                icon_path = '/images/' .. get_icon_pathbase() .. '/items/' .. kebab_casify(action.action) .. '.png'
+            elseif (action.target == 'me') then
+                icon_path = '/images/' .. get_icon_pathbase() .. '/usable-item.png'
+            else
+                icon_path = '/images/' .. get_icon_pathbase() .. '/item.png'
+            end
+        end
+
+        if (icon_overridden) then
+            self.hotbars[hotbar].slot_icon[slot]:pos(self:get_slot_x(hotbar, slot) + 4, self:get_slot_y(hotbar, slot) + 4) -- temporary fix for 32 x 32 icons
+        else
+            self.hotbars[hotbar].slot_icon[slot]:pos(self:get_slot_x(hotbar, slot), self:get_slot_y(hotbar, slot)) -- temporary fix for 32 x 32 icons
         end
         self.hotbars[hotbar].slot_icon[slot]:path(windower.addon_path .. icon_path)
 
