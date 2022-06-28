@@ -2,6 +2,12 @@ Steps to get XIVCrossbar working:
 
 1) Install Autohotkey (https://www.autohotkey.com/)
 
+OR (for Steam Deck users)
+
+1b) Add the following line to your init.txt Windower script, changing the path as appropriate to point to your FFXI_Input.sh:
+
+    run C:/Windows/System32/cmd.exe /c start /unix /home/deck/Games/final-fantasy-xi-online/FFXI_Input.sh
+
 2) Enable the "Run" plugin in Windower
 
 3) Run FFXI Configuration tool and set up your gamepad to match ConfigureYourGamepadLikeThis.jpg. Green box = required to have set, Red box = required to leave blank, Yellow box = configure it the way you usually do.
