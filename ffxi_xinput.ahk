@@ -216,6 +216,8 @@ XInput_Term() {
 
 #SingleInstance force
 
+TRIGGER_DEAD_ZONE := 4
+
 lastKeyPressed := ""
 isLeftTriggerDown := false
 isRightTriggerDown := false
@@ -249,14 +251,14 @@ Loop {
     Loop, 4 {
         If State := XInput_GetState(A_Index-1) {
             If WinActive("ahk_class FFXiClass") {
-                if (State.bLeftTrigger and !isLeftTriggerDown) {
+                if (State.bLeftTrigger > TRIGGER_DEAD_ZONE and !isLeftTriggerDown) {
                     isLeftTriggerDown := true
                     If (!isCtrlDown) {
                         isCtrlDown := true
                         SendInput {Ctrl down}
                     }
                     SendInput {f11 down}
-                } else If (!State.bLeftTrigger and isLeftTriggerDown) {
+                } else If ((State.bLeftTrigger <= TRIGGER_DEAD_ZONE and isLeftTriggerDown) {
                     isLeftTriggerDown := false
                     SendInput {f11 up}
                     If (!State.bRightTrigger and !isRightTriggerDown and isCtrlDown) {
@@ -265,14 +267,14 @@ Loop {
                     }
                 }
                 
-                if (State.bRightTrigger and !isRightTriggerDown) {
+                if (State.bRightTrigger > TRIGGER_DEAD_ZONE and !isRightTriggerDown) {
                     isRightTriggerDown := true
                     If (!isCtrlDown) {
                         isCtrlDown := true
                         SendInput {Ctrl down}
                     }
                     SendInput {f12 down}
-                } else If (!State.bRightTrigger and isRightTriggerDown) {
+                } else If (State.bRightTrigger <= TRIGGER_DEAD_ZONE and isRightTriggerDown) {
                     isRightTriggerDown := false
                     SendInput {f12 up}
                     If (!State.bLeftTrigger and !isLeftTriggerDown and isCtrlDown) {
