@@ -258,7 +258,7 @@ Loop {
                         SendInput {Ctrl down}
                     }
                     SendInput {f11 down}
-                } else If ((State.bLeftTrigger <= TRIGGER_DEAD_ZONE and isLeftTriggerDown) {
+                } else If (State.bLeftTrigger <= TRIGGER_DEAD_ZONE and isLeftTriggerDown) {
                     isLeftTriggerDown := false
                     SendInput {f11 up}
                     If (!State.bRightTrigger and !isRightTriggerDown and isCtrlDown) {
