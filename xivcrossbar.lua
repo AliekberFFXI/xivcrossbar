@@ -85,12 +85,12 @@ local right_trigger_lifted_during_doublepress_window = false
 local is_left_doublepress_window_open = false
 local is_right_doublepress_window_open = false
 
-function close_left_doublepress_window()
+local function close_left_doublepress_window()
     is_left_doublepress_window_open = false
     left_trigger_lifted_during_doublepress_window = false
 end
 
-function close_right_doublepress_window()
+local function close_right_doublepress_window()
     is_right_doublepress_window_open = false
     right_trigger_lifted_during_doublepress_window = false
 end

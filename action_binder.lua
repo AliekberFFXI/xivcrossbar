@@ -36,12 +36,12 @@ local right_trigger_lifted_during_doublepress_window = false
 local is_left_doublepress_window_open = false
 local is_right_doublepress_window_open = false
 
-function close_left_doublepress_window()
+local function close_left_doublepress_window()
     is_left_doublepress_window_open = false
     left_trigger_lifted_during_doublepress_window = false
 end
 
-function close_right_doublepress_window()
+local function close_right_doublepress_window()
     is_right_doublepress_window_open = false
     right_trigger_lifted_during_doublepress_window = false
 end
@@ -275,13 +275,13 @@ function action_binder:update_active_crossbar(left_trigger_just_pressed, right_t
             self.active_crossbar = 3
         end
     elseif (self.trigger_left_pressed) then
-        if (self.trigger_left_doublepressed) then
+        if (self.theme_options.hotbar_number > 4 and self.trigger_left_doublepressed) then
             self.active_crossbar = 5
         else
             self.active_crossbar = 1
         end
     elseif (self.trigger_right_pressed) then
-        if (self.trigger_right_doublepressed) then
+        if (self.theme_options.hotbar_number > 4 and self.trigger_right_doublepressed) then
             self.active_crossbar = 6
         else
             self.active_crossbar = 2
@@ -480,6 +480,7 @@ function action_binder:trigger_left(pressed)
         end
         if (only_left_trigger_just_pressed and is_left_doublepress_window_open and left_trigger_lifted_during_doublepress_window) then
             self.trigger_left_doublepressed = true
+            close_left_doublepress_window()
         end
         if (just_released and self.trigger_left_doublepressed) then
             self.trigger_left_doublepressed = false
@@ -508,6 +509,7 @@ function action_binder:trigger_right(pressed)
         end
         if (only_right_trigger_just_pressed and is_right_doublepress_window_open and right_trigger_lifted_during_doublepress_window) then
             self.trigger_right_doublepressed = true
+            close_right_doublepress_window()
         end
         if (just_released and self.trigger_right_doublepressed) then
             self.trigger_right_doublepressed = false
