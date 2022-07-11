@@ -11,7 +11,7 @@ local database = require('database')  -- TODO: IMPORT FROM RES
 local action_binder = {}
 
 local kebab_casify = function(str)
-    return str:lower():gsub('/', '\n'):gsub(':', ''):gsub('%p', ''):gsub(' ', '-'):gsub('\n', '/')
+    return str:lower():gsub('/', '\n'):gsub(':', ''):gsub('-', ' '):gsub('%p', ''):gsub(' ', '-'):gsub('\n', '/')
 end
 
 local icon_pack = nil
