@@ -229,6 +229,22 @@ end
 -- Addon Commands
 -----------------------------
 
+-- command to switch to a specific crossbar
+function switch_crossbars_command(args)
+    if not args[1] then
+        print('XIVCROSSBAR: Invalid arguments: crossbar <crossbar_set>')
+        return
+    end
+
+    local environment = args[1]:lower()
+
+    if (is_valid_environment(environment)) then
+        set_active_environment(environment)
+    else
+        print('XIVCROSSBAR: "' .. environment .. '" is not a valid crossbar set.')
+    end
+end
+
 -- command to set an action in a hotbar
 function set_action_command(args)
     if not args[5] then
@@ -513,6 +529,8 @@ windower.register_event('addon command', function(command, ...)
     if command == 'reload' then
         return reload_hotbar()
 
+    elseif command == 'bar' or command == 'crossbar' or command == 'hotbar' then
+        switch_crossbars_command(args)
     elseif command == 'set' then
         set_action_command(args)
     elseif command == 'del' or command == 'delete' then
