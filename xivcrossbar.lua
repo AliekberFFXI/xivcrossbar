@@ -159,7 +159,6 @@ function initialize()
     if windower_player == nil then return end
 
     if (buttonmapping.validate()) then
-        start_controller_wrappers()
         theme_options.button_layout = buttonmapping.button_layout
         action_binder:setup(buttonmapping, set_hotkey, delete_hotkey, theme_options, get_crossbar_sets, 150, 150, windower.get_windower_settings().ui_x_res - 300, windower.get_windower_settings().ui_y_res - 450)
     else
@@ -484,6 +483,10 @@ end
 
 -- ON LOAD
 windower.register_event('load',function()
+    if (buttonmapping.validate()) then
+        start_controller_wrappers()
+    end
+
     if windower.ffxi.get_info().logged_in then
         initialize()
     end
