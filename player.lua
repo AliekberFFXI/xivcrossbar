@@ -311,6 +311,16 @@ function player:change_active_hotbar(new_hotbar)
     end
 end
 
+function player:get_crossbar_names()
+    local names = L{}
+
+    for name, hotbar in pairs(self.hotbar) do
+        names:append(hotbar.name or name)
+    end
+
+    return names
+end
+
 -- add given action to a hotbar
 function player:add_action(action, environment, hotbar, slot)
     if environment == 'b' then environment = 'battle' elseif environment == 'f' then environment = 'field' end

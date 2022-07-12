@@ -89,8 +89,9 @@ local action_types = {
     ['MAP'] = 28,
     ['LAST_SYNTH'] = 29,
     ['SWITCH_TARGET'] = 30,
-    ['MOVE_CROSSBARS'] = 31,
-    ['SHOW_CREDITS'] = 32
+    ['SWITCH_CROSSBARS'] = 31,
+    ['MOVE_CROSSBARS'] = 32,
+    ['SHOW_CREDITS'] = 33
 }
 
 local prefix_lookup = {
@@ -124,6 +125,7 @@ local prefix_lookup = {
     [action_types.ASSIST] = 'assist',
     [action_types.MAP] = 'map',
     [action_types.LAST_SYNTH] = 'ct',
+    [action_types.SWITCH_CROSSBARS] = 'ex',
     [action_types.SWITCH_TARGET] = 'ta'
 }
 
@@ -147,7 +149,7 @@ local SPELL_TYPE_LOOKUP = {
     ['SummonerPact'] = 'summoning magic',
 }
 
-function action_binder:setup(buttonmapping, save_binding_func, delete_binding_func, theme_options, base_x, base_y, max_width, max_height)
+function action_binder:setup(buttonmapping, save_binding_func, delete_binding_func, theme_options, get_crossbar_sets_func, base_x, base_y, max_width, max_height)
     self.button_layout = buttonmapping.button_layout
     self.confirm_button = buttonmapping.confirm_button
     self.cancel_button = buttonmapping.cancel_button
@@ -155,6 +157,7 @@ function action_binder:setup(buttonmapping, save_binding_func, delete_binding_fu
     self.activewindow_button = buttonmapping.activewindow_button
     self.save_binding = save_binding_func
     self.delete_binding = delete_binding_func
+    self.get_crossbar_sets_binding = get_crossbar_sets_func
     self.is_hidden = true
     self.selector = require('ui/selectablelist')
     self.selector:setup(theme_options, base_x + 50, base_y + 75, max_width - 100, max_height - 175)
@@ -172,6 +175,8 @@ function action_binder:setup(buttonmapping, save_binding_func, delete_binding_fu
     self.target_type = nil
     self.action_target = nil
     self.active_crossbar = nil
+    self.action_command = nil
+    self.action_icon = nil
     self.hotkey = nil
     self.selection_states = {}
     self.images = L{}
@@ -209,6 +214,8 @@ function action_binder:reset_state()
     self.target_type = nil
     self.action_target = nil
     self.active_crossbar = nil
+    self.action_command = nil
+    self.action_icon = nil
     self.hotkey = nil
     self.selection_states = {}
     self.selector:hide()
@@ -603,6 +610,13 @@ function action_binder:submit_selected_option()
             self.action_name = option.text
             self.target_type = option.data.target_type
 
+            if (option.data.command ~= nil) then
+                self.action_command = option.data.command
+            end
+            if (option.data.icon_path ~= nil) then
+                self.action_icon = option.data.icon_path
+            end
+
             if (self.target_type['Self'] and not (
                     self.target_type['NPC'] or
                     self.target_type['Enemy'] or
@@ -810,6 +824,7 @@ function action_binder:display_action_type_selector()
     action_type_list:append({id = action_types.SWITCH_TARGET, name = 'Switch Target', icon = get_icon_pathbase() .. '/targetnpc.png'})
     action_type_list:append({id = action_types.MAP, name = 'View Map', icon = get_icon_pathbase() .. '/map.png'})
     action_type_list:append({id = action_types.LAST_SYNTH, name = 'Repeat Last Synth', icon = get_icon_pathbase() .. '/synth.png'})
+    action_type_list:append({id = action_types.SWITCH_CROSSBARS, name = 'Switch Crossbars', icon = get_icon_pathbase() .. '/ui/facebuttons_' .. self.button_layout .. '.png'})
     action_type_list:append({id = action_types.MOVE_CROSSBARS, name = 'Move Crossbar', icon = get_icon_pathbase() .. '/ui/dpad_' .. self.button_layout .. '.png'})
     action_type_list:append({id = action_types.SHOW_CREDITS, name = 'XIVCrossbar Credits', icon = 'credit_avatars/xiv.png'})
     self.selector:display_options(action_type_list)
@@ -868,6 +883,8 @@ function action_binder:display_action_selector()
         self:display_tradable_item_selector()
     elseif (self.action_type == action_types.RANGED_ATTACK) then
         self:display_tradable_item_selector()
+    elseif (self.action_type == action_types.SWITCH_CROSSBARS) then
+        self:display_crossbar_sets_selector()
     end
 end
 
@@ -960,7 +977,7 @@ function action_binder:display_button_confirmer()
 end
 
 function action_binder:assign_action()
-    self.save_binding(self.active_crossbar, self.hotkey, prefix_lookup[self.action_type], self.action_name, self.action_target)
+    self.save_binding(self.active_crossbar, self.hotkey, prefix_lookup[self.action_type], self.action_name, self.action_target, self.action_command, self.action_icon)
     self:hide()
     self:reset_state()
 end
@@ -1710,6 +1727,30 @@ function action_binder:display_effusion_selector()
     end
 
     self.selector:display_options(effusions)
+    self:show_control_hints('Confirm', 'Go Back')
+end
+
+function action_binder:display_crossbar_sets_selector()
+    self.title:text('Select Crossbar Set')
+    self.title:show()
+
+    crossbar_set_list = L{}
+
+    local icon_offset = 0
+    local icon_path = get_icon_pathbase() .. '/ui/facebuttons_' .. self.button_layout .. '.png'
+
+    for i, crossbar_set in ipairs(self.get_crossbar_sets_binding()) do
+        if (crossbar_set ~= 'Default' and crossbar_set ~= 'Job Default' and crossbar_set ~= 'All Jobs Default') then
+            local data = {
+                target_type = {['None'] = true},
+                command = 'xb bar ' .. crossbar_set,
+                icon_path = '/ui/facebuttons_' .. self.button_layout
+            }
+            crossbar_set_list:append({id = 0, name = crossbar_set, icon = icon_path, icon_offset = icon_offset, data = data})
+        end
+    end
+
+    self.selector:display_options(crossbar_set_list)
     self:show_control_hints('Confirm', 'Go Back')
 end
 

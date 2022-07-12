@@ -96,11 +96,10 @@ local function close_right_doublepress_window()
 end
 
 -- command to set a crossbar action in action_binder
-function set_hotkey(hotbar, slot, action_type, action, target)
+function set_hotkey(hotbar, slot, action_type, action, target, command, icon)
     local environment = player.hotbar_settings.active_environment
 
     local alias = nil
-    local icon = nil
     if (action == 'Ranged Attack') then
         action = 'ra'
         alias = 'Ranged Attack'
@@ -120,6 +119,11 @@ function set_hotkey(hotbar, slot, action_type, action, target)
         icon = 'synth'
     end
 
+    if (command ~= nil) then
+        alias = action
+        action = command
+    end
+
     local new_action = action_manager:build(action_type, action, target, alias, icon)
     player:add_action(new_action, environment, hotbar, slot)
     player:save_hotbar()
@@ -135,6 +139,10 @@ function delete_hotkey(hotbar, slot)
     player:save_hotbar()
     reload_hotbar()
     set_active_environment(environment)
+end
+
+function get_crossbar_sets()
+    return player:get_crossbar_names()
 end
 
 function start_controller_wrappers()
@@ -153,7 +161,7 @@ function initialize()
     if (buttonmapping.validate()) then
         start_controller_wrappers()
         theme_options.button_layout = buttonmapping.button_layout
-        action_binder:setup(buttonmapping, set_hotkey, delete_hotkey, theme_options, 150, 150, windower.get_windower_settings().ui_x_res - 300, windower.get_windower_settings().ui_y_res - 450)
+        action_binder:setup(buttonmapping, set_hotkey, delete_hotkey, theme_options, get_crossbar_sets, 150, 150, windower.get_windower_settings().ui_x_res - 300, windower.get_windower_settings().ui_y_res - 450)
     else
         theme_options.button_layout = 'nintendo'
         local temp_buttonmapping = {}
@@ -163,7 +171,7 @@ function initialize()
         theme_options.activewindow_button = 'x'
         gamepad_mapper:setup(buttonmapping, start_controller_wrappers, theme_options, 150, 150, windower.get_windower_settings().ui_x_res - 300, windower.get_windower_settings().ui_y_res - 450)
         gamepad_mapper:show(true)
-        action_binder:setup(temp_buttonmapping, set_hotkey, delete_hotkey, theme_options, 150, 150, windower.get_windower_settings().ui_x_res - 300, windower.get_windower_settings().ui_y_res - 450)
+        action_binder:setup(temp_buttonmapping, set_hotkey, delete_hotkey, theme_options, get_crossbar_sets, 150, 150, windower.get_windower_settings().ui_x_res - 300, windower.get_windower_settings().ui_y_res - 450)
     end
 
     player:initialize(windower_player, server, theme_options, enchanted_items)
