@@ -155,6 +155,9 @@ end
 function initialize()
     local windower_player = windower.ffxi.get_player()
     local server = resources.servers[windower.ffxi.get_info().server].en
+    if (server == nil) then
+        server = 'UnknownServer'
+    end
 
     if windower_player == nil then return end
 
