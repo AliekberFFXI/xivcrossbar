@@ -942,6 +942,28 @@ windower.register_event('job change',function(main_job, main_job_level, sub_job,
     reload_hotbar()
 end)
 
+local CATEGORY_COMPLETED_SPELL = 4
+local CATEGORY_JOB_ABILITY = 6
+local SUMMONING_MAGIC = 38
+local RELEASE = 90
+
+local no_pet_environment = nil
+
+windower.register_event('action', function(act)
+    if (act.category == CATEGORY_COMPLETED_SPELL) then
+        local spell = resources.spells[act.param]
+        if (spell.skill == SUMMONING_MAGIC and is_valid_environment(spell.en:lower())) then
+            no_pet_environment = player.hotbar_settings.active_environment
+            set_active_environment(spell.en:lower())
+        end
+    elseif (act.category == CATEGORY_JOB_ABILITY and act.param == RELEASE) then
+        if (no_pet_environment ~= nil and is_valid_environment(no_pet_environment)) then
+            set_active_environment(no_pet_environment)
+            no_pet_environment = nil
+        end
+    end
+end)
+
 windower.register_event('incoming chunk', function(id, data)
     skillchains.incoming_chunk(id, data)
 end)

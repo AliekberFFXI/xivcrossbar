@@ -1518,13 +1518,32 @@ function action_binder:display_bp_rage_selector()
     self.title:text('Select Blood Pact: Rage')
     self.title:show()
 
+    local WYVERN_ABILITIES_TO_FILTER = {
+        ['1151'] = true,
+        ['1152'] = true,
+        ['1153'] = true,
+        ['1154'] = true,
+        ['1155'] = true,
+        ['1156'] = true,
+        ['1157'] = true,
+        ['1158'] = true,
+        ['1159'] = true,
+        ['1160'] = true,
+        ['1161'] = true,
+        ['1162'] = true,
+        ['1163'] = true,
+        ['1164'] = true,
+        ['1165'] = true,
+        ['1166'] = true
+    }
+
     local ability_list = L{}
 
     for id, ability in pairs(res.job_abilities) do
         local name = ability.name
         local target_type = ability.targets
         local skill = database.abilities[name:lower()]
-        if (skill ~= nil and skill.type == 'BloodPactRage') then
+        if (skill ~= nil and skill.type == 'BloodPactRage' and WYVERN_ABILITIES_TO_FILTER[skill.id] == nil) then
             local icon_path = maybe_get_custom_icon('blood-pacts/rage', name)
             local icon_offset = 0
             if (icon_path == nil) then
