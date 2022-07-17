@@ -952,7 +952,7 @@ local no_pet_environment = nil
 windower.register_event('action', function(act)
     if (act.category == CATEGORY_COMPLETED_SPELL) then
         local spell = resources.spells[act.param]
-        if (spell.skill == SUMMONING_MAGIC and is_valid_environment(spell.en:lower())) then
+        if (spell ~= nil and spell.skill == SUMMONING_MAGIC and is_valid_environment(spell.en:lower())) then
             no_pet_environment = player.hotbar_settings.active_environment
             set_active_environment(spell.en:lower())
         end
