@@ -323,10 +323,17 @@ end
 
 -- add given action to a hotbar
 function player:add_action(action, environment, hotbar, slot)
+    if environment == nil or environment == '' then
+        return
+    end
+
     if environment == 'b' then environment = 'battle' elseif environment == 'f' then environment = 'field' end
     if slot == 10 then slot = 0 end
 
     local env_key = kebab_casify(environment)
+    if (env_key == nil) then
+        return
+    end
 
     if self.hotbar[env_key] == nil then
         self.hotbar[env_key] = {}
@@ -496,16 +503,20 @@ end
 
 -- create a new environment for the existing hotbar
 function player:create_new_environment(name)
-    local new_environment = {}
-    for h=1,self.hotbar_settings.max,1 do
-        new_environment['name'] = name
-        new_environment['hotbar_' .. h] = {}
-        for i=1,8,1 do
-            new_environment['hotbar_' .. h]['slot_' .. i] = {}
+    if (name ~= nil) then
+        local new_environment = {}
+        for h=1,self.hotbar_settings.max,1 do
+            new_environment['name'] = name
+            new_environment['hotbar_' .. h] = {}
+            for i=1,8,1 do
+                new_environment['hotbar_' .. h]['slot_' .. i] = {}
+            end
         end
-    end
 
-    self.hotbar[kebab_casify(name)] = new_environment
+        self.hotbar[kebab_casify(name)] = new_environment
+    else
+        print('XIVCROSSBAR: Attempted to create crossbar set with no name. Unable to create.')
+    end
 end
 
 -- save current hotbar
