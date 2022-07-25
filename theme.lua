@@ -32,6 +32,7 @@ theme.apply = function (settings)
     local options = {}
 
     options.frame_skip = settings.FrameSkip or 0
+    options.allow_stpc_for_self_targeted_actions = settings.AllowSTPCForSelfTargetedActions or false
 
     options.skillchain_window_opacity = settings.SkillchainIndicator.Opacity
     options.skillchain_waiting_color_red = settings.SkillchainIndicator.WindowWaitingColor.Red

@@ -617,7 +617,8 @@ function action_binder:submit_selected_option()
                 self.action_icon = option.data.icon_path
             end
 
-            if (self.target_type['Self'] and not (
+            print(self.theme_options.allow_stpc_for_self_targeted_actions)
+            if (self.target_type['Self'] and not (self.theme_options.allow_stpc_for_self_targeted_actions or
                     self.target_type['NPC'] or
                     self.target_type['Enemy'] or
                     self.target_type['Party'] or
@@ -913,6 +914,11 @@ function action_binder:display_target_selector()
     if (self.target_type['Enemy']) then
         target_options:append({id = 'SELECT_TARGET', name = 'Select Target (<st>)', icon = get_icon_pathbase() .. '/mappoint.png'})
         target_options:append({id = 'BATTLE_TARGET', name = 'Battle Target (<bt>)', icon = get_icon_pathbase() .. '/mappoint.png'})
+    end
+    
+    local is_only_self_targeted = self.target_type['Self'] and not (self.target_type['Party'] or self.target_type['Ally'] or self.target_type['Player'] or self.target_type['NPC'])
+    if (is_only_self_targeted and self.theme_options.allow_stpc_for_self_targeted_actions) then
+        target_options:append({id = 'SELECT_PLAYER', name = 'Select Player (<stpc>)', icon = get_icon_pathbase() .. '/mappoint.png'})
     end
 
     self.selector:display_options(target_options)

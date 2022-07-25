@@ -34,6 +34,7 @@ defaults.iscompact = false
 defaults.iconpack = 'default'
 
 defaults.FrameSkip = 0
+defaults.AllowSTPCForSelfTargetedActions = false
 
 defaults.SkillchainIndicator = {}
 defaults.SkillchainIndicator.Opacity = 220
