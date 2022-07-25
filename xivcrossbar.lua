@@ -555,7 +555,7 @@ windower.register_event('addon command', function(command, ...)
         copy_action_command(args, true)
     elseif command == 'ic' or command == 'icon' then
         update_icon_command(args)
-    elseif command == 'al' or command == 'alias' then
+    elseif command == 'al' or command == 'alias' or command == 'ca' or command == 'caption' then
         update_alias_command(args)
     elseif command == 'n' or command == 'new' then
         new_environment_command(args)
