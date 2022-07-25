@@ -946,6 +946,10 @@ local CATEGORY_COMPLETED_SPELL = 4
 local CATEGORY_JOB_ABILITY = 6
 local SUMMONING_MAGIC = 38
 local RELEASE = 90
+local LIGHT_ARTS = 211
+local DARK_ARTS = 212
+local ADDENDUM_WHITE = 234
+local ADDENDUM_BLACK = 235
 
 local no_pet_environment = nil
 
@@ -960,6 +964,22 @@ windower.register_event('action', function(act)
         if (no_pet_environment ~= nil and is_valid_environment(no_pet_environment)) then
             set_active_environment(no_pet_environment)
             no_pet_environment = nil
+        end
+    elseif (act.category == CATEGORY_JOB_ABILITY and act.param == LIGHT_ARTS) then
+        if (is_valid_environment('lightarts')) then
+            set_active_environment('lightarts')
+        end
+    elseif (act.category == CATEGORY_JOB_ABILITY and act.param == DARK_ARTS) then
+        if (is_valid_environment('darkarts')) then
+            set_active_environment('darkarts')
+        end
+    elseif (act.category == CATEGORY_JOB_ABILITY and act.param == ADDENDUM_WHITE) then
+        if (is_valid_environment('addendumwhite')) then
+            set_active_environment('addendumwhite')
+        end
+    elseif (act.category == CATEGORY_JOB_ABILITY and act.param == ADDENDUM_BLACK) then
+        if (is_valid_environment('addendumblack')) then
+            set_active_environment('addendumblack')
         end
     end
 end)
