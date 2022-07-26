@@ -66,6 +66,7 @@ local xivcrossbar = require('variables')
 local skillchains = require('libs/skillchain/skillchains')
 local consumables = require('consumables')
 local gamepad_mapper = require('gamepad_mapper')
+local gamepad_converter = require('gamepad_converter')
 local function_key_bindings = require('function_key_bindings')
 
 -----------------------------
@@ -196,6 +197,7 @@ function initialize()
 
     consumables:setup()
     env_chooser:setup(theme_options)
+    gamepad_converter:setup(theme_options.button_layout)
 
     xivcrossbar.ready = true
     xivcrossbar.initialized = true
@@ -272,8 +274,8 @@ function set_action_command(args)
         end
     end
 
-    local hotbar = tonumber(args[2]) or 0
-    local slot = tonumber(args[3]) or 0
+    local hotbar = gamepad_converter:convert_to_crossbar(args[2]) or 0
+    local slot = gamepad_converter:convert_to_slot(args[3]) or 0
     local action_type = args[4]:lower()
     local action = args[5]
     local target = args[6] or nil
@@ -306,8 +308,8 @@ function delete_action_command(args)
     end
 
     local environment = args[1]:lower()
-    local hotbar = tonumber(args[2]) or 0
-    local slot = tonumber(args[3]) or 0
+    local hotbar = gamepad_converter:convert_to_crossbar(args[2]) or 0
+    local slot = gamepad_converter:convert_to_slot(args[3]) or 0
 
     if hotbar < 1 or hotbar > theme_options.hotbar_number then
         print('XIVCROSSBAR: Invalid hotbar. Please use a number between 1 and ' .. theme_options.hotbar_number .. '.')
@@ -335,11 +337,11 @@ function copy_action_command(args, is_moving)
     end
 
     local environment = args[1]:lower()
-    local hotbar = tonumber(args[2]) or 0
-    local slot = tonumber(args[3]) or 0
+    local hotbar = gamepad_converter:convert_to_crossbar(args[2]) or 0
+    local slot = gamepad_converter:convert_to_slot(args[3]) or 0
     local to_environment = args[4]:lower()
-    local to_hotbar =  tonumber(args[5]) or 0
-    local to_slot =  tonumber(args[6]) or 0
+    local to_hotbar = gamepad_converter:convert_to_crossbar(args[5]) or 0
+    local to_slot = gamepad_converter:convert_to_slot(args[6]) or 0
 
     if hotbar < 1 or hotbar > 3 or to_hotbar < 1 or to_hotbar > 3 then
         print('XIVCROSSBAR: Invalid hotbar. Please use a number between 1 and ' .. theme_options.hotbar_number .. '.')
@@ -364,8 +366,8 @@ function update_alias_command(args)
     end
 
     local environment = args[1]:lower()
-    local hotbar = tonumber(args[2]) or 0
-    local slot = tonumber(args[3]) or 0
+    local hotbar = gamepad_converter:convert_to_crossbar(args[2]) or 0
+    local slot = gamepad_converter:convert_to_slot(args[3]) or 0
     local alias = args[4]
 
     if hotbar < 1 or hotbar > 3 then
@@ -391,8 +393,8 @@ function update_icon_command(args)
     end
 
     local environment = args[1]:lower()
-    local hotbar = tonumber(args[2]) or 0
-    local slot = tonumber(args[3]) or 0
+    local hotbar = gamepad_converter:convert_to_crossbar(args[2]) or 0
+    local slot = gamepad_converter:convert_to_slot(args[3]) or 0
     local icon = args[4]
 
     if hotbar < 1 or hotbar > 3 then
