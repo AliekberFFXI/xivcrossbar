@@ -964,9 +964,9 @@ windower.register_event('action', function(act)
 
     if (act.category == CATEGORY_COMPLETED_SPELL) then
         local spell = resources.spells[act.param]
-        if (spell ~= nil and spell.skill == SUMMONING_MAGIC and is_valid_environment(spell.en:lower())) then
+        if (spell ~= nil and spell.skill == SUMMONING_MAGIC and is_valid_environment(spell.en:gsub(' ', ''):lower())) then
             no_pet_environment = player.hotbar_settings.active_environment
-            set_active_environment(spell.en:lower())
+            set_active_environment(spell.en:gsub(' ', ''):lower())
         end
     elseif (act.category == CATEGORY_JOB_ABILITY and act.param == RELEASE) then
         if (no_pet_environment ~= nil and is_valid_environment(no_pet_environment)) then
