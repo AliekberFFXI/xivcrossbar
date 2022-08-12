@@ -956,6 +956,12 @@ local ADDENDUM_BLACK = 235
 local no_pet_environment = nil
 
 windower.register_event('action', function(act)
+    -- Don't swap crossbars when someone *else* summons or uses Light/Dark Arts
+    local windower_player = windower.ffxi.get_player()
+    if (act.actor_id ~= windower_player.id) then
+        return
+    end
+
     if (act.category == CATEGORY_COMPLETED_SPELL) then
         local spell = resources.spells[act.param]
         if (spell ~= nil and spell.skill == SUMMONING_MAGIC and is_valid_environment(spell.en:lower())) then
