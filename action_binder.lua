@@ -1294,6 +1294,10 @@ function action_binder:display_ability_selector()
     self.title:text('Select Job Ability')
     self.title:show()
 
+    local LV_1_SP_ABILITY_RECAST_ID = 0
+    local LV_96_SP_ABILITY_RECAST_ID = 254
+
+    local player = windower.ffxi.get_player()
     local abilities = windower.ffxi.get_abilities().job_abilities
     local ability_list = L{}
 
@@ -1318,6 +1322,7 @@ function action_binder:display_ability_selector()
     }
 
     for key, id in pairs(abilities) do
+        local recast_id = res.job_abilities[id].recast_id
         local name = res.job_abilities[id].name
         local target_type = res.job_abilities[id].targets
         local skill = database.abilities[name:lower()]
@@ -1325,7 +1330,11 @@ function action_binder:display_ability_selector()
             local icon_path = maybe_get_custom_icon('abilities', name)
             local icon_offset = 0
             if (icon_path == nil) then
-                icon_path = 'icons/abilities/' .. string.format("%05d", skill.icon) .. '.png'
+                if (recast_id == LV_1_SP_ABILITY_RECAST_ID or recast_id == LV_96_SP_ABILITY_RECAST_ID) then
+                    icon_path = 'icons/abilities/' .. string.format("%05d", recast_id) .. '.' .. string.format("%02d", player.main_job_id) .. '.png'
+                else    
+                    icon_path = 'icons/abilities/' .. string.format("%05d", skill.icon) .. '.png'
+                end
                 icon_offset = 4
             end
             ability_list:append({id = id, name = name, icon = icon_path, icon_offset = icon_offset, data = {target_type = target_type}})

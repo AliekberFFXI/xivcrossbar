@@ -560,6 +560,12 @@ local JOB_ABILITY_TYPE_LOOKUP = {
 function ui:load_action(player_hotbar, environment, hotbar, slot, action, player_vitals, show_when_ready)
     local is_disabled = false
 
+    local player = windower.ffxi.get_player()
+    local main_job_id = player.main_job_id
+
+    local LV_1_SP_ABILITY_RECAST_ID = 0
+    local LV_96_SP_ABILITY_RECAST_ID = 254
+
     self:clear_slot(hotbar, slot)
 
     local icon_overridden = false
@@ -612,9 +618,13 @@ function ui:load_action(player_hotbar, environment, hotbar, slot, action, player
                     icon_overridden = true
                     icon_path = 'images/' .. icon_path
                 else
-                    icon_path = '/images/icons/abilities/' .. string.format("%05d", skill.icon) .. '.png'
+                    if (tonumber(skill.icon) == LV_1_SP_ABILITY_RECAST_ID or tonumber(skill.icon) == LV_96_SP_ABILITY_RECAST_ID) then
+                        icon_path = 'icons/abilities/' .. string.format("%05d", skill.icon) .. '.' .. string.format("%02d", main_job_id) .. '.png'
+                    else    
+                        icon_path = 'icons/abilities/' .. string.format("%05d", skill.icon) .. '.png'
+                    end
                 end
-                self.hotbars[hotbar].slot_icon[slot]:path(windower.addon_path .. icon_path)
+                self.hotbars[hotbar].slot_icon[slot]:path(windower.addon_path .. 'images/' .. icon_path)
             else
                 if (skill.id ~= nil) then
                     local ws = res.weapon_skills[tonumber(skill.id)]
