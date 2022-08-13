@@ -109,7 +109,7 @@ function setup_text(text, theme_options)
 end
 
 local kebab_casify = function(str)
-    return str:lower():gsub('/', '\n'):gsub(':', ''):gsub('%p', ''):gsub(' ', '-'):gsub('\n', '/')
+    return str:lower():gsub('/', '\n'):gsub(':', ''):gsub('-', ' '):gsub('%p', ''):gsub(' ', '-'):gsub('\n', '/')
 end
 
 local icon_pack = nil
