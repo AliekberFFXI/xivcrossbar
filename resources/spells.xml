@@ -955,4 +955,5 @@
   <s id="995" index="1017" prefix="/magic" english="Arciela II" japanese="アシェラII" type="Trust" element="None" targets="Self" skill="0" mpcost="0" casttime="2" recast="48" duration="0" alias="" />
   <s id="958" index="1018" prefix="/magic" english="Iroha II" japanese="イロハII" type="Trust" element="None" targets="Self" skill="0" mpcost="0" casttime="2" recast="48" duration="0" alias="" />
   <s id="971" index="1019" prefix="/magic" english="Shantotto II" japanese="シャントットII" type="Trust" element="None" targets="Self" skill="0" mpcost="0" casttime="2" recast="48" duration="0" alias="" />
+  <s id="782" index="355" prefix="/magic" english="Siren" japanese="セイレーン召喚" type="SummonerPact" element="Wind" targets="Self" skill="SummoningMagic" mpcost="7" casttime="5" recast="5" duration="0" alias="" />
 </spells>
