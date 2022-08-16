@@ -537,10 +537,10 @@ local SPELL_TYPE_LOOKUP = {
 }
 
 local JOB_ABILITY_TYPE_LOOKUP = {
-    ['BloodPactRage'] = 'blood pacts/rage',
-    ['BloodPactWard'] = 'blood pacts/ward',
-    ['CorsairRoll'] = 'phantom rolls',
-    ['CorsairShot'] = 'quick draw',
+    ['BloodPactRage'] = 'blood-pacts/rage',
+    ['BloodPactWard'] = 'blood-pacts/ward',
+    ['CorsairRoll'] = 'phantom-rolls',
+    ['CorsairShot'] = 'quick-draw',
     ['Effusion'] = 'effusions',
     ['Flourish1'] = 'dances',
     ['Flourish2'] = 'dances',
