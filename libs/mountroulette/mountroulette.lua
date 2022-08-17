@@ -48,7 +48,7 @@ function update_allowed_mounts()
 
     for _, id in ipairs(kis) do
         local ki = resources.key_items[id]
-        if ki.category == 'Mounts' and ki.name ~= "trainer's whistle" then -- Don't care about the quest KI
+        if ki ~= nil and ki.category == 'Mounts' and ki.name ~= "trainer's whistle" then -- Don't care about the quest KI
             local mount_index = possible_mounts:find(function(possible_mount)
                 return windower.wc_match(ki.name:lower(), '♪' .. possible_mount .. '*')
             end)
