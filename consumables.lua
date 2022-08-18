@@ -256,7 +256,7 @@ function consumables:build_item_cache(inventory)
 
         for i, inv_item in pairs(inventory) do
             if ((not ignore_indices[i]) and inv_item.id ~= 0) then
-                local is_stackable = res.items[inv_item.id].stack > 1
+                local is_stackable = res.items[inv_item.id] ~= nil and res.items[inv_item.id].stack > 1
                 if (is_stackable) then
                     if (total_counts[inv_item.id] == nil) then
                         total_counts[inv_item.id] = inv_item.count
