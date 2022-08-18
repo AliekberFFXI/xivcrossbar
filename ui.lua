@@ -547,6 +547,7 @@ local JOB_ABILITY_TYPE_LOOKUP = {
     ['Flourish3'] = 'dances',
     ['Jig'] = 'dances',
     ['JobAbility'] = 'abilities',
+    ['Ability'] = 'abilities',
     ['Monster'] = 'ready',
     ['Rune'] = 'rune-enchantments',
     ['Samba'] = 'dances',
@@ -612,13 +613,19 @@ function ui:load_action(player_hotbar, environment, hotbar, slot, action, player
             skill = database.abilities[(action.action):lower()]
 
             if action.type == 'ja' then
+                local recast_id = tonumber(skill.icon)
+                local ability_recast = res.ability_recasts[recast_id]
+                local id = ability_recast.action_id
+                local name = res.job_abilities[id].name
+
                 local category = JOB_ABILITY_TYPE_LOOKUP[skill.type]
-                local icon_path = maybe_get_custom_icon(category, action.action)
+                local icon_path = maybe_get_custom_icon(category, name)
+
                 if (icon_path ~= nil) then
                     icon_overridden = true
-                    icon_path = 'images/' .. icon_path
+                    icon_path = icon_path
                 else
-                    if (tonumber(skill.icon) == LV_1_SP_ABILITY_RECAST_ID or tonumber(skill.icon) == LV_96_SP_ABILITY_RECAST_ID) then
+                    if (recast_id == LV_1_SP_ABILITY_RECAST_ID or recast_id == LV_96_SP_ABILITY_RECAST_ID) then
                         icon_path = 'icons/abilities/' .. string.format("%05d", skill.icon) .. '.' .. string.format("%02d", main_job_id) .. '.png'
                     else    
                         icon_path = 'icons/abilities/' .. string.format("%05d", skill.icon) .. '.png'
