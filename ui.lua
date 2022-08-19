@@ -616,7 +616,12 @@ function ui:load_action(player_hotbar, environment, hotbar, slot, action, player
                 local recast_id = tonumber(skill.icon)
                 local ability_recast = res.ability_recasts[recast_id]
                 local id = ability_recast.action_id
-                local name = res.job_abilities[id].name
+                local name = ""
+                if (id ~= nil) then
+                    name = res.job_abilities[id].name
+                else
+                    name = action.action
+                end
 
                 local category = JOB_ABILITY_TYPE_LOOKUP[skill.type]
                 local icon_path = maybe_get_custom_icon(category, name)
