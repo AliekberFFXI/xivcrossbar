@@ -177,6 +177,9 @@ function action_binder:setup(buttonmapping, save_binding_func, delete_binding_fu
     self.active_crossbar = nil
     self.action_command = nil
     self.action_icon = nil
+    self.alt_action_type = nil
+    self.alt_action = nil
+    self.alt_action_buff_id_condition = nil
     self.hotkey = nil
     self.selection_states = {}
     self.images = L{}
@@ -216,6 +219,9 @@ function action_binder:reset_state()
     self.active_crossbar = nil
     self.action_command = nil
     self.action_icon = nil
+    self.alt_action_type = nil
+    self.alt_action = nil
+    self.alt_action_buff_id_condition = nil
     self.hotkey = nil
     self.selection_states = {}
     self.selector:hide()
@@ -609,6 +615,9 @@ function action_binder:submit_selected_option()
         else
             self.action_name = option.text
             self.target_type = option.data.target_type
+            self.alt_action_type = option.data.alt_action_type
+            self.alt_action = option.data.alt_action
+            self.alt_action_buff_id_condition = option.data.alt_action_buff_id_condition
 
             if (option.data.command ~= nil) then
                 self.action_command = option.data.command
@@ -983,7 +992,7 @@ function action_binder:display_button_confirmer()
 end
 
 function action_binder:assign_action()
-    self.save_binding(self.active_crossbar, self.hotkey, prefix_lookup[self.action_type], self.action_name, self.action_target, self.action_command, self.action_icon)
+    self.save_binding(self.active_crossbar, self.hotkey, prefix_lookup[self.action_type], self.action_name, self.action_target, self.action_command, self.action_icon, self.alt_action_type, self.alt_action, self.alt_action_buff_id_condition)
     self:hide()
     self:reset_state()
 end
@@ -1628,7 +1637,7 @@ function action_binder:display_phantom_roll_selector()
                 icon_path = 'icons/abilities/' .. string.format("%05d", skill.icon) .. '.png'
                 icon_offset = 4
             end
-            ability_list:append({id = id, name = name, icon = icon_path, icon_offset = icon_offset, data = {target_type = target_type}})
+            ability_list:append({id = id, name = name, icon = icon_path, icon_offset = icon_offset, data = {target_type = target_type, alt_action_type = "ja", alt_action = "Double-Up", alt_action_buff_id_condition = 308}})
         end
     end
 

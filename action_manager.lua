@@ -31,7 +31,7 @@ local action_manager = {}
 local CUSTOM_TYPE = 'ct'
 
 -- build action
-function action_manager:build(type, action, target, alias, icon, equip_slot, warmup, cooldown, usable)
+function action_manager:build(type, action, target, alias, icon, equip_slot, warmup, cooldown, usable, alt_action_type, alt_action, alt_action_buff_id_condition)
     local new_action = {}
 
     new_action.type = type
@@ -62,6 +62,18 @@ function action_manager:build(type, action, target, alias, icon, equip_slot, war
 
     if usable ~= nil then
         new_action.usable = usable
+    end
+
+    if alt_action_type ~= nil then
+        new_action.alt_action_type = alt_action_type
+    end
+
+    if alt_action ~= nil then
+        new_action.alt_action = alt_action
+    end
+
+    if alt_action_buff_id_condition ~= nil then
+        new_action.alt_action_buff_id_condition = alt_action_buff_id_condition
     end
 
     return new_action

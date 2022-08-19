@@ -30,6 +30,7 @@ local res = require('resources')
 local storage = require('storage')
 local action_manager = require('action_manager')
 local mount_roulette = require('libs/mountroulette/mountroulette')
+local database = require('database')  -- TODO: IMPORT FROM RES
 
 local player = {}
 
@@ -57,6 +58,7 @@ function player:initialize(windower_player, server, theme_options, enchanted_ite
     self.server = server
     self.id = windower_player.id
     self.enchanted_items = enchanted_items
+    self.buffs_active = {}
 
     self.hotbar_settings.max = theme_options.hotbar_number
 
@@ -116,6 +118,14 @@ end
 -- Returns true if the player has the spell and (if BLU) the spell is set.
 function player:has_spell(spellName)
     return self.current_spells[spellName] == true
+end
+
+function to_number_or_nil(maybe_number)
+    if (maybe_number == nil) then
+        return nil
+    else
+        return tonumber(maybe_number)
+    end
 end
 
 -- load hotbar for current player and job combination
@@ -211,11 +221,17 @@ function player:load_from_file(storage_file)
                             new_action.cooldown = tag.children[1].value
                         elseif tag.name == 'usable' then
                             new_action.usable = tag.children[1].value
+                        elseif tag.name == 'alt_action_type' then
+                            new_action.alt_action_type = tag.children[1].value
+                        elseif tag.name == 'alt_action' then
+                            new_action.alt_action = tag.children[1].value
+                        elseif tag.name == 'alt_action_buff_id_condition' then
+                            new_action.alt_action_buff_id_condition = to_number_or_nil(tag.children[1].value)
                         end
                     end
 
                     self:add_action(
-                        action_manager:build(new_action.type, new_action.action, new_action.target, new_action.alias, new_action.icon, new_action.equip_slot, new_action.warmup, new_action.cooldown, new_action.usable),
+                        action_manager:build(new_action.type, new_action.action, new_action.target, new_action.alias, new_action.icon, new_action.equip_slot, new_action.warmup, new_action.cooldown, new_action.usable, new_action.alt_action_type, new_action.alt_action, new_action.alt_action_buff_id_condition),
                         environment_name,
                         hotbar.name:gsub('hotbar_', ''),
                         slot.name:gsub('slot_', '')
@@ -366,6 +382,18 @@ function player:create_use_item_coroutine(item_name)
     end
 end
 
+function player:gain_buff(buff_id)
+    self.buffs_active[buff_id] = true
+end
+
+function player:lose_buff(buff_id)
+    self.buffs_active[buff_id] = nil
+end
+
+function player:has_buff(buff_id)
+    return self.buffs_active[buff_id] ~= nil
+end
+
 -- execute action from given slot
 function player:execute_action(slot)
     local h = self.hotbar_settings.active_hotbar
@@ -448,7 +476,39 @@ function player:execute_action(slot)
         return
     end
 
-    windower.send_command('input /' .. action.type .. ' "' .. action.action .. target_string)
+    local actual_action_type = action.type
+    local actual_action = action.action
+
+    local spell_recasts = windower.ffxi.get_spell_recasts()
+    local ability_recasts = windower.ffxi.get_ability_recasts()
+
+    local is_action_ready = true
+    if (action.type == 'ma') then
+        local skill = database.spells[(action.action):lower()]
+        is_action_ready = spell_recasts[tonumber(skill.icon)] == 0
+    elseif (action.type == 'ja' or action.type == 'pet') then
+        local skill = database.abilities[(action.action):lower()]
+        is_action_ready = ability_recasts[tonumber(skill.icon)] == 0
+    end
+    if (not is_action_ready and action.alt_action ~= nil and action.alt_action_type ~= nil) then
+        local is_alt_action_ready = true
+
+        if (action.alt_action_type == 'ma') then
+            local alt_skill = database.spells[(action.alt_action):lower()]
+            is_alt_action_ready = spell_recasts[tonumber(alt_skill.icon)]
+        elseif (action.alt_action_type == 'ja' or action.alt_action_type == 'pet') then
+            local alt_skill = database.abilities[(action.alt_action):lower()]
+            is_alt_action_ready = ability_recasts[tonumber(alt_skill.icon)]
+        end
+
+        local is_buff_condition_met = action.alt_action_buff_id_condition == nil or self:has_buff(action.alt_action_buff_id_condition)
+        if (is_alt_action_ready and is_buff_condition_met) then
+            actual_action_type = action.alt_action_type
+            actual_action = action.alt_action
+        end
+    end
+
+    windower.send_command('input /' .. actual_action_type .. ' "' .. actual_action .. target_string)
 end
 
 -- remove action from slot

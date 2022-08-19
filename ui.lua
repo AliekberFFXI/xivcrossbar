@@ -229,6 +229,8 @@ function ui:setup(theme_options, enchanted_items)
     self.is_compact = theme_options.is_compact
     self.button_bg_alpha = theme_options.button_background_alpha
 
+    self.buffs_active = {}
+
     self:setup_metrics(theme_options)
     self:load(theme_options)
 
@@ -355,6 +357,18 @@ function ui:load(theme_options)
     self.feedback.speed = theme_options.feedback_speed
     self.feedback.current_opacity = self.feedback.max_opacity
     self.feedback_icon:hide()
+end
+
+function ui:gain_buff(buff_id)
+    self.buffs_active[buff_id] = true
+end
+
+function ui:lose_buff(buff_id)
+    self.buffs_active[buff_id] = nil
+end
+
+function ui:has_buff(buff_id)
+    return self.buffs_active[buff_id] ~= nil
 end
 
 -- setup positions and dimensions for ui
@@ -557,6 +571,72 @@ local JOB_ABILITY_TYPE_LOOKUP = {
     ['Ward'] = 'wards',
 }
 
+local get_ma_icon = function(action, skill)
+    local spell = res.spells[tonumber(skill.icon)]
+    local magic_skill = res.skills[spell.skill].en
+    local category = SPELL_TYPE_LOOKUP[spell.type]
+    if (category == nil) then
+        category = spell.type
+    end
+    local icon_path = maybe_get_custom_icon(category, action)
+    if (icon_path ~= nil) then
+        icon_overridden = true
+        icon_path = 'images/' .. icon_path
+    else
+        icon_path = '/images/icons/spells/' .. (string.format("%05d", skill.icon)) .. '.png'
+    end
+
+    return icon_path, icon_overridden
+end
+
+local get_ja_icon = function(action, skill)
+    local recast_id = tonumber(skill.icon)
+    local ability_recast = res.ability_recasts[recast_id]
+    local id = ability_recast.action_id
+    local name = ""
+    if (id ~= nil) then
+        name = res.job_abilities[id].name
+    else
+        name = action.action
+    end
+
+    local category = JOB_ABILITY_TYPE_LOOKUP[skill.type]
+    local icon_path = maybe_get_custom_icon(category, name)
+    local icon_overridden = false
+
+    if (icon_path ~= nil) then
+        icon_overridden = true
+        icon_path = icon_path
+    else
+        if (recast_id == LV_1_SP_ABILITY_RECAST_ID or recast_id == LV_96_SP_ABILITY_RECAST_ID) then
+            icon_path = 'icons/abilities/' .. string.format("%05d", skill.icon) .. '.' .. string.format("%02d", main_job_id) .. '.png'
+        else    
+            icon_path = 'icons/abilities/' .. string.format("%05d", skill.icon) .. '.png'
+        end
+    end
+
+    return ('images/' .. icon_path), icon_overridden
+end
+
+local get_ws_icon = function(action, skill)
+    local icon_path = nil
+    if (skill.id ~= nil) then
+        local ws = res.weapon_skills[tonumber(skill.id)]
+        local weapon = res.skills[ws.skill].en:lower()
+        local icon_path = maybe_get_custom_icon('weaponskills/' .. weapon, ws.en)
+        if (icon_path ~= nil) then
+            icon_overridden = true
+            icon_path = 'images/' .. icon_path
+        else
+            icon_path = '/images/icons/weapons/' .. weapon .. '.png'
+        end
+    else
+        icon_path = '/images/icons/weapons/sword.png'
+    end
+
+    return icon_path, icon_overridden
+end
+
 -- load action into a hotbar slot
 function ui:load_action(player_hotbar, environment, hotbar, slot, action, player_vitals, show_when_ready)
     local is_disabled = false
@@ -590,62 +670,28 @@ function ui:load_action(player_hotbar, environment, hotbar, slot, action, player
     -- if slot has a skill (ma, ja or ws)
     if action.type == 'ma' or action.type == 'ja' or action.type == 'ws' or action.type == 'enchanteditem' then
         local skill = nil
+        local icon_path = nil
 
         -- if its magic, look for it in spells
         if action.type == 'ma' and database.spells[(action.action):lower()] ~= nil then
             skill = database.spells[(action.action):lower()]
 
-            local spell = res.spells[tonumber(skill.icon)]
-            local magic_skill = res.skills[spell.skill].en
-            local category = SPELL_TYPE_LOOKUP[spell.type]
-            if (category == nil) then
-                category = spell.type
-            end
-            local icon_path = maybe_get_custom_icon(category, action.action)
+            icon_path, icon_overridden = get_ma_icon(action.action, skill)
             if (icon_path ~= nil) then
-                icon_overridden = true
-                icon_path = 'images/' .. icon_path
-            else
-                icon_path = '/images/icons/spells/' .. (string.format("%05d", skill.icon)) .. '.png'
+                self.hotbars[hotbar].slot_icon[slot]:path(windower.addon_path .. icon_path)
             end
-            self.hotbars[hotbar].slot_icon[slot]:path(windower.addon_path .. icon_path)
         elseif (action.type == 'ja' or action.type == 'ws') and database.abilities[(action.action):lower()] ~= nil then
             skill = database.abilities[(action.action):lower()]
 
             if action.type == 'ja' then
-                local recast_id = tonumber(skill.icon)
-                local ability_recast = res.ability_recasts[recast_id]
-                local id = ability_recast.action_id
-                local name = res.job_abilities[id].name
-
-                local category = JOB_ABILITY_TYPE_LOOKUP[skill.type]
-                local icon_path = maybe_get_custom_icon(category, name)
-
+                icon_path, icon_overridden = get_ja_icon(action, skill)
                 if (icon_path ~= nil) then
-                    icon_overridden = true
-                    icon_path = icon_path
-                else
-                    if (recast_id == LV_1_SP_ABILITY_RECAST_ID or recast_id == LV_96_SP_ABILITY_RECAST_ID) then
-                        icon_path = 'icons/abilities/' .. string.format("%05d", skill.icon) .. '.' .. string.format("%02d", main_job_id) .. '.png'
-                    else    
-                        icon_path = 'icons/abilities/' .. string.format("%05d", skill.icon) .. '.png'
-                    end
-                end
-                self.hotbars[hotbar].slot_icon[slot]:path(windower.addon_path .. 'images/' .. icon_path)
-            else
-                if (skill.id ~= nil) then
-                    local ws = res.weapon_skills[tonumber(skill.id)]
-                    local weapon = res.skills[ws.skill].en:lower()
-                    local icon_path = maybe_get_custom_icon('weaponskills/' .. weapon, ws.en)
-                    if (icon_path ~= nil) then
-                        icon_overridden = true
-                        icon_path = 'images/' .. icon_path
-                    else
-                        icon_path = '/images/icons/weapons/' .. weapon .. '.png'
-                    end
                     self.hotbars[hotbar].slot_icon[slot]:path(windower.addon_path .. icon_path)
-                else
-                    self.hotbars[hotbar].slot_icon[slot]:path(windower.addon_path .. '/images/icons/weapons/sword.png')
+                end
+            else
+                icon_path, icon_overridden = get_ws_icon(action, skill)
+                if (icon_path ~= nil) then
+                    self.hotbars[hotbar].slot_icon[slot]:path(windower.addon_path .. icon_path)
                 end
 
                 skill.tpcost = '1000'
@@ -1026,19 +1072,41 @@ function ui:check_recasts(player_hotbar, player_vitals, environment, spells, gam
                 else
                     local skill = nil
                     local skill_recasts = nil
+                    local icon_path = nil
+                    local alt_skill = nil
                     local in_cooldown = false
                     local in_warmup = false
                     local is_in_seconds = false
                     local has_spell = true
+                    local has_alt_spell = true
+                    local alt_icon_path = nil
                     local spell_requires_ja = false
+                    local icon_overridden = false
+                    local alt_icon_overridden = false
 
                     local skillchain_prop = nil
+
+                    -- set up alt action skill (if present)
+                    if (action.alt_action_type == 'ma' and action.alt_action ~= nil) then
+                        alt_skill = database.spells[(action.alt_action):lower()]
+                        has_alt_spell = alt_skill.type ~= 'BlueMagic' or spells[(action.alt_action):lower()]
+                        alt_icon_path, alt_icon_overridden = get_ma_icon(action.alt_action, alt_skill)
+                    elseif (action.alt_action_type == 'ja' or action.alt_action_type == 'ws' or action.alt_action_type == 'pet') and database.abilities[(action.alt_action):lower()] ~= nil then
+                        alt_skill = database.abilities[(action.alt_action):lower()]
+                        if action.type == 'ja' then
+                            alt_icon_path, alt_icon_overridden = get_ja_icon(action.alt_action, alt_skill)
+                        else
+                            alt_icon_path, alt_icon_overridden = get_ws_icon(action.alt_action, alt_skill)
+                            alt_skill.tpcost = '1000'
+                        end
+                    end
 
                     -- if its magic, look for it in spells
                     if action.type == 'ma' and database.spells[(action.action):lower()] ~= nil then
                         skill = database.spells[(action.action):lower()]
                         skill_recasts = windower.ffxi.get_spell_recasts()
                         has_spell = skill.type ~= 'BlueMagic' or spells[(action.action):lower()]
+                        icon_path, icon_overridden = get_ma_icon(action.action, skill)
                         local spell_id = tonumber(skill.icon)
                         local tool_info = consumables:get_ninja_spell_info(spell_id)
                         if (tool_info ~= nil and tool_info.tool_count ~= nil and tool_info.master_tool_count ~= nil) then
@@ -1070,8 +1138,10 @@ function ui:check_recasts(player_hotbar, player_vitals, environment, spells, gam
                     elseif (action.type == 'ja' or action.type == 'ws' or action.type == 'pet') and database.abilities[(action.action):lower()] ~= nil then
                         skill = database.abilities[(action.action):lower()]
                         if (action.type == 'ws') then
+                            icon_path, icon_overridden = get_ws_icon(action.action, skill)
                             skillchain_prop = skillchains.get_skillchain_result(tonumber(skill.id), 'weapon_skills')
                         elseif (action.type == 'ja' or action_type == 'pet') then
+                            icon_path, icon_overridden = get_ja_icon(action.action, skill)
                             skillchain_prop = skillchains.get_skillchain_result(tonumber(skill.icon), 'job_abilities')
 
                             local tool_info = consumables:get_ability_info_by_name(kebab_casify(action.action))
@@ -1141,8 +1211,18 @@ function ui:check_recasts(player_hotbar, player_vitals, environment, spells, gam
                         is_in_seconds = true
                     end
 
-                    -- check if skill is in cooldown
-                    if (has_spell and skill ~= nil and skill_recasts[tonumber(skill.icon)] ~= nil and skill_recasts[tonumber(skill.icon)] > 0) then
+                    local action_recast = skill_recasts[tonumber(skill.icon)]
+                    local alt_action_recast = nil
+                    if (alt_skill ~= nil) then
+                        alt_action_recast = skill_recasts[tonumber(alt_skill.icon)]
+                    end
+
+                    local is_skill_in_cooldown = has_spell and skill ~= nil and action_recast ~= nil and action_recast > 0
+                    local is_alt_skill_in_cooldown = has_alt_spell and alt_skill ~= nil and alt_action_recast ~= nil and alt_action_recast > 0
+                    local is_alt_skill_not_in_cooldown = has_alt_spell and alt_skill ~= nil and (alt_action_recast == nil or alt_action_recast == 0)
+                    local is_buff_condition_met = action.alt_action_buff_id_condition == nil or self:has_buff(action.alt_action_buff_id_condition)
+
+                    if (is_skill_in_cooldown) then
                         -- register first cooldown to calculate percentage
                         if self.disabled_slots.on_cooldown[action.action] == nil then
                             self.disabled_slots.on_cooldown[action.action] = skill_recasts[tonumber(skill.icon)]
@@ -1151,7 +1231,66 @@ function ui:check_recasts(player_hotbar, player_vitals, environment, spells, gam
                             self.hotbars[h].slot_recast[i]:path(windower.addon_path .. '/images/' .. get_icon_pathbase() .. '/ui/black-square.png')
                         end
 
-                        in_cooldown = true
+                        if (has_alt_spell) then
+                            if (is_alt_skill_in_cooldown) then
+                                -- re-enable slot if it's disabled
+                                if self.disabled_slots.actions[action.action] == true then
+                                    self.disabled_slots.actions[action.action] = nil
+                                    self:toggle_slot(h, i, true)
+                                end
+
+                                if (self.disabled_slots.on_cooldown[action.alt_action] == nil) then
+                                    self.disabled_slots.on_cooldown[action.alt_action] = skill_recasts[tonumber(alt_skill.icon)]
+
+                                    -- setup recast elements
+                                    self.hotbars[h].slot_recast[i]:path(windower.addon_path .. '/images/' .. get_icon_pathbase() .. '/ui/black-square.png')
+                                end
+                                in_cooldown = true
+                            elseif (action.alt_action ~= nil and is_buff_condition_met) then
+                                self.hotbars[h].slot_text[i]:text(action.alt_action)
+                                self.hotbars[h].slot_icon[i]:path(windower.addon_path .. alt_icon_path)
+                                if (alt_icon_overridden) then
+                                    self.hotbars[h].slot_icon[i]:pos(self:get_slot_x(h, i), self:get_slot_y(h, i)) -- temporary fix for 32 x 32 icons
+                                else
+                                    self.hotbars[h].slot_icon[i]:pos(self:get_slot_x(h, i) + 4, self:get_slot_y(h, i) + 4) -- temporary fix for 32 x 32 icons
+                                end
+
+                                in_cooldown = false
+                                if self.disabled_slots.actions[action.alt_action] == true then
+                                    self.disabled_slots.actions[action.alt_action] = nil
+                                    self:toggle_slot(h, i, true)
+                                end
+                            elseif (not is_buff_condition_met) then
+                                self.hotbars[h].slot_text[i]:text(action.action)
+                                self.hotbars[h].slot_icon[i]:path(windower.addon_path .. icon_path)
+                                if (icon_overridden) then
+                                    self.hotbars[h].slot_icon[i]:pos(self:get_slot_x(h, i), self:get_slot_y(h, i)) -- temporary fix for 32 x 32 icons
+                                else
+                                    self.hotbars[h].slot_icon[i]:pos(self:get_slot_x(h, i) + 4, self:get_slot_y(h, i) + 4) -- temporary fix for 32 x 32 icons
+                                end
+                                in_cooldown = true
+                            end
+                        else
+                            self.hotbars[h].slot_text[i]:text(action.action)
+                            self.hotbars[h].slot_icon[i]:path(windower.addon_path .. icon_path)
+                            if (icon_overridden) then
+                                self.hotbars[h].slot_icon[i]:pos(self:get_slot_x(h, i), self:get_slot_y(h, i)) -- temporary fix for 32 x 32 icons
+                            else
+                                self.hotbars[h].slot_icon[i]:pos(self:get_slot_x(h, i) + 4, self:get_slot_y(h, i) + 4) -- temporary fix for 32 x 32 icons
+                            end
+
+                            in_cooldown = true
+                        end
+                    else
+                        if (icon_path ~= nil) then
+                            self.hotbars[h].slot_text[i]:text(action.action)
+                            self.hotbars[h].slot_icon[i]:path(windower.addon_path .. icon_path)
+                            if (icon_overridden) then
+                                self.hotbars[h].slot_icon[i]:pos(self:get_slot_x(h, i), self:get_slot_y(h, i)) -- temporary fix for 32 x 32 icons
+                            else
+                                self.hotbars[h].slot_icon[i]:pos(self:get_slot_x(h, i) + 4, self:get_slot_y(h, i) + 4) -- temporary fix for 32 x 32 icons
+                            end
+                        end
                     end
 
                     -- if skill is in cooldown
@@ -1171,9 +1310,15 @@ function ui:check_recasts(player_hotbar, player_vitals, environment, spells, gam
                                 time_remaining = self.enchanted_items:get_cooldown_fraction(action.action) * self.enchanted_items:get_cooldown_time(action.action)
                                 new_height = 40 * self.enchanted_items:get_cooldown_fraction(action.action)
                             else
-                                time_remaining = skill_recasts[tonumber(skill.icon)]
-                                local full_recast = tonumber(self.disabled_slots.on_cooldown[action.action])
-                                new_height = 40 * (time_remaining / full_recast)
+                                if (has_alt_spell and is_alt_skill_in_cooldown) then
+                                    time_remaining = skill_recasts[tonumber(alt_skill.icon)]
+                                    local full_recast = tonumber(self.disabled_slots.on_cooldown[action.alt_action])
+                                    new_height = 40 * (time_remaining / full_recast)
+                                else
+                                    time_remaining = skill_recasts[tonumber(skill.icon)]
+                                    local full_recast = tonumber(self.disabled_slots.on_cooldown[action.action])
+                                    new_height = 40 * (time_remaining / full_recast)
+                                end
                             end
                             if new_height > 40 then new_height = 40 end -- temporary bug fix
                             local recast_time = calc_recast_time(time_remaining, is_in_seconds)

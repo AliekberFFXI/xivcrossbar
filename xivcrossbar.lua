@@ -97,7 +97,7 @@ local function close_right_doublepress_window()
 end
 
 -- command to set a crossbar action in action_binder
-function set_hotkey(hotbar, slot, action_type, action, target, command, icon)
+function set_hotkey(hotbar, slot, action_type, action, target, command, icon, alt_action_type, alt_action, alt_action_buff_id_condition)
     local environment = player.hotbar_settings.active_environment
 
     local alias = nil
@@ -125,7 +125,7 @@ function set_hotkey(hotbar, slot, action_type, action, target, command, icon)
         action = command
     end
 
-    local new_action = action_manager:build(action_type, action, target, alias, icon)
+    local new_action = action_manager:build(action_type, action, target, alias, icon, nil, nil, nil, nil, alt_action_type, alt_action, alt_action_buff_id_condition)
     player:add_action(new_action, environment, hotbar, slot)
     player:save_hotbar()
     reload_hotbar()
@@ -190,6 +190,13 @@ function initialize()
         end
         config.save(settings)
     end)
+
+    if (windower_player.buffs ~= nil) then
+        for _, buff_id in ipairs(windower_player.buffs) do
+            ui:gain_buff(buff_id)
+            player:gain_buff(buff_id)
+        end
+    end
 
     local default_active_environment = env_chooser:get_default_active_environment(player.hotbar)
     set_active_environment(default_active_environment)
@@ -990,6 +997,16 @@ windower.register_event('action', function(act)
             set_active_environment('addendumblack')
         end
     end
+end)
+
+windower.register_event('gain buff', function(buff_id)
+    ui:gain_buff(buff_id)
+    player:gain_buff(buff_id)
+end)
+
+windower.register_event('lose buff', function(buff_id)
+    ui:lose_buff(buff_id)
+    player:lose_buff(buff_id)
 end)
 
 windower.register_event('incoming chunk', function(id, data)

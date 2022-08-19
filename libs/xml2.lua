@@ -573,7 +573,11 @@ function table.to_xml(t, indentlevel)
             if type(val) == 'table' then
                 val = ''
             end
-            str = str..indent..'<'..key..'>'..val:xml_escape()..'</'..key..'>\n'
+            if type(val) == 'number' then
+                str = str..indent..'<'..key..'>'..val..'</'..key..'>\n'
+            else
+                str = str..indent..'<'..key..'>'..val:xml_escape()..'</'..key..'>\n'
+            end
         end
     end
 
