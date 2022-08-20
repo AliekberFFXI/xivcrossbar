@@ -617,7 +617,7 @@ function ui:load_action(player_hotbar, environment, hotbar, slot, action, player
                 local ability_recast = res.ability_recasts[recast_id]
                 local id = ability_recast.action_id
                 local name = ""
-                if (id ~= nil) then
+                if (id ~= nil and res.job_abilities[id] ~= nil) then
                     name = res.job_abilities[id].name
                 else
                     name = action.action
