@@ -619,11 +619,12 @@ local get_ja_icon = function(action, skill)
 end
 
 local get_ws_icon = function(action, skill)
+    local icon_overridden = false
     local icon_path = nil
     if (skill.id ~= nil) then
         local ws = res.weapon_skills[tonumber(skill.id)]
         local weapon = res.skills[ws.skill].en:lower()
-        local icon_path = maybe_get_custom_icon('weaponskills/' .. weapon, ws.en)
+        icon_path = maybe_get_custom_icon('weaponskills/' .. weapon, ws.en)
         if (icon_path ~= nil) then
             icon_overridden = true
             icon_path = 'images/' .. icon_path
@@ -1211,16 +1212,22 @@ function ui:check_recasts(player_hotbar, player_vitals, environment, spells, gam
                         is_in_seconds = true
                     end
 
-                    local action_recast = skill_recasts[tonumber(skill.icon)]
-                    local alt_action_recast = nil
-                    if (alt_skill ~= nil) then
-                        alt_action_recast = skill_recasts[tonumber(alt_skill.icon)]
-                    end
+                    local is_skill_in_cooldown = false
+                    local is_alt_skill_in_cooldown = false
+                    local is_alt_skill_not_in_cooldown = false
+                    local is_buff_condition_met = false
+                    if (skill ~= nil) then
+                        local action_recast = skill_recasts[tonumber(skill.icon)]
+                        local alt_action_recast = nil
+                        if (alt_skill ~= nil) then
+                            alt_action_recast = skill_recasts[tonumber(alt_skill.icon)]
+                        end
 
-                    local is_skill_in_cooldown = has_spell and skill ~= nil and action_recast ~= nil and action_recast > 0
-                    local is_alt_skill_in_cooldown = has_alt_spell and alt_skill ~= nil and alt_action_recast ~= nil and alt_action_recast > 0
-                    local is_alt_skill_not_in_cooldown = has_alt_spell and alt_skill ~= nil and (alt_action_recast == nil or alt_action_recast == 0)
-                    local is_buff_condition_met = action.alt_action_buff_id_condition == nil or self:has_buff(action.alt_action_buff_id_condition)
+                        is_skill_in_cooldown = has_spell and skill ~= nil and action_recast ~= nil and action_recast > 0
+                        is_alt_skill_in_cooldown = has_alt_spell and alt_skill ~= nil and alt_action_recast ~= nil and alt_action_recast > 0
+                        is_alt_skill_not_in_cooldown = has_alt_spell and alt_skill ~= nil and (alt_action_recast == nil or alt_action_recast == 0)
+                        is_buff_condition_met = action.alt_action_buff_id_condition == nil or self:has_buff(action.alt_action_buff_id_condition)
+                    end
 
                     if (is_skill_in_cooldown) then
                         -- register first cooldown to calculate percentage
