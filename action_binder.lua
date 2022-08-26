@@ -2284,80 +2284,88 @@ function get_party_names(include_self)
 end
 
 local INVENTORY_BAG = 0
+local TEMP_ITEMS_BAG = 3
 
 function get_items(category)
     local usable_icon_path = get_icon_pathbase() .. '/usable-item.png'
     local tradable_icon_path = get_icon_pathbase() .. '/item.png'
     local inventory = windower.ffxi.get_items(INVENTORY_BAG)
-    local ignore_indices = {max = true, count = true, enabled = true}
+    local temp_items = windower.ffxi.get_items(TEMP_ITEMS_BAG)
 
     if (inventory) then
         local all_items = L{}
         local already_included_ids = {}
 
-        for i, inv_item in pairs(inventory) do
-            if ((not ignore_indices[i]) and inv_item.id ~= 0) then
-                local item = res.items[inv_item.id]
-                if (not already_included_ids[item.id]) then
-                    already_included_ids[item.id] = true
-                    local icon_path = maybe_get_custom_icon('items', item.en)
-                    local is_32_by_32 = false
-                    if (icon_path == nil) then
-                        local icon_dir = string.format('%simages/extracted_icons', windower.addon_path)
-                        local full_icon_path = string.format('%simages/extracted_icons/%s.bmp', windower.addon_path, kebab_casify(item.en))
-
-                        if not windower.dir_exists(icon_dir) then
-                            windower.create_dir(icon_dir)
-                        end
-                        if not windower.file_exists(full_icon_path) then
-                            local item_id = nil
-                            for id, resource_item in pairs(res.items) do
-                                if (resource_item.en == item.name) then
-                                    item_id = id
-                                    break;
-                                end
-                            end
-                            if (item_id ~= nil) then
-                                icon_extractor.item_by_id(item_id, full_icon_path)
-                            end
-                        end
-                        if windower.file_exists(full_icon_path) then
-                            is_32_by_32 = true
-                            icon_path = '/extracted_icons/' .. kebab_casify(item.name) .. '.bmp'
-                        end
-                    end
-                    local target_type = nil
-
-                    local is_usable = item.category == 'Usable' and category == 'Usable'
-                    local is_tradable = item.category == 'General' and category == 'General'
-                    if (is_usable) then
-                        target_type = item.targets
-                        if (icon_path == nil) then
-                            icon_path = usable_icon_path
-                        end
-                    elseif (is_tradable) then
-                        target_type = {NPC = true}
-                        if (icon_path == nil) then
-                            icon_path = tradable_icon_path
-                        end
-                    end
-                    local offset = 0
-                    if (is_32_by_32) then
-                        offset = 4
-                    end
-
-                    if (is_usable or is_tradable) then
-                        all_items:append({id = item.id, name = item.en, icon = icon_path, icon_offset = offset, data = {target_type = target_type}})
-                    end
-                end
-            end
-        end
+        append_items(all_items, already_included_ids, category, temp_items)
+        append_items(all_items, already_included_ids, category, inventory)
 
         all_items:sort(sortByName)
 
         return all_items
     else
         return L{}
+    end
+end
+
+function append_items(items_list, already_included_ids, category, inventory)
+    local ignore_indices = {max = true, count = true, enabled = true}
+
+    for i, inv_item in pairs(inventory) do
+        if ((not ignore_indices[i]) and inv_item.id ~= 0) then
+            local item = res.items[inv_item.id]
+            if (not already_included_ids[item.id]) then
+                already_included_ids[item.id] = true
+                local icon_path = maybe_get_custom_icon('items', item.en)
+                local is_32_by_32 = false
+                if (icon_path == nil) then
+                    local icon_dir = string.format('%simages/extracted_icons', windower.addon_path)
+                    local full_icon_path = string.format('%simages/extracted_icons/%s.bmp', windower.addon_path, kebab_casify(item.en))
+
+                    if not windower.dir_exists(icon_dir) then
+                        windower.create_dir(icon_dir)
+                    end
+                    if not windower.file_exists(full_icon_path) then
+                        local item_id = nil
+                        for id, resource_item in pairs(res.items) do
+                            if (resource_item.en == item.name) then
+                                item_id = id
+                                break;
+                            end
+                        end
+                        if (item_id ~= nil) then
+                            icon_extractor.item_by_id(item_id, full_icon_path)
+                        end
+                    end
+                    if windower.file_exists(full_icon_path) then
+                        is_32_by_32 = true
+                        icon_path = '/extracted_icons/' .. kebab_casify(item.name) .. '.bmp'
+                    end
+                end
+                local target_type = nil
+
+                local is_usable = item.category == 'Usable' and category == 'Usable'
+                local is_tradable = item.category == 'General' and category == 'General'
+                if (is_usable) then
+                    target_type = item.targets
+                    if (icon_path == nil) then
+                        icon_path = usable_icon_path
+                    end
+                elseif (is_tradable) then
+                    target_type = {NPC = true}
+                    if (icon_path == nil) then
+                        icon_path = tradable_icon_path
+                    end
+                end
+                local offset = 0
+                if (is_32_by_32) then
+                    offset = 4
+                end
+
+                if (is_usable or is_tradable) then
+                    items_list:append({id = item.id, name = item.en, icon = icon_path, icon_offset = offset, data = {target_type = target_type}})
+                end
+            end
+        end
     end
 end
 
