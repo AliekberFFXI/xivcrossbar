@@ -685,12 +685,12 @@ function ui:load_action(player_hotbar, environment, hotbar, slot, action, player
             skill = database.abilities[(action.action):lower()]
 
             if action.type == 'ja' then
-                icon_path, icon_overridden = get_ja_icon(action, skill)
+                icon_path, icon_overridden = get_ja_icon(action.action, skill)
                 if (icon_path ~= nil) then
                     self.hotbars[hotbar].slot_icon[slot]:path(windower.addon_path .. icon_path)
                 end
             else
-                icon_path, icon_overridden = get_ws_icon(action, skill)
+                icon_path, icon_overridden = get_ws_icon(action.action, skill)
                 if (icon_path ~= nil) then
                     self.hotbars[hotbar].slot_icon[slot]:path(windower.addon_path .. icon_path)
                 end
@@ -1094,7 +1094,7 @@ function ui:check_recasts(player_hotbar, player_vitals, environment, spells, gam
                         alt_icon_path, alt_icon_overridden = get_ma_icon(action.alt_action, alt_skill)
                     elseif (action.alt_action_type == 'ja' or action.alt_action_type == 'ws' or action.alt_action_type == 'pet') and database.abilities[(action.alt_action):lower()] ~= nil then
                         alt_skill = database.abilities[(action.alt_action):lower()]
-                        if action.type == 'ja' then
+                        if action.alt_action_type == 'ja' then
                             alt_icon_path, alt_icon_overridden = get_ja_icon(action.alt_action, alt_skill)
                         else
                             alt_icon_path, alt_icon_overridden = get_ws_icon(action.alt_action, alt_skill)
