@@ -1404,6 +1404,14 @@ function action_binder:display_pet_command_selector()
         commands:append(command)
     end
 
+    -- DRG
+    for i, command in ipairs(get_drg_pet_commands(player.main_job_id, player.main_job_level)) do
+        commands:append(command)
+    end
+    for i, command in ipairs(get_drg_pet_commands(player.sub_job_id, player.sub_job_level)) do
+        commands:append(command)
+    end
+
     self.selector:display_options(commands)
     self:show_control_hints('Confirm', 'Go Back')
 end
@@ -1963,6 +1971,38 @@ function get_pup_pet_commands(job_id, job_level)
     command_list = L{}
 
     if (job_id == 18) then
+        for i, command in ipairs(commands) do
+            if (job_level >= command.level) then
+                local skill = database.abilities[command.name:lower()]
+                local target_type = res.job_abilities[command.id].targets
+                local icon_path = 'ui/red-x.png'
+                local icon_offset = 0
+                if (skill ~= nil) then
+                    icon_path = maybe_get_custom_icon('pet-commands', command.name)
+                    if (icon_path == nil) then
+                        icon_path = 'icons/abilities/' .. string.format("%05d", skill.icon) .. '.png'
+                        icon_offset = 4
+                    end
+                end
+                command_list:append({id = command.id, name = command.name, icon = icon_path, icon_offset = icon_offset, data = {target_type = target_type}})
+            end
+        end
+    end
+
+    return command_list
+end
+
+function get_drg_pet_commands(job_id, job_level)
+    local commands = L{
+        {name = 'Dismiss', id = 87, level = 1},
+        {name = 'Restoring Breath', id = 319, level = 90},
+        {name = 'Smiting Breath', id = 318, level = 90},
+        {name = 'Steady Wing', id = 295, level = 95}
+    }
+
+    command_list = L{}
+
+    if (job_id == 14) then
         for i, command in ipairs(commands) do
             if (job_level >= command.level) then
                 local skill = database.abilities[command.name:lower()]
