@@ -28,6 +28,9 @@
 
 local database = require('database')  -- TODO: IMPORT FROM RES
 local icon_extractor = require('ui/icon_extractor')
+local kebab_casify = require('libs/kebab_casify')
+local crossbar_abilities = require('resources/crossbar_abilities')
+local crossbar_spells = require('resources/crossbar_spells')
 
 local ui = {}
 
@@ -106,10 +109,6 @@ function setup_text(text, theme_options)
     text:stroke_color(theme_options.font_stroke_color_red, theme_options.font_stroke_color_green, theme_options.font_stroke_color_blue)
     text:stroke_width(theme_options.font_stroke_width)
     text:show()
-end
-
-local kebab_casify = function(str)
-    return str:lower():gsub('/', '\n'):gsub(':', ''):gsub('-', ' '):gsub('%p', ''):gsub(' ', '-'):gsub('\n', '/')
 end
 
 local icon_pack = nil
@@ -594,59 +593,42 @@ function ui:load_action(player_hotbar, environment, hotbar, slot, action, player
         -- if its magic, look for it in spells
         if action.type == 'ma' and database.spells[(action.action):lower()] ~= nil then
             skill = database.spells[(action.action):lower()]
-
-            local spell = res.spells[tonumber(skill.icon)]
-            local magic_skill = res.skills[spell.skill].en
-            local category = SPELL_TYPE_LOOKUP[spell.type]
-            if (category == nil) then
-                category = spell.type
-            end
-            local icon_path = maybe_get_custom_icon(category, action.action)
+            local spell = crossbar_spells[kebab_casify(action.action)]
+            local icon_path = maybe_get_custom_icon(spell.category, spell.en)
             if (icon_path ~= nil) then
                 icon_overridden = true
                 icon_path = 'images/' .. icon_path
             else
-                icon_path = '/images/icons/spells/' .. (string.format("%05d", skill.icon)) .. '.png'
+                icon_path = '/images/icons/spells/' .. (string.format("%05d", spell.recast_id)) .. '.png'
             end
             self.hotbars[hotbar].slot_icon[slot]:path(windower.addon_path .. icon_path)
         elseif (action.type == 'ja' or action.type == 'ws') and database.abilities[(action.action):lower()] ~= nil then
             skill = database.abilities[(action.action):lower()]
 
             if action.type == 'ja' then
-                local recast_id = tonumber(skill.icon)
-                local ability_recast = res.ability_recasts[recast_id]
-                local id = ability_recast.action_id
-                local name = ""
-                if (id ~= nil and res.job_abilities[id] ~= nil) then
-                    name = res.job_abilities[id].name
-                else
-                    name = action.action
-                end
+                local ability = crossbar_abilities[kebab_casify(action.action)]
 
-                local category = JOB_ABILITY_TYPE_LOOKUP[skill.type]
-                local icon_path = maybe_get_custom_icon(category, name)
-
+                local icon_path = maybe_get_custom_icon(ability.category, ability.en)
                 if (icon_path ~= nil) then
                     icon_overridden = true
                     icon_path = icon_path
                 else
-                    if (recast_id == LV_1_SP_ABILITY_RECAST_ID or recast_id == LV_96_SP_ABILITY_RECAST_ID) then
-                        icon_path = 'icons/abilities/' .. string.format("%05d", skill.icon) .. '.' .. string.format("%02d", main_job_id) .. '.png'
+                    if (ability.recast_id == LV_1_SP_ABILITY_RECAST_ID or ability.recast_id == LV_96_SP_ABILITY_RECAST_ID) then
+                        icon_path = 'icons/abilities/' .. string.format("%05d", ability.recast_id) .. '.' .. string.format("%02d", main_job_id) .. '.png'
                     else    
-                        icon_path = 'icons/abilities/' .. string.format("%05d", skill.icon) .. '.png'
+                        icon_path = 'icons/abilities/' .. string.format("%05d", ability.recast_id) .. '.png'
                     end
                 end
                 self.hotbars[hotbar].slot_icon[slot]:path(windower.addon_path .. 'images/' .. icon_path)
             else
                 if (skill.id ~= nil) then
-                    local ws = res.weapon_skills[tonumber(skill.id)]
-                    local weapon = res.skills[ws.skill].en:lower()
-                    local icon_path = maybe_get_custom_icon('weaponskills/' .. weapon, ws.en)
+                    local ws = crossbar_abilities[kebab_casify(action.action)]
+                    local icon_path = maybe_get_custom_icon('weaponskills/' .. ws.category, ws.en)
                     if (icon_path ~= nil) then
                         icon_overridden = true
                         icon_path = 'images/' .. icon_path
                     else
-                        icon_path = '/images/icons/weapons/' .. weapon .. '.png'
+                        icon_path = '/images/icons/weapons/' .. ws.category .. '.png'
                     end
                     self.hotbars[hotbar].slot_icon[slot]:path(windower.addon_path .. icon_path)
                 else

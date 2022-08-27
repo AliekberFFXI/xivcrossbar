@@ -53,6 +53,8 @@ local theme = require('theme')
 local theme_options = theme.apply(settings)
 local buttonmapping = require('buttonmapping')
 
+local resource_shaper = require('resource_shaper')
+
 -- Addon Dependencies
 local action_manager = require('action_manager')
 local keyboard = require('keyboard_mapper')

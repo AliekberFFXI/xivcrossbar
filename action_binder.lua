@@ -3,16 +3,13 @@ require("tables")
 
 local mount_roulette = require('libs/mountroulette/mountroulette')
 local icon_extractor = require('ui/icon_extractor')
+local kebab_casify = require('libs/kebab_casify')
 
 texts = require('texts')
 
 local database = require('database')  -- TODO: IMPORT FROM RES
 
 local action_binder = {}
-
-local kebab_casify = function(str)
-    return str:lower():gsub('/', '\n'):gsub(':', ''):gsub('-', ' '):gsub('%p', ''):gsub(' ', '-'):gsub('\n', '/')
-end
 
 local icon_pack = nil
 
