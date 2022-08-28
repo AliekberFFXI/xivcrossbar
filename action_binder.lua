@@ -242,7 +242,9 @@ end
 
 function action_binder:reset_gamepad_triggers()
     self.trigger_left_pressed = false
+    self.trigger_left_doublepressed = false
     self.trigger_right_pressed = false
+    self.trigger_right_doublepressed = false
 end
 
 function action_binder:create_text(caption, x, y)
@@ -722,7 +724,6 @@ function action_binder:go_back()
         self.state = states.SELECT_BUTTON_ASSIGNMENT
         self.active_crossbar = nil
         self.hotkey = nil
-        self:reset_gamepad()
         self:display_button_assigner()
     end
 end
@@ -924,6 +925,8 @@ end
 function action_binder:display_button_assigner()
     self.title:text('Enter Button Combo')
     self.title:show()
+
+    self:reset_gamepad()
 
     self.selector:hide()
 
