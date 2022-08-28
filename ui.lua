@@ -117,14 +117,14 @@ local get_icon_pathbase = function()
     return 'icons/iconpacks/' .. icon_pack
 end
 
-local maybe_get_custom_icon = function(category, action_name)
+local maybe_get_custom_icon = function(default_icon, custom_icon)
     local pathbase = get_icon_pathbase()
-    local icon_path = pathbase .. '/' .. kebab_casify(category) .. '/' ..  kebab_casify(action_name) .. '.png'
-    local icon_file = file.new('images/' .. icon_path)
+    local icon_path = 'images/' .. pathbase .. '/' .. custom_icon
+    local icon_file = file.new(icon_path)
     if (icon_file:exists()) then
-        return icon_path
+        return icon_path, true
     else
-        return nil
+        return default_icon, false
     end
 end
 
@@ -556,6 +556,10 @@ local JOB_ABILITY_TYPE_LOOKUP = {
     ['Ward'] = 'wards',
 }
 
+function ui:should_show_element(element)
+    return element ~= nil and element ~= 'None' and self.theme.hide_action_element == false
+end
+
 -- load action into a hotbar slot
 function ui:load_action(player_hotbar, environment, hotbar, slot, action, player_vitals, show_when_ready)
     local is_disabled = false
@@ -586,111 +590,65 @@ function ui:load_action(player_hotbar, environment, hotbar, slot, action, player
         end
     end
 
+    local icon_path = nil
+
     -- if slot has a skill (ma, ja or ws)
     if action.type == 'ma' or action.type == 'ja' or action.type == 'ws' or action.type == 'enchanteditem' then
-        local skill = nil
+        local crossbar_action = nil
 
-        -- if its magic, look for it in spells
-        if action.type == 'ma' and database.spells[(action.action):lower()] ~= nil then
-            skill = database.spells[(action.action):lower()]
-            local spell = crossbar_spells[kebab_casify(action.action)]
-            local icon_path = maybe_get_custom_icon(spell.category, spell.en)
-            if (icon_path ~= nil) then
-                icon_overridden = true
-                icon_path = 'images/' .. icon_path
+        if (action.type == 'ma' or action.type == 'ja' or action.typ == 'pet' or action.type == 'ws') then
+            if (action.type == 'ma') then
+                crossbar_action = crossbar_spells[kebab_casify(action.action)]
             else
-                icon_path = '/images/icons/spells/' .. (string.format("%05d", spell.recast_id)) .. '.png'
+                crossbar_action = crossbar_abilities[kebab_casify(action.action)]
             end
-            self.hotbars[hotbar].slot_icon[slot]:path(windower.addon_path .. icon_path)
-        elseif (action.type == 'ja' or action.type == 'ws') and database.abilities[(action.action):lower()] ~= nil then
-            skill = database.abilities[(action.action):lower()]
 
-            if action.type == 'ja' then
-                local ability = crossbar_abilities[kebab_casify(action.action)]
+            icon_path, icon_overridden = maybe_get_custom_icon(crossbar_action.default_icon, crossbar_action.custom_icon)
 
-                local icon_path = maybe_get_custom_icon(ability.category, ability.en)
-                if (icon_path ~= nil) then
-                    icon_overridden = true
-                    icon_path = icon_path
-                else
-                    if (ability.recast_id == LV_1_SP_ABILITY_RECAST_ID or ability.recast_id == LV_96_SP_ABILITY_RECAST_ID) then
-                        icon_path = 'icons/abilities/' .. string.format("%05d", ability.recast_id) .. '.' .. string.format("%02d", main_job_id) .. '.png'
-                    else    
-                        icon_path = 'icons/abilities/' .. string.format("%05d", ability.recast_id) .. '.png'
-                    end
-                end
-                self.hotbars[hotbar].slot_icon[slot]:path(windower.addon_path .. 'images/' .. icon_path)
-            else
-                if (skill.id ~= nil) then
-                    local ws = crossbar_abilities[kebab_casify(action.action)]
-                    local icon_path = maybe_get_custom_icon('weaponskills/' .. ws.category, ws.en)
-                    if (icon_path ~= nil) then
-                        icon_overridden = true
-                        icon_path = 'images/' .. icon_path
-                    else
-                        icon_path = '/images/icons/weapons/' .. ws.category .. '.png'
-                    end
-                    self.hotbars[hotbar].slot_icon[slot]:path(windower.addon_path .. icon_path)
-                else
-                    self.hotbars[hotbar].slot_icon[slot]:path(windower.addon_path .. '/images/icons/weapons/sword.png')
-                end
-
-                skill.tpcost = '1000'
-            end
-        elseif (action.type == 'enchanteditem') then
-            self.enchanted_items:register(action.action, action.warmup, 2, action.cooldown)
-            self.hotbars[hotbar].slot_icon[slot]:pos(self:get_slot_x(hotbar, slot), self:get_slot_y(hotbar, slot))
-            self.hotbars[hotbar].slot_icon[slot]:path(windower.addon_path .. '/images/' .. get_icon_pathbase() .. '/items/' .. kebab_casify(action.action) .. '.png')
-        end
-
-        self.hotbars[hotbar].slot_background[slot]:alpha(200)
-        if (action.type ~= 'enchanteditem' and not icon_overridden) then
-            self.hotbars[hotbar].slot_icon[slot]:pos(self:get_slot_x(hotbar, slot) + 4, self:get_slot_y(hotbar, slot) + 4) -- temporary fix for 32 x 32 icons
-        else
-            self.hotbars[hotbar].slot_icon[slot]:pos(self:get_slot_x(hotbar, slot), self:get_slot_y(hotbar, slot)) -- temporary fix for 32 x 32 icons
-        end
-        if (show_when_ready) then
-            self.hotbars[hotbar].slot_icon[slot]:show()
-        end
-
-        if skill ~= nil then
-            -- display skill element
-            if skill.element ~= nil and skill.element ~= 'None' and self.theme.hide_action_element == false then
-                self.hotbars[hotbar].slot_element[slot]:path(windower.addon_path .. '/images/icons/elements/' .. skill.element .. '.png')
+            -- display element
+            if self:should_show_element(crossbar_action.element) then
+                self.hotbars[hotbar].slot_element[slot]:path(windower.addon_path .. '/images/icons/elements/' .. crossbar_action.element .. '.png')
                 if (show_when_ready) then
                     self.hotbars[hotbar].slot_element[slot]:show()
                 end
             end
 
             -- display mp cost
-            if skill.mpcost ~= nil and skill.mpcost ~= '0' then
+            if crossbar_action.mp_cost ~= nil and crossbar_action.mp_cost ~= 0 then
                 self.hotbars[hotbar].slot_cost[slot]:color(self.theme.mp_cost_color_red, self.theme.mp_cost_color_green, self.theme.mp_cost_color_blue)
-                self.hotbars[hotbar].slot_cost[slot]:text(skill.mpcost)
+                self.hotbars[hotbar].slot_cost[slot]:text(tostring(crossbar_action.mp_cost))
 
-                if player_vitals.mp < tonumber(skill.mpcost) then
+                if player_vitals.mp < crossbar_action.mp_cost then
                     self.disabled_slots.no_vitals[action.action] = true
                     is_disabled = true
                 end
             -- display tp cost
-            elseif skill.tpcost ~= nil and skill.tpcost ~= '0' then
+            elseif crossbar_action.tp_cost ~= nil and crossbar_action.tp_cost ~= 0 then
                 self.hotbars[hotbar].slot_cost[slot]:color(self.theme.tp_cost_color_red, self.theme.tp_cost_color_green, self.theme.tp_cost_color_blue)
-                self.hotbars[hotbar].slot_cost[slot]:text(skill.tpcost)
+                self.hotbars[hotbar].slot_cost[slot]:text(tostring(crossbar_action.tp_cost))
 
-                if player_vitals.tp < tonumber(skill.tpcost) then
+                if player_vitals.tp < crossbar_action.tp_cost then
                     self.disabled_slots.no_vitals[action.action] = true
                     is_disabled = true
                 end
             end
         end
+
+        if (action.type == 'enchanteditem') then
+            self.enchanted_items:register(action.action, action.warmup, 2, action.cooldown)
+            self.hotbars[hotbar].slot_icon[slot]:pos(self:get_slot_x(hotbar, slot), self:get_slot_y(hotbar, slot))
+            self.hotbars[hotbar].slot_icon[slot]:path(windower.addon_path .. '/images/' .. get_icon_pathbase() .. '/items/' .. kebab_casify(action.action) .. '.png')
+        end
+
+        self.hotbars[hotbar].slot_background[slot]:alpha(200)
+        if (show_when_ready) then
+            self.hotbars[hotbar].slot_icon[slot]:show()
+        end
     -- if action is an item
     elseif action.type == 'item' then
-        self.hotbars[hotbar].slot_icon[slot]:pos(self:get_slot_x(hotbar, slot), self:get_slot_y(hotbar, slot))
-
-        local icon_path = maybe_get_custom_icon('items', action.action)
-        if (icon_path ~= nil) then
-            icon_overridden = true
-            icon_path = '/images/' .. icon_path
-        else
+        local custom_icon = 'items/' ..  kebab_casify(action.action) .. '.png'
+        icon_path, icon_overridden = maybe_get_custom_icon(nil, custom_icon)
+        if (icon_path == nil) then
             local icon_dir = string.format('%simages/extracted_icons', windower.addon_path)
             local full_icon_path = string.format('%simages/extracted_icons/%s.bmp', windower.addon_path, kebab_casify(action.action))
 
@@ -710,7 +668,6 @@ function ui:load_action(player_hotbar, environment, hotbar, slot, action, player
                 end
             end
             if windower.file_exists(full_icon_path) then
-                icon_overridden = true
                 icon_path = '/images/extracted_icons/' .. kebab_casify(action.action) .. '.bmp'
             elseif (action.usable ~= nil) then
                 icon_path = '/images/' .. get_icon_pathbase() .. '/items/' .. kebab_casify(action.action) .. '.png'
@@ -721,29 +678,25 @@ function ui:load_action(player_hotbar, environment, hotbar, slot, action, player
             end
         end
 
-        if (icon_overridden) then
-            self.hotbars[hotbar].slot_icon[slot]:pos(self:get_slot_x(hotbar, slot) + 4, self:get_slot_y(hotbar, slot) + 4) -- temporary fix for 32 x 32 icons
-        else
-            self.hotbars[hotbar].slot_icon[slot]:pos(self:get_slot_x(hotbar, slot), self:get_slot_y(hotbar, slot)) -- temporary fix for 32 x 32 icons
-        end
-        self.hotbars[hotbar].slot_icon[slot]:path(windower.addon_path .. icon_path)
-
         if (show_when_ready) then
             self.hotbars[hotbar].slot_icon[slot]:show()
         end
     elseif (action.type == 'mount') then
-        self.hotbars[hotbar].slot_icon[slot]:pos(self:get_slot_x(hotbar, slot), self:get_slot_y(hotbar, slot))
+        local default_icon = '/images/' .. get_icon_pathbase() .. '/mount.png'
+        local custom_icon = 'mount/' ..  kebab_casify(action.action) .. '.png'
+        icon_path = maybe_get_custom_icon(default_icon, custom_icon)
+        icon_overridden = true
+    end
 
-        local icon_path = maybe_get_custom_icon('mounts', action.action)
-        if (icon_path ~= nil) then
-            icon_overridden = true
-            icon_path = '/images/' .. icon_path
-        else
-            icon_path = '/images/' .. get_icon_pathbase() .. '/mount.png'
-        end
+    if (icon_path ~= nil) then
         self.hotbars[hotbar].slot_icon[slot]:path(windower.addon_path .. icon_path)
     else
+        self.hotbars[hotbar].slot_icon[slot]:hide()
+    end
+    if (icon_overridden) then
         self.hotbars[hotbar].slot_icon[slot]:pos(self:get_slot_x(hotbar, slot), self:get_slot_y(hotbar, slot))
+    else
+        self.hotbars[hotbar].slot_icon[slot]:pos(self:get_slot_x(hotbar, slot) + 4, self:get_slot_y(hotbar, slot) + 4) -- "temporary" (lol) fix for 32 x 32 icons
     end
 
     -- if action is custom

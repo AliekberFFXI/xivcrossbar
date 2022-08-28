@@ -52,8 +52,8 @@ config.save(settings)
 local theme = require('theme')
 local theme_options = theme.apply(settings)
 local buttonmapping = require('buttonmapping')
-
-local resource_shaper = require('resource_shaper')
+local resource_generator = require('resource_generator')
+resource_generator.generate_missing_resources()
 
 -- Addon Dependencies
 local action_manager = require('action_manager')
@@ -441,6 +441,10 @@ function remap()
     gamepad_mapper:show(false)
 end
 
+function regenerate_resources()
+    resource_generator.generate_all_resources()
+end
+
 -- command to display help for the user
 function display_help_menu()
     local layout = theme_options.button_layout:lower()
@@ -565,6 +569,8 @@ windower.register_event('addon command', function(command, ...)
         new_environment_command(args)
     elseif command == 'remap' then
         remap()
+    elseif command == 'regenerate' then
+        regenerate_resources()
     elseif command == '?' or command == 'help' then
         display_help_menu()
     end
