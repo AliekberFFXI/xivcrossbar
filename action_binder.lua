@@ -2043,10 +2043,8 @@ function get_stratagems(job_id, job_level)
         for i, stratagem in ipairs(stratagems) do
             if (job_level >= stratagem.level) then
                 local target_type = res.job_abilities[stratagem.id].targets
-                local icon_path = maybe_get_custom_icon('stratagems', stratagem.name)
-                if (icon_path == nil) then
-                    icon_path = stratagem.icon
-                end
+                local crossbar_stratagem = crossbar_abilities[kebab_casify(stratagem.name)]
+                local icon_path = maybe_get_custom_icon(crossbar_stratagem.default_icon, crossbar_stratagem.custom_icon)
                 stratagem_list:append({id = stratagem.id, name = stratagem.name, icon = icon_path, data = {target_type = target_type}})
             end
         end
@@ -2278,8 +2276,8 @@ local INVENTORY_BAG = 0
 local TEMP_ITEMS_BAG = 3
 
 function get_items(category)
-    local usable_icon_path = get_icon_pathbase() .. '/usable-item.png'
-    local tradable_icon_path = get_icon_pathbase() .. '/item.png'
+    local usable_icon_path = 'images/' .. get_icon_pathbase() .. '/usable-item.png'
+    local tradable_icon_path = 'images/' .. get_icon_pathbase() .. '/item.png'
     local inventory = windower.ffxi.get_items(INVENTORY_BAG)
     local temp_items = windower.ffxi.get_items(TEMP_ITEMS_BAG)
 
@@ -2306,7 +2304,8 @@ function append_items(items_list, already_included_ids, category, inventory)
             local item = res.items[inv_item.id]
             if (not already_included_ids[item.id]) then
                 already_included_ids[item.id] = true
-                local icon_path = maybe_get_custom_icon('items', item.en)
+                local custom_icon = 'items/' .. kebab_casify(item.en) .. '.png'
+                local icon_path = maybe_get_custom_icon(nil, custom_icon)
                 local is_32_by_32 = false
                 if (icon_path == nil) then
                     local icon_dir = string.format('%simages/extracted_icons', windower.addon_path)
@@ -2329,7 +2328,7 @@ function append_items(items_list, already_included_ids, category, inventory)
                     end
                     if windower.file_exists(full_icon_path) then
                         is_32_by_32 = true
-                        icon_path = '/extracted_icons/' .. kebab_casify(item.name) .. '.bmp'
+                        icon_path = 'images/extracted_icons/' .. kebab_casify(item.name) .. '.bmp'
                     end
                 end
                 local target_type = nil
