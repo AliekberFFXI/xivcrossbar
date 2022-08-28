@@ -26,7 +26,6 @@
         SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ]]
 
-local database = require('database')  -- TODO: IMPORT FROM RES
 local icon_extractor = require('ui/icon_extractor')
 local kebab_casify = require('libs/kebab_casify')
 local crossbar_abilities = require('resources/crossbar_abilities')
@@ -192,7 +191,6 @@ end
 -- setup ui
 function ui:setup(theme_options, enchanted_items)
     self.enchanted_items = enchanted_items
-    database:import()
 
     icon_pack = theme_options.iconpack
 
@@ -772,18 +770,20 @@ function ui:check_vitals(player_hotbar, player_vitals, environment)
             end
 
             if action ~= nil then
-                local skill = nil
+                local crossbar_action = nil
                 local is_disabled = false
 
                 -- if its magic, look for it in spells
-                if action.type == 'ma' and database.spells[(action.action):lower()] ~= nil then
-                    skill = database.spells[(action.action):lower()]
-                elseif (action.type == 'ja' or action.type == 'ws') and database.abilities[(action.action):lower()] ~= nil then
-                    skill = database.abilities[(action.action):lower()]
+                if (action.type == 'ma') then
+                    crossbar_action = crossbar_spells[kebab_casify(action.action)]
+                elseif (action.type == 'ja' or action.type == 'ws') then
+                    crossbar_action = crossbar_abilities[kebab_casify(action.action)]
                 end
 
-                if skill ~= nil then
-                    if (skill.mpcost ~= nil and skill.mpcost ~= '0' and player_vitals.mp < tonumber(skill.mpcost)) or (skill.tpcost ~= nil and skill.tpcost ~= '0' and player_vitals.tp < tonumber(skill.tpcost)) then
+                if (crossbar_action ~= nil) then
+                    local can_afford_mp = crossbar_action.mp_cost ~= nil and crossbar_action.mp_cost ~= '0' and player_vitals.mp < crossbar_action.mp_cost
+                    local can_afford_tp = crossbar_action.tp_cost ~= nil and crossbar_action.tp_cost ~= '0' and player_vitals.tp < crossbar_action.tp_cost
+                    if (can_afford_mp or can_afford_tp) then
                         self.disabled_slots.no_vitals[action.action] = true
                         is_disabled = true
                     else
@@ -964,6 +964,7 @@ function ui:check_recasts(player_hotbar, player_vitals, environment, spells, gam
                         self:mark_default_set_action(h, i, action.source_environment)
                     end
                 else
+                    local crossbar_action = nil
                     local skill = nil
                     local skill_recasts = nil
                     local in_cooldown = false
@@ -975,49 +976,13 @@ function ui:check_recasts(player_hotbar, player_vitals, environment, spells, gam
                     local skillchain_prop = nil
 
                     -- if its magic, look for it in spells
-                    if action.type == 'ma' and database.spells[(action.action):lower()] ~= nil then
-                        skill = database.spells[(action.action):lower()]
-                        skill_recasts = windower.ffxi.get_spell_recasts()
-                        has_spell = skill.type ~= 'BlueMagic' or spells[(action.action):lower()]
-                        local spell_id = tonumber(skill.icon)
-                        local tool_info = consumables:get_ninja_spell_info(spell_id)
-                        if (tool_info ~= nil and tool_info.tool_count ~= nil and tool_info.master_tool_count ~= nil) then
-                            local total_tool_count = tool_info.tool_count + tool_info.master_tool_count
-                            local display_count = total_tool_count .. ''
-                            if (total_tool_count > 99) then
-                                display_count = '99+'
-                            end
-                            self.hotbars[h].slot_cost[i]:text(display_count)
-                            if (tool_info.tool_count > 50) then
-                                self.hotbars[h].slot_cost[i]:color(0, 255, 0)
-                            elseif (total_tool_count > 50) then
-                                self.hotbars[h].slot_cost[i]:color(255, 255, 0)
-                            else
-                                self.hotbars[h].slot_cost[i]:color(255, 0, 0)
-                            end
-                            self.hotbars[h].slot_cost[i]:show()
-
-                            if (total_tool_count == 0) then
-                                -- set up "Xed-out" element
-                                self.hotbars[h].slot_recast[i]:path(windower.addon_path .. '/images/' .. get_icon_pathbase() .. '/ui/red-x.png')
-                                self.hotbars[h].slot_recast[i]:alpha(150)
-                                self.hotbars[h].slot_recast[i]:size(40, 40)
-                                self.hotbars[h].slot_recast[i]:pos(self:get_slot_x(h, i), self:get_slot_y(h, i))
-                                self.hotbars[h].slot_recast[i]:show()
-                                self.hotbars[h].slot_recast_text[i]:hide()
-                            end
-                        end
-                    elseif (action.type == 'ja' or action.type == 'ws' or action.type == 'pet') and database.abilities[(action.action):lower()] ~= nil then
-                        skill = database.abilities[(action.action):lower()]
-                        if (action.type == 'ws') then
-                            skillchain_prop = skillchains.get_skillchain_result(tonumber(skill.id), 'weapon_skills')
-                        elseif (action.type == 'ja' or action_type == 'pet') then
-                            skillchain_prop = skillchains.get_skillchain_result(tonumber(skill.icon), 'job_abilities')
-
-                            local tool_info = consumables:get_ability_info_by_name(kebab_casify(action.action))
-
+                    if action.type == 'ma' then
+                        crossbar_action = crossbar_spells[kebab_casify(action.action)]
+                        if (crossbar_action ~= nil) then
+                            skill_recasts = windower.ffxi.get_spell_recasts()
+                            has_spell = crossbar_action.category ~= "blue magic" or spells[(action.action):lower()]
+                            local tool_info = consumables:get_ninja_spell_info(crossbar_action.id)
                             if (tool_info ~= nil and tool_info.tool_count ~= nil and tool_info.master_tool_count ~= nil) then
-
                                 local total_tool_count = tool_info.tool_count + tool_info.master_tool_count
                                 local display_count = total_tool_count .. ''
                                 if (total_tool_count > 99) then
@@ -1041,6 +1006,45 @@ function ui:check_recasts(player_hotbar, player_vitals, environment, spells, gam
                                     self.hotbars[h].slot_recast[i]:pos(self:get_slot_x(h, i), self:get_slot_y(h, i))
                                     self.hotbars[h].slot_recast[i]:show()
                                     self.hotbars[h].slot_recast_text[i]:hide()
+                                end
+                            end
+                        end
+                    elseif (action.type == 'ja' or action.type == 'ws' or action.type == 'pet') then
+                        crossbar_action = crossbar_abilities[kebab_casify(action.action)]
+                        if (crossbar_action ~= nil) then
+                            if (action.type == 'ws') then
+                                skillchain_prop = skillchains.get_skillchain_result(crossbar_action.id, 'weapon_skills')
+                            elseif (action.type == 'ja' or action_type == 'pet') then
+                                skillchain_prop = skillchains.get_skillchain_result(crossbar_action.recast_id, 'job_abilities')
+
+                                local tool_info = consumables:get_ability_info_by_name(kebab_casify(action.action))
+
+                                if (tool_info ~= nil and tool_info.tool_count ~= nil and tool_info.master_tool_count ~= nil) then
+
+                                    local total_tool_count = tool_info.tool_count + tool_info.master_tool_count
+                                    local display_count = total_tool_count .. ''
+                                    if (total_tool_count > 99) then
+                                        display_count = '99+'
+                                    end
+                                    self.hotbars[h].slot_cost[i]:text(display_count)
+                                    if (tool_info.tool_count > 50) then
+                                        self.hotbars[h].slot_cost[i]:color(0, 255, 0)
+                                    elseif (total_tool_count > 50) then
+                                        self.hotbars[h].slot_cost[i]:color(255, 255, 0)
+                                    else
+                                        self.hotbars[h].slot_cost[i]:color(255, 0, 0)
+                                    end
+                                    self.hotbars[h].slot_cost[i]:show()
+
+                                    if (total_tool_count == 0) then
+                                        -- set up "Xed-out" element
+                                        self.hotbars[h].slot_recast[i]:path(windower.addon_path .. '/images/' .. get_icon_pathbase() .. '/ui/red-x.png')
+                                        self.hotbars[h].slot_recast[i]:alpha(150)
+                                        self.hotbars[h].slot_recast[i]:size(40, 40)
+                                        self.hotbars[h].slot_recast[i]:pos(self:get_slot_x(h, i), self:get_slot_y(h, i))
+                                        self.hotbars[h].slot_recast[i]:show()
+                                        self.hotbars[h].slot_recast_text[i]:hide()
+                                    end
                                 end
                             end
                         end
@@ -1149,7 +1153,7 @@ function ui:check_recasts(player_hotbar, player_vitals, environment, spells, gam
                         end
                     elseif not has_spell then
                         if (action.source_environment == environment or not dim_default_slots) then
-                            if database.spells[(action.action):lower()] ~= nil and spellsThatRequireJA:contains((action.action):lower()) then
+                            if spellsThatRequireJA:contains((action.action):lower()) then
                                 -- set up "needs JA" element
                                 self.hotbars[h].slot_recast[i]:path(windower.addon_path .. '/images/' .. get_icon_pathbase() .. '/ui/needs_job_ability.png')
                             else

@@ -20,7 +20,7 @@ local generate_crossbar_spells = function()
 
     local spells_by_name = {}
 
-    for id, spell in ipairs(res.spells) do
+    for id, spell in pairs(res.spells) do
         local key = kebab_casify(spell.en)
         local skill = res.skills[spell.skill].en
         local recast_id = spell.recast_id
