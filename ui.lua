@@ -681,7 +681,7 @@ function ui:load_action(player_hotbar, environment, hotbar, slot, action, player
         end
     elseif (action.type == 'mount') then
         local default_icon = '/images/' .. get_icon_pathbase() .. '/mount.png'
-        local custom_icon = 'mount/' ..  kebab_casify(action.action) .. '.png'
+        local custom_icon = 'mounts/' ..  kebab_casify(action.action) .. '.png'
         icon_path = maybe_get_custom_icon(default_icon, custom_icon)
         icon_overridden = true
     end
