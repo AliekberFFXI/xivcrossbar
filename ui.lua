@@ -525,35 +525,6 @@ function ui:load_player_hotbar(player_hotbar, player_vitals, environment, gamepa
     end
 end
 
-local SPELL_TYPE_LOOKUP = {
-    ['BardSong'] = 'songs',
-    ['BlackMagic'] = 'black magic',
-    ['BlueMagic'] = 'blue magic',
-    ['WhiteMagic'] = 'white magic',
-    ['SummonerPact'] = 'summoning magic',
-}
-
-local JOB_ABILITY_TYPE_LOOKUP = {
-    ['BloodPactRage'] = 'blood-pacts/rage',
-    ['BloodPactWard'] = 'blood-pacts/ward',
-    ['CorsairRoll'] = 'phantom-rolls',
-    ['CorsairShot'] = 'quick-draw',
-    ['Effusion'] = 'effusions',
-    ['Flourish1'] = 'dances',
-    ['Flourish2'] = 'dances',
-    ['Flourish3'] = 'dances',
-    ['Jig'] = 'dances',
-    ['JobAbility'] = 'abilities',
-    ['Ability'] = 'abilities',
-    ['Monster'] = 'ready',
-    ['Rune'] = 'rune-enchantments',
-    ['Samba'] = 'dances',
-    ['Scholar'] = 'stratagems',
-    ['Step'] = 'dances',
-    ['Waltz'] = 'dances',
-    ['Ward'] = 'wards',
-}
-
 function ui:should_show_element(element)
     return element ~= nil and element ~= 'None' and self.theme.hide_action_element == false
 end
