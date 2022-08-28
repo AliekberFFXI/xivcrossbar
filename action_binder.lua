@@ -4,6 +4,8 @@ require("tables")
 local mount_roulette = require('libs/mountroulette/mountroulette')
 local icon_extractor = require('ui/icon_extractor')
 local kebab_casify = require('libs/kebab_casify')
+local crossbar_abilities = require('resources/crossbar_abilities')
+local crossbar_spells = require('resources/crossbar_spells')
 
 texts = require('texts')
 
@@ -17,14 +19,14 @@ local get_icon_pathbase = function()
     return 'icons/iconpacks/' .. icon_pack
 end
 
-local maybe_get_custom_icon = function(category, action_name)
+local maybe_get_custom_icon = function(default_icon, custom_icon)
     local pathbase = get_icon_pathbase()
-    local icon_path = pathbase .. '/' .. kebab_casify(category) .. '/' ..  kebab_casify(action_name) .. '.png'
-    local icon_file = file.new('images/' .. icon_path)
+    local icon_path = 'images/' .. pathbase .. '/' .. custom_icon
+    local icon_file = file.new(icon_path)
     if (icon_file:exists()) then
-        return icon_path
+        return icon_path, true
     else
-        return nil
+        return default_icon, false
     end
 end
 
@@ -1298,42 +1300,30 @@ function action_binder:display_ability_selector()
     local abilities = windower.ffxi.get_abilities().job_abilities
     local ability_list = L{}
 
-    local skip_abilities = {
-        ['Phantom Roll'] = true,
-        ['Quick Draw'] = true,
-        ['Stratagems'] = true,
-        ['Sambas'] = true,
-        ['Jigs'] = true,
-        ['Steps'] = true,
-        ['Flourishes I'] = true,
-        ['Flourishes II'] = true,
-        ['Flourishes III'] = true,
-        ['Curing Waltz'] = true,
-        ['Healing Waltz'] = true,
-        ['Divine Waltz'] = true,
-        ['Ward'] = true,
-        ['Effusion'] = true,
-        ['Ready'] = true,
-        ['Blood Pact: Rage'] = true,
-        ['Blood Pact: Ward'] = true,
+    local skip_categories = {
+        ['phantom-rolls'] = true,
+        ['quick-draw'] = true,
+        ['stratagems'] = true,
+        ['dances'] = true,
+        ['wards'] = true,
+        ['effusions'] = true,
+        ['ready'] = true,
+        ['blood-pacts/rage'] = true,
+        ['blood-pacts/ward'] = true,
     }
 
     for key, id in pairs(abilities) do
         local recast_id = res.job_abilities[id].recast_id
         local name = res.job_abilities[id].name
         local target_type = res.job_abilities[id].targets
-        local skill = database.abilities[name:lower()]
-        if (skill ~= nil and skill.type == 'JobAbility' and not skip_abilities[skill.name]) then
-            local icon_path = maybe_get_custom_icon('abilities', name)
-            local icon_offset = 0
-            if (icon_path == nil) then
-                if (recast_id == LV_1_SP_ABILITY_RECAST_ID or recast_id == LV_96_SP_ABILITY_RECAST_ID) then
-                    icon_path = 'icons/abilities/' .. string.format("%05d", recast_id) .. '.' .. string.format("%02d", player.main_job_id) .. '.png'
-                else    
-                    icon_path = 'icons/abilities/' .. string.format("%05d", skill.icon) .. '.png'
-                end
-                icon_offset = 4
+        local ability = crossbar_abilities[kebab_casify(name)]
+        if (not skip_categories[ability.category]) then
+            local icon_path, icon_overridden = maybe_get_custom_icon(ability.default_icon, ability.custom_icon)
+            local icon_offset = 4
+            if (icon_overridden) then
+                icon_offset = 0
             end
+
             ability_list:append({id = id, name = name, icon = icon_path, icon_offset = icon_offset, data = {target_type = target_type}})
         end
     end

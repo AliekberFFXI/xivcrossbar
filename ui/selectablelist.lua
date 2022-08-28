@@ -266,7 +266,7 @@ function selectable_list:display_options(options)
                 self.fields:append(self:create_text(option_caption, row, col))
 
                 local icon = images.new({draggable = false})
-                local icon_path = windower.addon_path .. '/images/' .. value.icon
+                local icon_path = windower.addon_path .. value.icon
                 local x, y = self:get_pos(row, col)
                 x = x + 5
                 y = y + 5
