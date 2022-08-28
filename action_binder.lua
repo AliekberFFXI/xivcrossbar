@@ -9,8 +9,6 @@ local crossbar_spells = require('resources/crossbar_spells')
 
 texts = require('texts')
 
-local database = require('database')  -- TODO: IMPORT FROM RES
-
 local action_binder = {}
 
 local icon_pack = nil
@@ -767,66 +765,66 @@ function action_binder:display_action_type_selector()
     local black_magic_jobs = {BLM = true, RDM = true, DRK = true, SCH = true, GEO = true, RUN = true}
 
     local action_type_list = L{}
-    action_type_list:append({id = action_types.DELETE, name = 'Remove a Binding', icon = get_icon_pathbase() .. '/ui/red-x.png'})
-    action_type_list:append({id = action_types.JOB_ABILITY, name = 'Job Ability', icon = 'icons/abilities/00001.png', icon_offset = 4})
-    action_type_list:append({id = action_types.WEAPONSKILL, name = 'Weaponskill', icon = 'icons/weapons/sword.png', icon_offset = 4})
+    action_type_list:append({id = action_types.DELETE, name = 'Remove a Binding', icon = 'images/' ..get_icon_pathbase() .. '/ui/red-x.png'})
+    action_type_list:append({id = action_types.JOB_ABILITY, name = 'Job Ability', icon = 'images/icons/abilities/00001.png', icon_offset = 4})
+    action_type_list:append({id = action_types.WEAPONSKILL, name = 'Weaponskill', icon = 'images/icons/weapons/sword.png', icon_offset = 4})
     if (pet_jobs[main_job] or pet_jobs[sub_job]) then
-        action_type_list:append({id = action_types.PET_COMMAND, name = 'Pet Command', icon = get_icon_pathbase() .. '/mounts/crab.png'})
+        action_type_list:append({id = action_types.PET_COMMAND, name = 'Pet Command', icon = 'images/' ..get_icon_pathbase() .. '/mounts/crab.png'})
     end
     if (white_magic_jobs[main_job] or white_magic_jobs[sub_job]) then
-        action_type_list:append({id = action_types.WHITE_MAGIC, name = 'White Magic', icon = get_icon_pathbase() .. '/jobs/WHM.png'})
+        action_type_list:append({id = action_types.WHITE_MAGIC, name = 'White Magic', icon = 'images/' ..get_icon_pathbase() .. '/jobs/WHM.png'})
     end
     if (black_magic_jobs[main_job] or black_magic_jobs[sub_job]) then
-        action_type_list:append({id = action_types.BLACK_MAGIC, name = 'Black Magic', icon = get_icon_pathbase() .. '/jobs/BLM.png'})
+        action_type_list:append({id = action_types.BLACK_MAGIC, name = 'Black Magic', icon = 'images/' ..get_icon_pathbase() .. '/jobs/BLM.png'})
     end
     if (main_job == 'BRD' or sub_job == 'BRD') then
-        action_type_list:append({id = action_types.SONG, name = 'Song', icon = get_icon_pathbase() .. '/jobs/BRD.png'})
+        action_type_list:append({id = action_types.SONG, name = 'Song', icon = 'images/' ..get_icon_pathbase() .. '/jobs/BRD.png'})
     end
     if (main_job == 'BST' or sub_job == 'BST') then
-        action_type_list:append({id = action_types.READY, name = 'Ready', icon = get_icon_pathbase() .. '/jobs/BST.png'})
+        action_type_list:append({id = action_types.READY, name = 'Ready', icon = 'images/' ..get_icon_pathbase() .. '/jobs/BST.png'})
     end
     if (main_job == 'NIN' or sub_job == 'NIN') then
-        action_type_list:append({id = action_types.NINJUTSU, name = 'Ninjutsu', icon = get_icon_pathbase() .. '/jobs/NIN.png'})
+        action_type_list:append({id = action_types.NINJUTSU, name = 'Ninjutsu', icon = 'images/' ..get_icon_pathbase() .. '/jobs/NIN.png'})
     end
     if (main_job == 'SMN' or sub_job == 'SMN') then
-        action_type_list:append({id = action_types.SUMMON, name = 'Summon', icon = get_icon_pathbase() .. '/jobs/SMN.png'})
-        action_type_list:append({id = action_types.BP_RAGE, name = 'Blood Pact: Rage', icon = get_icon_pathbase() .. '/jobs/SMN.png'})
-        action_type_list:append({id = action_types.BP_WARD, name = 'Blood Pact: Ward', icon = get_icon_pathbase() .. '/jobs/SMN.png'})
+        action_type_list:append({id = action_types.SUMMON, name = 'Summon', icon = 'images/' ..get_icon_pathbase() .. '/jobs/SMN.png'})
+        action_type_list:append({id = action_types.BP_RAGE, name = 'Blood Pact: Rage', icon = 'images/' ..get_icon_pathbase() .. '/jobs/SMN.png'})
+        action_type_list:append({id = action_types.BP_WARD, name = 'Blood Pact: Ward', icon = 'images/' ..get_icon_pathbase() .. '/jobs/SMN.png'})
     end
     if (main_job == 'BLU' or sub_job == 'BLU') then
-        action_type_list:append({id = action_types.BLUE_MAGIC, name = 'Blue Magic', icon = get_icon_pathbase() .. '/jobs/BLU.png'})
+        action_type_list:append({id = action_types.BLUE_MAGIC, name = 'Blue Magic', icon = 'images/' ..get_icon_pathbase() .. '/jobs/BLU.png'})
     end
     if (main_job == 'COR' or sub_job == 'COR') then
-        action_type_list:append({id = action_types.PHANTOM_ROLL, name = 'Phantom Roll', icon = get_icon_pathbase() .. '/jobs/COR.png'})
-        action_type_list:append({id = action_types.QUICK_DRAW, name = 'Quick Draw', icon = get_icon_pathbase() .. '/jobs/COR.png'})
+        action_type_list:append({id = action_types.PHANTOM_ROLL, name = 'Phantom Roll', icon = 'images/' ..get_icon_pathbase() .. '/jobs/COR.png'})
+        action_type_list:append({id = action_types.QUICK_DRAW, name = 'Quick Draw', icon = 'images/' ..get_icon_pathbase() .. '/jobs/COR.png'})
     end
     if (main_job == 'SCH' or sub_job == 'SCH') then
-        action_type_list:append({id = action_types.STRATAGEMS, name = 'Stratagem', icon = get_icon_pathbase() .. '/jobs/SCH.png'})
+        action_type_list:append({id = action_types.STRATAGEMS, name = 'Stratagem', icon = 'images/' ..get_icon_pathbase() .. '/jobs/SCH.png'})
     end
     if (main_job == 'DNC' or sub_job == 'DNC') then
-        action_type_list:append({id = action_types.DANCES, name = 'Dance', icon = get_icon_pathbase() .. '/jobs/DNC.png'})
+        action_type_list:append({id = action_types.DANCES, name = 'Dance', icon = 'images/' ..get_icon_pathbase() .. '/jobs/DNC.png'})
     end
     if (main_job == 'RUN' or sub_job == 'RUN') then
-        action_type_list:append({id = action_types.RUNE_ENCHANTMENT, name = 'Rune Enchantment', icon = get_icon_pathbase() .. '/jobs/RUN.png'})
-        action_type_list:append({id = action_types.WARD, name = 'Ward', icon = get_icon_pathbase() .. '/jobs/RUN.png'})
-        action_type_list:append({id = action_types.EFFUSION, name = 'Effusion', icon = get_icon_pathbase() .. '/jobs/RUN.png'})
+        action_type_list:append({id = action_types.RUNE_ENCHANTMENT, name = 'Rune Enchantment', icon = 'images/' ..get_icon_pathbase() .. '/jobs/RUN.png'})
+        action_type_list:append({id = action_types.WARD, name = 'Ward', icon = 'images/' ..get_icon_pathbase() .. '/jobs/RUN.png'})
+        action_type_list:append({id = action_types.EFFUSION, name = 'Effusion', icon = 'images/' ..get_icon_pathbase() .. '/jobs/RUN.png'})
     end
     if (main_job == 'GEO' or sub_job == 'GEO') then
-        action_type_list:append({id = action_types.GEOMANCY, name = 'Geomancy', icon = get_icon_pathbase() .. '/jobs/GEO.png'})
+        action_type_list:append({id = action_types.GEOMANCY, name = 'Geomancy', icon = 'images/' ..get_icon_pathbase() .. '/jobs/GEO.png'})
     end
-    action_type_list:append({id = action_types.TRUST, name = 'Call Trust', icon = get_icon_pathbase() .. '/trust/yoran-oran.png'})
-    action_type_list:append({id = action_types.MOUNT, name = 'Call Mount', icon = get_icon_pathbase() .. '/mount.png'})
-    action_type_list:append({id = action_types.USABLE_ITEM, name = 'Use Item', icon = get_icon_pathbase() .. '/usable-item.png'})
-    action_type_list:append({id = action_types.TRADABLE_ITEM, name = 'Trade Item', icon = get_icon_pathbase() .. '/item.png'})
-    action_type_list:append({id = action_types.RANGED_ATTACK, name = 'Ranged Attack', icon = get_icon_pathbase() .. '/ranged.png'})
-    action_type_list:append({id = action_types.ATTACK, name = 'Attack', icon = get_icon_pathbase() .. '/attack.png'})
-    action_type_list:append({id = action_types.ASSIST, name = 'Assist', icon = get_icon_pathbase() .. '/assist.png'})
-    action_type_list:append({id = action_types.SWITCH_TARGET, name = 'Switch Target', icon = get_icon_pathbase() .. '/targetnpc.png'})
-    action_type_list:append({id = action_types.MAP, name = 'View Map', icon = get_icon_pathbase() .. '/map.png'})
-    action_type_list:append({id = action_types.LAST_SYNTH, name = 'Repeat Last Synth', icon = get_icon_pathbase() .. '/synth.png'})
-    action_type_list:append({id = action_types.SWITCH_CROSSBARS, name = 'Switch Crossbars', icon = get_icon_pathbase() .. '/ui/facebuttons_' .. self.button_layout .. '.png'})
-    action_type_list:append({id = action_types.MOVE_CROSSBARS, name = 'Move Crossbar', icon = get_icon_pathbase() .. '/ui/dpad_' .. self.button_layout .. '.png'})
-    action_type_list:append({id = action_types.SHOW_CREDITS, name = 'XIVCrossbar Credits', icon = 'credit_avatars/xiv.png'})
+    action_type_list:append({id = action_types.TRUST, name = 'Call Trust', icon = 'images/' ..get_icon_pathbase() .. '/trust/yoran-oran.png'})
+    action_type_list:append({id = action_types.MOUNT, name = 'Call Mount', icon = 'images/' ..get_icon_pathbase() .. '/mount.png'})
+    action_type_list:append({id = action_types.USABLE_ITEM, name = 'Use Item', icon = 'images/' ..get_icon_pathbase() .. '/usable-item.png'})
+    action_type_list:append({id = action_types.TRADABLE_ITEM, name = 'Trade Item', icon = 'images/' ..get_icon_pathbase() .. '/item.png'})
+    action_type_list:append({id = action_types.RANGED_ATTACK, name = 'Ranged Attack', icon = 'images/' ..get_icon_pathbase() .. '/ranged.png'})
+    action_type_list:append({id = action_types.ATTACK, name = 'Attack', icon = 'images/' ..get_icon_pathbase() .. '/attack.png'})
+    action_type_list:append({id = action_types.ASSIST, name = 'Assist', icon = 'images/' ..get_icon_pathbase() .. '/assist.png'})
+    action_type_list:append({id = action_types.SWITCH_TARGET, name = 'Switch Target', icon = 'images/' ..get_icon_pathbase() .. '/targetnpc.png'})
+    action_type_list:append({id = action_types.MAP, name = 'View Map', icon = 'images/' ..get_icon_pathbase() .. '/map.png'})
+    action_type_list:append({id = action_types.LAST_SYNTH, name = 'Repeat Last Synth', icon = 'images/' ..get_icon_pathbase() .. '/synth.png'})
+    action_type_list:append({id = action_types.SWITCH_CROSSBARS, name = 'Switch Crossbars', icon = 'images/' ..get_icon_pathbase() .. '/ui/facebuttons_' .. self.button_layout .. '.png'})
+    action_type_list:append({id = action_types.MOVE_CROSSBARS, name = 'Move Crossbar', icon = 'images/' ..get_icon_pathbase() .. '/ui/dpad_' .. self.button_layout .. '.png'})
+    action_type_list:append({id = action_types.SHOW_CREDITS, name = 'XIVCrossbar Credits', icon = 'images/credit_avatars/xiv.png'})
     self.selector:display_options(action_type_list)
 
     self:show_control_hints('Confirm', 'Exit')
@@ -895,29 +893,29 @@ function action_binder:display_target_selector()
     local target_options = L{}
 
     if (self.target_type['Self']) then
-        target_options:append({id = 'SELF', name = 'Self (<me>)', icon = get_icon_pathbase() .. '/mappoint.png'})
+        target_options:append({id = 'SELF', name = 'Self (<me>)', icon = 'images/' .. get_icon_pathbase() .. '/mappoint.png'})
     end
     if (self.target_type['Party'] or self.target_type['Corpse']) then
-        target_options:append({id = 'SELECT_PARTY', name = 'Select Party (<stpt>)', icon = get_icon_pathbase() .. '/mappoint.png'})
+        target_options:append({id = 'SELECT_PARTY', name = 'Select Party (<stpt>)', icon = 'images/' .. get_icon_pathbase() .. '/mappoint.png'})
     end
     if (self.target_type['Ally'] or self.target_type['Corpse']) then
-        target_options:append({id = 'SELECT_ALLIANCE', name = 'Select Ally (<stal>)', icon = get_icon_pathbase() .. '/mappoint.png'})
+        target_options:append({id = 'SELECT_ALLIANCE', name = 'Select Ally (<stal>)', icon = 'images/' .. get_icon_pathbase() .. '/mappoint.png'})
     end
     if (self.target_type['Player'] or self.target_type['Corpse']) then
-        target_options:append({id = 'SELECT_PLAYER', name = 'Select Player (<stpc>)', icon = get_icon_pathbase() .. '/mappoint.png'})
+        target_options:append({id = 'SELECT_PLAYER', name = 'Select Player (<stpc>)', icon = 'images/' .. get_icon_pathbase() .. '/mappoint.png'})
     end
     if (self.target_type['NPC'] or self.target_type['Enemy']) then
-        target_options:append({id = 'SELECT_NPC', name = 'Select NPC (<stnpc>)', icon = get_icon_pathbase() .. '/mappoint.png'})
-        target_options:append({id = 'CURRENT_TARGET', name = 'Current Target (<t>)', icon = get_icon_pathbase() .. '/mappoint.png'})
+        target_options:append({id = 'SELECT_NPC', name = 'Select NPC (<stnpc>)', icon = 'images/' .. get_icon_pathbase() .. '/mappoint.png'})
+        target_options:append({id = 'CURRENT_TARGET', name = 'Current Target (<t>)', icon = 'images/' .. get_icon_pathbase() .. '/mappoint.png'})
     end
     if (self.target_type['Enemy']) then
-        target_options:append({id = 'SELECT_TARGET', name = 'Select Target (<st>)', icon = get_icon_pathbase() .. '/mappoint.png'})
-        target_options:append({id = 'BATTLE_TARGET', name = 'Battle Target (<bt>)', icon = get_icon_pathbase() .. '/mappoint.png'})
+        target_options:append({id = 'SELECT_TARGET', name = 'Select Target (<st>)', icon = 'images/' .. get_icon_pathbase() .. '/mappoint.png'})
+        target_options:append({id = 'BATTLE_TARGET', name = 'Battle Target (<bt>)', icon = 'images/' .. get_icon_pathbase() .. '/mappoint.png'})
     end
     
     local is_only_self_targeted = self.target_type['Self'] and not (self.target_type['Party'] or self.target_type['Ally'] or self.target_type['Player'] or self.target_type['NPC'])
     if (is_only_self_targeted and self.theme_options.allow_stpc_for_self_targeted_actions) then
-        target_options:append({id = 'SELECT_PLAYER', name = 'Select Player (<stpc>)', icon = get_icon_pathbase() .. '/mappoint.png'})
+        target_options:append({id = 'SELECT_PLAYER', name = 'Select Player (<stpc>)', icon = 'images/' .. get_icon_pathbase() .. '/mappoint.png'})
     end
 
     self.selector:display_options(target_options)
@@ -1345,16 +1343,14 @@ function action_binder:display_weaponskill_selector()
         local ws = res.weapon_skills[id]
         local weapon = res.skills[ws.skill].en:lower()
         local name = ws.name
-        local skill = database.abilities[name:lower()]
-        if (skill ~= nil and skill.type == 'WeaponSkill') then
-            local icon_path = maybe_get_custom_icon('weaponskills/' .. weapon, ws.en)
-            local icon_offset = 0
-            if (icon_path == nil) then
-                icon_path = 'icons/weapons/' .. weapon .. '.png'
-                icon_offset = 4
-            end
-            ability_list:append({id = id, name = name, icon = icon_path, icon_offset = icon_offset, data = {target_type = {['Enemy'] = true}}})
+        local ws_action = crossbar_abilities[kebab_casify(name)]
+        local icon_path, icon_overridden = maybe_get_custom_icon(ws_action.default_icon, ws_action.custom_icon)
+        local icon_offset = 4
+        if (icon_overridden) then
+            icon_offset = 0
         end
+
+        ability_list:append({id = id, name = name, icon = icon_path, icon_offset = icon_offset, data = {target_type = {['Enemy'] = true}}})
     end
 
     ability_list:sort(sortByName)
@@ -1429,24 +1425,15 @@ function action_binder:display_magic_selector_internal(magic_type)
     for id in pairs(all_spells) do
         local name = res.spells[id].name
         local target_type = fix_target_types(id, magic_type, res.spells[id].targets)
-        local spell = database.spells[name:lower()]
+        local spell = crossbar_spells[kebab_casify(name)]
 
         if (spell ~= nil and spell.type == magic_type) then
-            local magic_spell = res.spells[tonumber(spell.icon)]
-            local magic_skill = res.skills[magic_spell.skill].en
-            local icon_path = maybe_get_custom_icon(magic_skill, magic_spell.en)
-            local icon_offset = 0
-            if (icon_path == nil) then
-                local category = SPELL_TYPE_LOOKUP[magic_type]
-                if (category == nil) then
-                    category = magic_type
-                end
-                icon_path = maybe_get_custom_icon(category, magic_spell.en)
+            local icon_path, icon_overridden = maybe_get_custom_icon(spell.default_icon, spell.custom_icon)
+            local icon_offset = 4
+            if (icon_overridden) then
+                icon_offset = 0
             end
-            if (icon_path == nil) then
-                icon_path = 'icons/spells/' .. string.format("%05d", spell.icon) .. '.png'
-                icon_offset = 4
-            end
+
             spell_list:append({id = id, name = name, icon = icon_path, icon_offset = icon_offset, data = {target_type = target_type}})
         end
     end
@@ -1490,14 +1477,14 @@ function action_binder:display_ready_selector()
     for id, ability in pairs(res.job_abilities) do
         local name = ability.name
         local target_type = ability.targets
-        local skill = database.abilities[name:lower()]
-        if (skill ~= nil and skill.type == 'Monster') then
-            local icon_path = maybe_get_custom_icon('ready', name)
-            local icon_offset = 0
-            if (icon_path == nil) then
-                icon_path = 'icons/abilities/' .. string.format("%05d", skill.icon) .. '.png'
-                icon_offset = 4
+        local ready_ability = crossbar_abilities[kebab_casify(name)]
+        if (ready_ability.category == 'ready') then
+            local icon_path, icon_overridden = maybe_get_custom_icon(ready_ability.default_icon, ready_ability.custom_icon)
+            local icon_offset = 4
+            if (icon_overridden) then
+                icon_offset = 0
             end
+
             ability_list:append({id = id, name = name, icon = icon_path, icon_offset = icon_offset, data = {target_type = target_type}})
         end
     end
@@ -1552,14 +1539,14 @@ function action_binder:display_bp_rage_selector()
     for id, ability in pairs(res.job_abilities) do
         local name = ability.name
         local target_type = ability.targets
-        local skill = database.abilities[name:lower()]
-        if (skill ~= nil and skill.type == 'BloodPactRage' and WYVERN_ABILITIES_TO_FILTER[skill.id] == nil) then
-            local icon_path = maybe_get_custom_icon('blood-pacts/rage', name)
-            local icon_offset = 0
-            if (icon_path == nil) then
-                icon_path = 'icons/abilities/' .. string.format("%05d", skill.icon) .. '.png'
-                icon_offset = 4
+        local blood_pact = crossbar_abilities[kebab_casify(name)]
+        if (blood_pact.category == 'blood-pacts/rage' and WYVERN_ABILITIES_TO_FILTER[blood_pact.id] == nil) then
+            local icon_path, icon_overridden = maybe_get_custom_icon(blood_pact.default_icon, blood_pact.custom_icon)
+            local icon_offset = 4
+            if (icon_overridden) then
+                icon_offset = 0
             end
+
             ability_list:append({id = id, name = name, icon = icon_path, icon_offset = icon_offset, data = {target_type = target_type}})
         end
     end
@@ -1579,14 +1566,15 @@ function action_binder:display_bp_ward_selector()
     for id, ability in pairs(res.job_abilities) do
         local name = ability.name
         local target_type = ability.targets
-        local skill = database.abilities[name:lower()]
-        if (skill ~= nil and skill.type == 'BloodPactWard') then
-            local icon_path = maybe_get_custom_icon('blood-pacts/ward', name)
-            local icon_offset = 0
-            if (icon_path == nil) then
-                icon_path = 'icons/abilities/' .. string.format("%05d", skill.icon) .. '.png'
-                icon_offset = 4
+
+        local blood_pact = crossbar_abilities[kebab_casify(name)]
+        if (blood_pact.category == 'blood-pacts/ward') then
+            local icon_path, icon_overridden = maybe_get_custom_icon(blood_pact.default_icon, blood_pact.custom_icon)
+            local icon_offset = 4
+            if (icon_overridden) then
+                icon_offset = 0
             end
+
             ability_list:append({id = id, name = name, icon = icon_path, icon_offset = icon_offset, data = {target_type = target_type}})
         end
     end
@@ -1615,14 +1603,14 @@ function action_binder:display_phantom_roll_selector()
     for key, id in pairs(abilities) do
         local name = res.job_abilities[id].name
         local target_type = res.job_abilities[id].targets
-        local skill = database.abilities[name:lower()]
-        if (skill ~= nil and skill.type == 'CorsairRoll') then
-            local icon_path = maybe_get_custom_icon('phantom-rolls', name)
-            local icon_offset = 0
-            if (icon_path == nil) then
-                icon_path = 'icons/abilities/' .. string.format("%05d", skill.icon) .. '.png'
-                icon_offset = 4
+        local roll = crossbar_abilities[kebab_casify(name)]
+        if (roll.category == 'phantom-rolls') then
+            local icon_path, icon_overridden = maybe_get_custom_icon(roll.default_icon, roll.custom_icon)
+            local icon_offset = 4
+            if (icon_overridden) then
+                icon_offset = 0
             end
+
             ability_list:append({id = id, name = name, icon = icon_path, icon_offset = icon_offset, data = {target_type = target_type}})
         end
     end
@@ -1643,14 +1631,14 @@ function action_binder:display_quick_draw_selector()
     for key, id in pairs(abilities) do
         local name = res.job_abilities[id].name
         local target_type = res.job_abilities[id].targets
-        local skill = database.abilities[name:lower()]
-        if (skill ~= nil and skill.type == 'CorsairShot') then
-            local icon_path = maybe_get_custom_icon('quick-draw', name)
-            local icon_offset = 0
-            if (icon_path == nil) then
-                icon_path = 'icons/abilities/' .. string.format("%05d", skill.icon) .. '.png'
-                icon_offset = 4
+        local quick_draw = crossbar_abilities[kebab_casify(name)]
+        if (quick_draw.category == 'quick-draw') then
+            local icon_path, icon_overridden = maybe_get_custom_icon(quick_draw.default_icon, quick_draw.custom_icon)
+            local icon_offset = 4
+            if (icon_overridden) then
+                icon_offset = 0
             end
+
             ability_list:append({id = id, name = name, icon = icon_path, icon_offset = icon_offset, data = {target_type = target_type}})
         end
     end
@@ -1717,10 +1705,15 @@ function action_binder:display_rune_enchantment_selector()
         local name = res.job_abilities[id].name
         local target_type = res.job_abilities[id].targets
         local element = res.elements[res.job_abilities[id].element].en:lower()
-        local ability = database.abilities[name:lower()]
-        local icon_path = maybe_get_custom_icon('rune-enchantments', name)
-        if (icon_path == nil) then
-            icon_path = get_icon_pathbase() .. '/elements/' .. element .. '.png'
+        local rune_enchantment = crossbar_abilities[kebab_casify(name)]
+        if (rune_enchantment.category == 'rune-enchantments') then
+            local icon_path, icon_overridden = maybe_get_custom_icon(rune_enchantment.default_icon, rune_enchantment.custom_icon)
+            local icon_offset = 4
+            if (icon_overridden) then
+                icon_offset = 0
+            end
+
+            ability_list:append({id = id, name = name, icon = icon_path, icon_offset = icon_offset, data = {target_type = target_type}})
         end
         ability_list:append({id = id, name = name, icon = icon_path, data = {target_type = target_type}})
     end
@@ -1889,14 +1882,16 @@ function get_bst_pet_commands(job_id, job_level)
     if (job_id == 9) then
         for i, command in ipairs(commands) do
             if (job_level >= command.level) then
-                local skill = database.abilities[command.name:lower()]
+                local crossbar_command = crossbar_abilities[kebab_casify(command.name)]
                 local target_type = res.job_abilities[command.id].targets
                 local icon_path = 'ui/red-x.png'
                 local icon_offset = 0
-                if (skill ~= nil) then
-                    icon_path = maybe_get_custom_icon('pet-commands', command.name)
-                    if (icon_path == nil) then
-                        icon_path = 'icons/abilities/' .. string.format("%05d", skill.icon) .. '.png'
+                local icon_overridden = true
+                if (crossbar_command ~= nil) then
+                    icon_path, icon_overridden = maybe_get_custom_icon(crossbar_command.default_icon, crossbar_command.custom_icon)
+                    if (icon_overridden) then
+                        icon_offset = 0
+                    else
                         icon_offset = 4
                     end
                 end
@@ -1921,14 +1916,16 @@ function get_smn_pet_commands(job_id, job_level)
     if (job_id == 15) then
         for i, command in ipairs(commands) do
             if (job_level >= command.level) then
-                local skill = database.abilities[command.name:lower()]
+                local crossbar_command = crossbar_abilities[kebab_casify(command.name)]
                 local target_type = res.job_abilities[command.id].targets
                 local icon_path = 'ui/red-x.png'
                 local icon_offset = 0
-                if (skill ~= nil) then
-                    icon_path = maybe_get_custom_icon('pet-commands', command.name)
-                    if (icon_path == nil) then
-                        icon_path = 'icons/abilities/' .. string.format("%05d", skill.icon) .. '.png'
+                local icon_overridden = true
+                if (crossbar_command ~= nil) then
+                    icon_path, icon_overridden = maybe_get_custom_icon(crossbar_command.default_icon, crossbar_command.custom_icon)
+                    if (icon_overridden) then
+                        icon_offset = 0
+                    else
                         icon_offset = 4
                     end
                 end
@@ -1960,14 +1957,16 @@ function get_pup_pet_commands(job_id, job_level)
     if (job_id == 18) then
         for i, command in ipairs(commands) do
             if (job_level >= command.level) then
-                local skill = database.abilities[command.name:lower()]
+                local crossbar_command = crossbar_abilities[kebab_casify(command.name)]
                 local target_type = res.job_abilities[command.id].targets
                 local icon_path = 'ui/red-x.png'
                 local icon_offset = 0
-                if (skill ~= nil) then
-                    icon_path = maybe_get_custom_icon('pet-commands', command.name)
-                    if (icon_path == nil) then
-                        icon_path = 'icons/abilities/' .. string.format("%05d", skill.icon) .. '.png'
+                local icon_overridden = true
+                if (crossbar_command ~= nil) then
+                    icon_path, icon_overridden = maybe_get_custom_icon(crossbar_command.default_icon, crossbar_command.custom_icon)
+                    if (icon_overridden) then
+                        icon_offset = 0
+                    else
                         icon_offset = 4
                     end
                 end
@@ -1992,14 +1991,16 @@ function get_drg_pet_commands(job_id, job_level)
     if (job_id == 14) then
         for i, command in ipairs(commands) do
             if (job_level >= command.level) then
-                local skill = database.abilities[command.name:lower()]
+                local crossbar_command = crossbar_abilities[kebab_casify(command.name)]
                 local target_type = res.job_abilities[command.id].targets
                 local icon_path = 'ui/red-x.png'
                 local icon_offset = 0
-                if (skill ~= nil) then
-                    icon_path = maybe_get_custom_icon('pet-commands', command.name)
-                    if (icon_path == nil) then
-                        icon_path = 'icons/abilities/' .. string.format("%05d", skill.icon) .. '.png'
+                local icon_overridden = true
+                if (crossbar_command ~= nil) then
+                    icon_path, icon_overridden = maybe_get_custom_icon(crossbar_command.default_icon, crossbar_command.custom_icon)
+                    if (icon_overridden) then
+                        icon_offset = 0
+                    else
                         icon_offset = 4
                     end
                 end
@@ -2095,14 +2096,16 @@ function get_dances(job_id, job_level)
     if (job_id == 19) then
         for i, dance in ipairs(dances) do
             if (job_level >= dance.level) then
-                local skill = database.abilities[dance.name:lower()]
-                local target_type = res.job_abilities[dance.id].targets
+                local crossbar_dance = crossbar_abilities[kebab_casify(command.name)]
+                local target_type = res.job_abilities[command.id].targets
                 local icon_path = 'ui/red-x.png'
                 local icon_offset = 0
-                if (skill ~= nil) then
-                    icon_path = maybe_get_custom_icon('dances', dance.name)
-                    if (icon_path == nil) then
-                        icon_path = 'icons/abilities/' .. string.format("%05d", skill.icon) .. '.png'
+                local icon_overridden = true
+                if (crossbar_dance ~= nil) then
+                    icon_path, icon_overridden = maybe_get_custom_icon(crossbar_dance.default_icon, crossbar_dance.custom_icon)
+                    if (icon_overridden) then
+                        icon_offset = 0
+                    else
                         icon_offset = 4
                     end
                 end
@@ -2130,14 +2133,16 @@ function get_wards(job_id, job_level)
     if (job_id == 22) then
         for i, ward in ipairs(wards) do
             if (job_level >= ward.level) then
-                local skill = database.abilities[ward.name:lower()]
-                local target_type = res.job_abilities[ward.id].targets
+                local crossbar_ward = crossbar_abilities[kebab_casify(command.name)]
+                local target_type = res.job_abilities[command.id].targets
                 local icon_path = 'ui/red-x.png'
                 local icon_offset = 0
-                if (skill ~= nil) then
-                    icon_path = maybe_get_custom_icon('wards', ward.name)
-                    if (icon_path == nil) then
-                        icon_path = 'icons/abilities/' .. string.format("%05d", skill.icon) .. '.png'
+                local icon_overridden = true
+                if (crossbar_ward ~= nil) then
+                    icon_path, icon_overridden = maybe_get_custom_icon(crossbar_ward.default_icon, crossbar_ward.custom_icon)
+                    if (icon_overridden) then
+                        icon_offset = 0
+                    else
                         icon_offset = 4
                     end
                 end
@@ -2164,14 +2169,16 @@ function get_effusions(job_id, job_level)
     if (job_id == 22) then
         for i, effusion in ipairs(effusions) do
             if (job_level >= effusion.level) then
-                local skill = database.abilities[effusion.name:lower()]
-                local target_type = res.job_abilities[effusion.id].targets
+                local crossbar_effusion = crossbar_abilities[kebab_casify(command.name)]
+                local target_type = res.job_abilities[command.id].targets
                 local icon_path = 'ui/red-x.png'
                 local icon_offset = 0
-                if (skill ~= nil) then
-                    icon_path = maybe_get_custom_icon('effusions', effusion.name)
-                    if (icon_path == nil) then
-                        icon_path = 'icons/abilities/' .. string.format("%05d", skill.icon) .. '.png'
+                local icon_overridden = true
+                if (crossbar_effusion ~= nil) then
+                    icon_path, icon_overridden = maybe_get_custom_icon(crossbar_effusion.default_icon, crossbar_effusion.custom_icon)
+                    if (icon_overridden) then
+                        icon_offset = 0
+                    else
                         icon_offset = 4
                     end
                 end
@@ -2229,12 +2236,10 @@ function get_mounts()
 
     local target_type = {['None'] = true}
     for i, mount_name in ipairs(allowed_mounts) do
-        local icon_path = maybe_get_custom_icon('mounts', mount_name)
-        if (icon_path == nil) then
-            icon_path = get_icon_pathbase() .. '/mount.png'
-        end
-
         if (mount_names[mount_name] ~= nil) then
+            local default_icon = 'images/' .. get_icon_pathbase() .. '/mount.png'
+            local custom_icon = 'mounts/' .. kebab_casify(mount_name) .. '.png'
+            local icon_path = maybe_get_custom_icon(default_icon, custom_icon)
             mount_list:append({id = FAKE_ID, name = mount_names[mount_name], icon = icon_path, data = {target_type = target_type}})
         end
     end
@@ -2242,10 +2247,9 @@ function get_mounts()
     mount_list:sort(sortByName)
 
     local mount_name = 'mount roulette'
-    local icon_path = maybe_get_custom_icon('mounts', mount_name)
-    if (icon_path == nil) then
-        icon_path = get_icon_pathbase() .. '/mount.png'
-    end
+    local default_icon = 'images/' .. get_icon_pathbase() .. '/mount.png'
+    local custom_icon = 'mounts/mount-roulette.png'
+    local icon_path = maybe_get_custom_icon(default_icon, custom_icon)
     mount_list:append({id = FAKE_ID, name = mount_names[mount_name], icon = icon_path, data = {target_type = target_type}})
 
     return mount_list
