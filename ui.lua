@@ -936,7 +936,6 @@ function ui:check_recasts(player_hotbar, player_vitals, environment, spells, gam
                     end
                 else
                     local crossbar_action = nil
-                    local skill = nil
                     local skill_recasts = nil
                     local in_cooldown = false
                     local in_warmup = false
@@ -1057,10 +1056,10 @@ function ui:check_recasts(player_hotbar, player_vitals, environment, spells, gam
                     end
 
                     -- check if skill is in cooldown
-                    if (has_spell and skill ~= nil and skill_recasts[tonumber(skill.icon)] ~= nil and skill_recasts[tonumber(skill.icon)] > 0) then
+                    if (has_spell and crossbar_action ~= nil and skill_recasts[crossbar_action.recast_id] ~= nil and skill_recasts[crossbar_action.recast_id] > 0) then
                         -- register first cooldown to calculate percentage
                         if self.disabled_slots.on_cooldown[action.action] == nil then
-                            self.disabled_slots.on_cooldown[action.action] = skill_recasts[tonumber(skill.icon)]
+                            self.disabled_slots.on_cooldown[action.action] = skill_recasts[crossbar_action.recast_id]
 
                             -- setup recast elements
                             self.hotbars[h].slot_recast[i]:path(windower.addon_path .. '/images/' .. get_icon_pathbase() .. '/ui/black-square.png')
@@ -1086,7 +1085,7 @@ function ui:check_recasts(player_hotbar, player_vitals, environment, spells, gam
                                 time_remaining = self.enchanted_items:get_cooldown_fraction(action.action) * self.enchanted_items:get_cooldown_time(action.action)
                                 new_height = 40 * self.enchanted_items:get_cooldown_fraction(action.action)
                             else
-                                time_remaining = skill_recasts[tonumber(skill.icon)]
+                                time_remaining = skill_recasts[crossbar_action.recast_id]
                                 local full_recast = tonumber(self.disabled_slots.on_cooldown[action.action])
                                 new_height = 40 * (time_remaining / full_recast)
                             end
