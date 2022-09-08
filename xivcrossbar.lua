@@ -53,7 +53,7 @@ local theme = require('theme')
 local theme_options = theme.apply(settings)
 local buttonmapping = require('buttonmapping')
 local resource_generator = require('resource_generator')
-resource_generator.generate_missing_resources()
+resource_generator.generate_outdated_resources()
 
 -- Addon Dependencies
 local action_manager = require('action_manager')

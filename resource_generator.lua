@@ -2,6 +2,7 @@ local res = require 'resources'
 local kebab_casify = require('libs/kebab_casify')
 local files = require('files')
 local ordered_pairs = require('libs/ordered_pairs')
+local md5 = require('libs/md5')
 
 local spells_dot_lua = files.new('resources/crossbar_spells.lua', true)
 local abilities_dot_lua = files.new('resources/crossbar_abilities.lua', true)
@@ -18,7 +19,13 @@ local generate_crossbar_spells = function()
         ['Trust'] = 'trust',
     }
 
-    local spells_by_name = {}
+    local spells_resource_file = files.new('../../res/spells.lua', false)
+    local spells_resource_file_contents = files.read(spells_resource_file)
+    local md5_hash = md5.sumhexa(spells_resource_file_contents)
+
+    local spells_by_name = {
+        ["spells.lua.md5"] = string.format('["spells.lua.md5"] = "%s"', md5_hash)
+    }
 
     for id, spell in pairs(res.spells) do
         local key = kebab_casify(spell.en)
@@ -138,7 +145,17 @@ local generate_crossbar_abilities = function()
     local LV_1_SP_ABILITY_RECAST_ID = 0
     local LV_96_SP_ABILITY_RECAST_ID = 254
 
-    local abilities_by_name = {}
+    local abilities_resource_file = files.new('../../res/job_abilities.lua', false)
+    local abilities_resource_file_contents = files.read(abilities_resource_file)
+    local abilities_md5_hash = md5.sumhexa(abilities_resource_file_contents)
+    local weapon_skills_resource_file = files.new('../../res/weapon_skills.lua', false)
+    local weapon_skills_resource_file_contents = files.read(weapon_skills_resource_file)
+    local weapon_skills_md5_hash = md5.sumhexa(weapon_skills_resource_file_contents)
+
+    local abilities_by_name = {
+        ["job_abilities.lua.md5"] = string.format('["job_abilities.lua.md5"] = "%s"', abilities_md5_hash),
+        ["weapon_skills.lua.md5"] = string.format('["weapon_skills.lua.md5"] = "%s"', weapon_skills_md5_hash)
+    }
 
     for id, ability in pairs(res.job_abilities) do
         local key = kebab_casify(ability.en)
@@ -181,19 +198,25 @@ local generate_crossbar_abilities = function()
     files.write(abilities_dot_lua, content, true)
 end
 
+local get_crossbar_spells_hash = function()
+    local crossbar_spells = require('resources/crossbar_spells')
+    if (crossbar_spells == true or crossbar_spells == false) then
+        return nil
+    else
+        return crossbar_spells['spells.lua.md5']
+    end
+end
+
+local get_crossbar_abilities_hash = function()
+    local crossbar_abilities = require('resources/crossbar_abilities')
+    if (crossbar_abilities == true or crossbar_abilities == false) then
+        return nil
+    else
+        return crossbar_abilities['job_abilities.lua.md5'], crossbar_abilities['weapon_skills.lua.md5']
+    end
+end
+
 local resource_generator = {
-    ['generate_missing_resources'] = function()
-        if (not files.exists(spells_dot_lua)) then
-            files.create(spells_dot_lua)
-
-            generate_crossbar_spells()
-        end
-        if (not files.exists(abilities_dot_lua)) then
-            files.create(abilities_dot_lua)
-
-            generate_crossbar_abilities()
-        end
-    end,
     ['generate_all_resources'] = function()
         if (not files.exists(spells_dot_lua)) then
             files.create(spells_dot_lua)
@@ -204,6 +227,43 @@ local resource_generator = {
 
         generate_crossbar_spells()
         generate_crossbar_abilities()
+    end,
+    ['generate_outdated_resources'] = function()
+        if (not files.exists(spells_dot_lua)) then
+            files.create(spells_dot_lua)
+        end
+        if (not files.exists(abilities_dot_lua)) then
+            files.create(abilities_dot_lua)
+        end
+
+        local crossbar_spells_hash = get_crossbar_spells_hash()
+        if (crossbar_spells_hash == nil) then
+            generate_crossbar_spells()
+        else
+            local spells_resource_file = files.new('../../res/spells.lua', false)
+            local spells_resource_file_contents = files.read(spells_resource_file)
+            local md5_hash = md5.sumhexa(spells_resource_file_contents)
+
+            if (crossbar_spells_hash ~= md5_hash) then
+                generate_crossbar_spells()
+            end
+        end
+
+        local crossbar_abilities_hash, crossbar_weaponskills_hash = get_crossbar_abilities_hash()
+        if (crossbar_abilities_hash == nil or crossbar_weaponskills_hash == nil) then
+            generate_crossbar_abilities()
+        else
+            local abilities_resource_file = files.new('../../res/job_abilities.lua', false)
+            local abilities_resource_file_contents = files.read(abilities_resource_file)
+            local abilities_md5_hash = md5.sumhexa(abilities_resource_file_contents)
+            local weapon_skills_resource_file = files.new('../../res/weapon_skills.lua', false)
+            local weapon_skills_resource_file_contents = files.read(weapon_skills_resource_file)
+            local weapon_skills_md5_hash = md5.sumhexa(weapon_skills_resource_file_contents)
+
+            if (crossbar_abilities_hash ~= abilities_md5_hash or crossbar_weaponskills_hash ~= weapon_skills_md5_hash) then
+                generate_crossbar_abilities()
+            end
+        end
     end
 }
 
