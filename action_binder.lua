@@ -1430,7 +1430,12 @@ function action_binder:display_magic_selector_internal(magic_type)
         local target_type = fix_target_types(id, magic_type, res.spells[id].targets)
         local spell = crossbar_spells[kebab_casify(name)]
 
-        if (spell ~= nil and spell.category == kebab_casify(magic_type)) then
+        local magic_filter_type = SPELL_TYPE_LOOKUP[magic_type]
+        if (magic_filter_type == nil) then
+            magic_filter_type = kebab_casify(magic_type)
+        end
+
+        if (spell ~= nil and spell.category == magic_filter_type) then
             local icon_path, icon_overridden = maybe_get_custom_icon(spell.default_icon, spell.custom_icon)
             local icon_offset = 4
             if (icon_overridden) then
